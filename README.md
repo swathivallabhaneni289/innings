@@ -4,7 +4,19 @@
 
 I took this from a written plan to a working app for iPhone and Android by directing Claude Code, Anthropic's AI coding assistant. The idea, the plan and the product calls (a Go backend, the Matchday Ticket look, one app for both phones) are mine; Claude wrote the code to my prompts. The app is React Native with Expo, backed by a Go API and SQLite.
 
-<!-- SCREENSHOTS -->
+**On Android** (Pixel 8 emulator):
+
+| Home | Matches | Match Page | Log it |
+| --- | --- | --- | --- |
+| <img src="docs/screenshots/android-home.png" width="200" alt="Home with live matches as tickets"> | <img src="docs/screenshots/android-matches.png" width="200" alt="Matches grouped by day"> | <img src="docs/screenshots/android-match.png" width="200" alt="Match Page after the match"> | <img src="docs/screenshots/android-log.png" width="200" alt="Rating a match in cricket balls"> |
+| **The Vault** | **Profile** | **A friend's stub** | **Floodlights** |
+| <img src="docs/screenshots/android-vault.png" width="200" alt="On This Day in the Vault"> | <img src="docs/screenshots/android-profile.png" width="200" alt="Profile with stats and stubs"> | <img src="docs/screenshots/android-stub.png" width="200" alt="A logged ticket stub"> | <img src="docs/screenshots/android-floodlights.png" width="200" alt="The dark floodlights theme"> |
+
+**On iPhone** (iPhone 17 Pro simulator):
+
+| Home | Match Page | Log it | The Vault | Profile | Floodlights |
+| --- | --- | --- | --- | --- | --- |
+| <img src="docs/screenshots/iphone-home.png" width="130" alt="Home"> | <img src="docs/screenshots/iphone-match.png" width="130" alt="Match Page"> | <img src="docs/screenshots/iphone-log.png" width="130" alt="Pick the match to log"> | <img src="docs/screenshots/iphone-vault.png" width="130" alt="The Vault"> | <img src="docs/screenshots/iphone-profile.png" width="130" alt="Profile"> | <img src="docs/screenshots/iphone-floodlights.png" width="130" alt="Floodlights theme"> |
 
 ## The idea
 
@@ -40,7 +52,7 @@ The full plan, with every decision that filled a gap, is in [`docs/PLAN.md`](doc
 ## What's left out on purpose
 
 - **Live mood reactions, Season Wrapped, team fan clubs and AI summaries of reviews.** The plan marks these as later.
-- **Store releases.** The same code builds for iPhone and Android. So far it has been run on the iOS Simulator; on phones it opens through Expo Go. App Store and Play Store builds need developer accounts.
+- **Store releases.** The same code builds for iPhone and Android, and both have been run: on the iOS Simulator and on an Android emulator. On real phones it opens through Expo Go. App Store and Play Store builds need developer accounts.
 - **Real accounts.** Everyone is a guest with a device token for now.
 
 ## How it's built

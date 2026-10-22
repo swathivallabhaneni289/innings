@@ -106,3 +106,12 @@ Resume file: .planning/phases/06-design-release/06-CONTEXT.md
 
 - Run locally: `make api` (port 8088, SQLite file `./innings.db`, `make reset-db` wipes it) and `make app` (Metro on 8082). On a phone, the app reaches the API through the Metro host's LAN address; `EXPO_PUBLIC_API_URL` overrides it.
 - Screenshot tooling: start Metro with `EXPO_PUBLIC_QA_DRIVER=<url>` and the app polls that URL for a route or `theme:paper` / `theme:floodlights` (`src/lib/qaDriver.ts`).
+
+## Update: 2026-10-22, end of the evening
+
+- **Phase 6 done.** Direction C, "Matchday Ticket", is implemented across the design system and every screen. The 6-pillar UI review (`phases/06-design-release/06-UI-REVIEW.md`, 16/24 before fixes) was worked through: every P0 and P1 item fixed (tab bar overlap, clipped and truncated text, red used only for live, stamps and serials, the rankings speck, consistent Log step numbers).
+- **Both platforms run.** iOS dev build on the iPhone 17 Pro simulator; Android debug build on a Pixel 8 emulator (Android 16), both against the Go API on port 8088. Screenshots are in `docs/screenshots/`.
+- **Performance.** Barcodes are drawn as one SVG path and Vault shelves show 8 tickets each, so the Vault renders quickly on Android.
+- **Tests.** `go test ./...` (5 packages pass), 14 Jest tests for the app's formatting rules, `tsc --noEmit` clean.
+- **Repo.** Private GitHub repo `swathivallabhaneni289/innings`, branch `main`.
+- **Still open:** store builds (need Apple and Google developer accounts), a real cricket data API, email sign-in, uploading log photos, deleting a log from the app.
