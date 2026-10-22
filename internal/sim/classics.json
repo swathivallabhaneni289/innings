@@ -1,0 +1,2643 @@
+[
+  {
+    "id": "wc-1975-final",
+    "date": "1975-06-21",
+    "competitionId": "world-cup",
+    "competitionName": "Prudential World Cup 1975",
+    "stage": "Final",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "wi",
+      "aus"
+    ],
+    "venue": {
+      "id": "lords",
+      "name": "Lord's",
+      "city": "London",
+      "country": "England"
+    },
+    "winnerId": "wi",
+    "resultText": "West Indies won by 17 runs",
+    "innings": [
+      {
+        "teamId": "wi",
+        "runs": 291,
+        "wickets": 8,
+        "overs": "60"
+      },
+      {
+        "teamId": "aus",
+        "runs": 274,
+        "wickets": 10,
+        "overs": "58.4"
+      }
+    ],
+    "scoreline": "WI 291/8 (60) · AUS 274 (58.4)",
+    "potmName": "Clive Lloyd",
+    "headline": "Lloyd's hundred wins the first World Cup",
+    "collections": [
+      "world-cup-finals"
+    ],
+    "era": "1970s",
+    "hype": 4
+  },
+  {
+    "id": "wc-1983-final",
+    "date": "1983-06-25",
+    "competitionId": "world-cup",
+    "competitionName": "Prudential World Cup 1983",
+    "stage": "Final",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "ind",
+      "wi"
+    ],
+    "venue": {
+      "id": "lords",
+      "name": "Lord's",
+      "city": "London",
+      "country": "England"
+    },
+    "winnerId": "ind",
+    "resultText": "India won by 43 runs",
+    "innings": [
+      {
+        "teamId": "ind",
+        "runs": 183,
+        "wickets": 10,
+        "overs": "54.4"
+      },
+      {
+        "teamId": "wi",
+        "runs": 140,
+        "wickets": 10,
+        "overs": "52"
+      }
+    ],
+    "scoreline": "IND 183 (54.4) · WI 140 (52)",
+    "potmName": "Mohinder Amarnath",
+    "headline": "Kapil's Devils defend 183 to stun West Indies",
+    "collections": [
+      "world-cup-finals"
+    ],
+    "era": "1980s",
+    "hype": 5
+  },
+  {
+    "id": "wc-1992-final",
+    "date": "1992-03-25",
+    "competitionId": "world-cup",
+    "competitionName": "Benson & Hedges World Cup 1992",
+    "stage": "Final",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "pak",
+      "eng"
+    ],
+    "venue": {
+      "id": "melbourne-cricket-ground",
+      "name": "Melbourne Cricket Ground",
+      "city": "Melbourne",
+      "country": "Australia"
+    },
+    "winnerId": "pak",
+    "resultText": "Pakistan won by 22 runs",
+    "innings": [
+      {
+        "teamId": "pak",
+        "runs": 249,
+        "wickets": 6,
+        "overs": "50"
+      },
+      {
+        "teamId": "eng",
+        "runs": 227,
+        "wickets": 10,
+        "overs": "49.2"
+      }
+    ],
+    "scoreline": "PAK 249/6 (50) · ENG 227 (49.2)",
+    "potmName": "Wasim Akram",
+    "headline": "Imran's Pakistan win their first World Cup",
+    "collections": [
+      "world-cup-finals"
+    ],
+    "era": "1990s",
+    "hype": 5
+  },
+  {
+    "id": "wc-1996-final",
+    "date": "1996-03-17",
+    "competitionId": "world-cup",
+    "competitionName": "Wills World Cup 1996",
+    "stage": "Final",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "aus",
+      "sl"
+    ],
+    "venue": {
+      "id": "gaddafi-stadium",
+      "name": "Gaddafi Stadium",
+      "city": "Lahore",
+      "country": "Pakistan"
+    },
+    "winnerId": "sl",
+    "resultText": "Sri Lanka won by 7 wickets",
+    "innings": [
+      {
+        "teamId": "aus",
+        "runs": 241,
+        "wickets": 7,
+        "overs": "50"
+      },
+      {
+        "teamId": "sl",
+        "runs": 245,
+        "wickets": 3,
+        "overs": "46.2"
+      }
+    ],
+    "scoreline": "AUS 241/7 (50) · SL 245/3 (46.2)",
+    "potmName": "Aravinda de Silva",
+    "headline": "Aravinda's hundred crowns Sri Lanka in Lahore",
+    "collections": [
+      "world-cup-finals"
+    ],
+    "era": "1990s",
+    "hype": 5
+  },
+  {
+    "id": "wc-1999-final",
+    "date": "1999-06-20",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Cricket World Cup 1999",
+    "stage": "Final",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "pak",
+      "aus"
+    ],
+    "venue": {
+      "id": "lords",
+      "name": "Lord's",
+      "city": "London",
+      "country": "England"
+    },
+    "winnerId": "aus",
+    "resultText": "Australia won by 8 wickets",
+    "innings": [
+      {
+        "teamId": "pak",
+        "runs": 132,
+        "wickets": 10,
+        "overs": "39"
+      },
+      {
+        "teamId": "aus",
+        "runs": 133,
+        "wickets": 2,
+        "overs": "20.1"
+      }
+    ],
+    "scoreline": "PAK 132 (39) · AUS 133/2 (20.1)",
+    "potmName": "Shane Warne",
+    "headline": "Warne spins Australia to a Lord's rout",
+    "collections": [
+      "world-cup-finals"
+    ],
+    "era": "1990s",
+    "hype": 3
+  },
+  {
+    "id": "wc-2003-final",
+    "date": "2003-03-23",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Cricket World Cup 2003",
+    "stage": "Final",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "aus",
+      "ind"
+    ],
+    "venue": {
+      "id": "wanderers-stadium",
+      "name": "Wanderers Stadium",
+      "city": "Johannesburg",
+      "country": "South Africa"
+    },
+    "winnerId": "aus",
+    "resultText": "Australia won by 125 runs",
+    "innings": [
+      {
+        "teamId": "aus",
+        "runs": 359,
+        "wickets": 2,
+        "overs": "50"
+      },
+      {
+        "teamId": "ind",
+        "runs": 234,
+        "wickets": 10,
+        "overs": "39.2"
+      }
+    ],
+    "scoreline": "AUS 359/2 (50) · IND 234 (39.2)",
+    "potmName": "Ricky Ponting",
+    "headline": "Ponting's 140* flattens India in Johannesburg",
+    "collections": [
+      "world-cup-finals"
+    ],
+    "era": "2000s",
+    "hype": 4
+  },
+  {
+    "id": "wc-2011-final",
+    "date": "2011-04-02",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Cricket World Cup 2011",
+    "stage": "Final",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "sl",
+      "ind"
+    ],
+    "venue": {
+      "id": "wankhede-stadium",
+      "name": "Wankhede Stadium",
+      "city": "Mumbai",
+      "country": "India"
+    },
+    "winnerId": "ind",
+    "resultText": "India won by 6 wickets",
+    "innings": [
+      {
+        "teamId": "sl",
+        "runs": 274,
+        "wickets": 6,
+        "overs": "50"
+      },
+      {
+        "teamId": "ind",
+        "runs": 277,
+        "wickets": 4,
+        "overs": "48.2"
+      }
+    ],
+    "scoreline": "SL 274/6 (50) · IND 277/4 (48.2)",
+    "potmName": "MS Dhoni",
+    "headline": "Dhoni's six seals India's second World Cup",
+    "collections": [
+      "world-cup-finals",
+      "greatest-chases"
+    ],
+    "era": "2010s",
+    "hype": 5
+  },
+  {
+    "id": "wc-2015-final",
+    "date": "2015-03-29",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Cricket World Cup 2015",
+    "stage": "Final",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "nz",
+      "aus"
+    ],
+    "venue": {
+      "id": "melbourne-cricket-ground",
+      "name": "Melbourne Cricket Ground",
+      "city": "Melbourne",
+      "country": "Australia"
+    },
+    "winnerId": "aus",
+    "resultText": "Australia won by 7 wickets",
+    "innings": [
+      {
+        "teamId": "nz",
+        "runs": 183,
+        "wickets": 10,
+        "overs": "45"
+      },
+      {
+        "teamId": "aus",
+        "runs": 186,
+        "wickets": 3,
+        "overs": "33.1"
+      }
+    ],
+    "scoreline": "NZ 183 (45) · AUS 186/3 (33.1)",
+    "potmName": "James Faulkner",
+    "headline": "Australia crush New Zealand for a fifth title",
+    "collections": [
+      "world-cup-finals"
+    ],
+    "era": "2010s",
+    "hype": 3
+  },
+  {
+    "id": "wc-2019-final",
+    "date": "2019-07-14",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Cricket World Cup 2019",
+    "stage": "Final",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "nz",
+      "eng"
+    ],
+    "venue": {
+      "id": "lords",
+      "name": "Lord's",
+      "city": "London",
+      "country": "England"
+    },
+    "winnerId": "eng",
+    "resultText": "Match tied (Super Over tied); England won on boundary count",
+    "innings": [
+      {
+        "teamId": "nz",
+        "runs": 241,
+        "wickets": 8,
+        "overs": "50"
+      },
+      {
+        "teamId": "eng",
+        "runs": 241,
+        "wickets": 10,
+        "overs": "50"
+      }
+    ],
+    "scoreline": "NZ 241/8 (50) · ENG 241 (50) · Super Over: ENG 15/0, NZ 15/1",
+    "potmName": "Ben Stokes",
+    "headline": "Tied twice, won on boundaries: Stokes at Lord's",
+    "collections": [
+      "world-cup-finals",
+      "super-over-madness"
+    ],
+    "era": "2010s",
+    "hype": 5
+  },
+  {
+    "id": "wc-2023-final",
+    "date": "2023-11-19",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Cricket World Cup 2023",
+    "stage": "Final",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "ind",
+      "aus"
+    ],
+    "venue": {
+      "id": "narendra-modi-stadium",
+      "name": "Narendra Modi Stadium",
+      "city": "Ahmedabad",
+      "country": "India"
+    },
+    "winnerId": "aus",
+    "resultText": "Australia won by 6 wickets",
+    "innings": [
+      {
+        "teamId": "ind",
+        "runs": 240,
+        "wickets": 10,
+        "overs": "50"
+      },
+      {
+        "teamId": "aus",
+        "runs": 241,
+        "wickets": 4,
+        "overs": "43"
+      }
+    ],
+    "scoreline": "IND 240 (50) · AUS 241/4 (43)",
+    "potmName": "Travis Head",
+    "headline": "Head's 137 silences a full house in Ahmedabad",
+    "collections": [
+      "world-cup-finals"
+    ],
+    "era": "2020s",
+    "hype": 4
+  },
+  {
+    "id": "t20wc-2007-final",
+    "date": "2007-09-24",
+    "competitionId": "world-cup",
+    "competitionName": "ICC World Twenty20 2007",
+    "stage": "Final",
+    "format": "T20",
+    "gender": "men",
+    "teamIds": [
+      "ind",
+      "pak"
+    ],
+    "venue": {
+      "id": "wanderers-stadium",
+      "name": "Wanderers Stadium",
+      "city": "Johannesburg",
+      "country": "South Africa"
+    },
+    "winnerId": "ind",
+    "resultText": "India won by 5 runs",
+    "innings": [
+      {
+        "teamId": "ind",
+        "runs": 157,
+        "wickets": 5,
+        "overs": "20"
+      },
+      {
+        "teamId": "pak",
+        "runs": 152,
+        "wickets": 10,
+        "overs": "19.3"
+      }
+    ],
+    "scoreline": "IND 157/5 (20) · PAK 152 (19.3)",
+    "potmName": "Irfan Pathan",
+    "headline": "Misbah's scoop, Sreesanth's catch: India win",
+    "collections": [
+      "world-cup-finals"
+    ],
+    "era": "2000s",
+    "hype": 5
+  },
+  {
+    "id": "t20wc-2010-final",
+    "date": "2010-05-16",
+    "competitionId": "world-cup",
+    "competitionName": "ICC World Twenty20 2010",
+    "stage": "Final",
+    "format": "T20",
+    "gender": "men",
+    "teamIds": [
+      "aus",
+      "eng"
+    ],
+    "venue": {
+      "id": "kensington-oval",
+      "name": "Kensington Oval",
+      "city": "Bridgetown",
+      "country": "Barbados"
+    },
+    "winnerId": "eng",
+    "resultText": "England won by 7 wickets",
+    "innings": [
+      {
+        "teamId": "aus",
+        "runs": 147,
+        "wickets": 6,
+        "overs": "20"
+      },
+      {
+        "teamId": "eng",
+        "runs": 148,
+        "wickets": 3,
+        "overs": "17"
+      }
+    ],
+    "scoreline": "AUS 147/6 (20) · ENG 148/3 (17)",
+    "potmName": "Craig Kieswetter",
+    "headline": "England finally win a global trophy",
+    "collections": [
+      "world-cup-finals"
+    ],
+    "era": "2010s",
+    "hype": 3
+  },
+  {
+    "id": "t20wc-2016-final",
+    "date": "2016-04-03",
+    "competitionId": "world-cup",
+    "competitionName": "ICC World Twenty20 2016",
+    "stage": "Final",
+    "format": "T20",
+    "gender": "men",
+    "teamIds": [
+      "eng",
+      "wi"
+    ],
+    "venue": {
+      "id": "eden-gardens",
+      "name": "Eden Gardens",
+      "city": "Kolkata",
+      "country": "India"
+    },
+    "winnerId": "wi",
+    "resultText": "West Indies won by 4 wickets",
+    "innings": [
+      {
+        "teamId": "eng",
+        "runs": 155,
+        "wickets": 9,
+        "overs": "20"
+      },
+      {
+        "teamId": "wi",
+        "runs": 161,
+        "wickets": 6,
+        "overs": "19.4"
+      }
+    ],
+    "scoreline": "ENG 155/9 (20) · WI 161/6 (19.4)",
+    "potmName": "Marlon Samuels",
+    "headline": "Brathwaite's four straight sixes win it",
+    "collections": [
+      "world-cup-finals",
+      "greatest-chases"
+    ],
+    "era": "2010s",
+    "hype": 5
+  },
+  {
+    "id": "t20wc-2022-final",
+    "date": "2022-11-13",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Men's T20 World Cup 2022",
+    "stage": "Final",
+    "format": "T20",
+    "gender": "men",
+    "teamIds": [
+      "pak",
+      "eng"
+    ],
+    "venue": {
+      "id": "melbourne-cricket-ground",
+      "name": "Melbourne Cricket Ground",
+      "city": "Melbourne",
+      "country": "Australia"
+    },
+    "winnerId": "eng",
+    "resultText": "England won by 5 wickets",
+    "innings": [
+      {
+        "teamId": "pak",
+        "runs": 137,
+        "wickets": 8,
+        "overs": "20"
+      },
+      {
+        "teamId": "eng",
+        "runs": 138,
+        "wickets": 5,
+        "overs": "19"
+      }
+    ],
+    "scoreline": "PAK 137/8 (20) · ENG 138/5 (19)",
+    "potmName": "Sam Curran",
+    "headline": "Stokes and Curran make England double champions",
+    "collections": [
+      "world-cup-finals"
+    ],
+    "era": "2020s",
+    "hype": 3
+  },
+  {
+    "id": "t20wc-2024-final",
+    "date": "2024-06-29",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Men's T20 World Cup 2024",
+    "stage": "Final",
+    "format": "T20",
+    "gender": "men",
+    "teamIds": [
+      "ind",
+      "sa"
+    ],
+    "venue": {
+      "id": "kensington-oval",
+      "name": "Kensington Oval",
+      "city": "Bridgetown",
+      "country": "Barbados"
+    },
+    "winnerId": "ind",
+    "resultText": "India won by 7 runs",
+    "innings": [
+      {
+        "teamId": "ind",
+        "runs": 176,
+        "wickets": 7,
+        "overs": "20"
+      },
+      {
+        "teamId": "sa",
+        "runs": 169,
+        "wickets": 8,
+        "overs": "20"
+      }
+    ],
+    "scoreline": "IND 176/7 (20) · SA 169/8 (20)",
+    "potmName": "Virat Kohli",
+    "headline": "Suryakumar's catch seals India's T20 crown",
+    "collections": [
+      "world-cup-finals"
+    ],
+    "era": "2020s",
+    "hype": 5
+  },
+  {
+    "id": "wwc-2017-final",
+    "date": "2017-07-23",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Women's World Cup 2017",
+    "stage": "Final",
+    "format": "ODI",
+    "gender": "women",
+    "teamIds": [
+      "eng-w",
+      "ind-w"
+    ],
+    "venue": {
+      "id": "lords",
+      "name": "Lord's",
+      "city": "London",
+      "country": "England"
+    },
+    "winnerId": "eng-w",
+    "resultText": "England won by 9 runs",
+    "innings": [
+      {
+        "teamId": "eng-w",
+        "runs": 228,
+        "wickets": 7,
+        "overs": "50"
+      },
+      {
+        "teamId": "ind-w",
+        "runs": 219,
+        "wickets": 10,
+        "overs": "48.4"
+      }
+    ],
+    "scoreline": "ENG 228/7 (50) · IND 219 (48.4)",
+    "potmName": "Anya Shrubsole",
+    "headline": "Shrubsole's 6 for 46 wins a packed Lord's final",
+    "collections": [
+      "world-cup-finals",
+      "womens-classics"
+    ],
+    "era": "2010s",
+    "hype": 5
+  },
+  {
+    "id": "wt20-2016-final",
+    "date": "2016-04-03",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Women's World Twenty20 2016",
+    "stage": "Final",
+    "format": "T20",
+    "gender": "women",
+    "teamIds": [
+      "aus-w",
+      "wi-w"
+    ],
+    "venue": {
+      "id": "eden-gardens",
+      "name": "Eden Gardens",
+      "city": "Kolkata",
+      "country": "India"
+    },
+    "winnerId": "wi-w",
+    "resultText": "West Indies won by 8 wickets",
+    "innings": [
+      {
+        "teamId": "aus-w",
+        "runs": 148,
+        "wickets": 5,
+        "overs": "20"
+      },
+      {
+        "teamId": "wi-w",
+        "runs": 149,
+        "wickets": 2,
+        "overs": "19.3"
+      }
+    ],
+    "scoreline": "AUS 148/5 (20) · WI 149/2 (19.3)",
+    "potmName": "Hayley Matthews",
+    "headline": "West Indies women end Australia's reign",
+    "collections": [
+      "world-cup-finals",
+      "womens-classics",
+      "greatest-chases"
+    ],
+    "era": "2010s",
+    "hype": 4
+  },
+  {
+    "id": "wt20-2018-final",
+    "date": "2018-11-24",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Women's World T20 2018",
+    "stage": "Final",
+    "format": "T20",
+    "gender": "women",
+    "teamIds": [
+      "eng-w",
+      "aus-w"
+    ],
+    "venue": {
+      "id": "sir-vivian-richards-stadium",
+      "name": "Sir Vivian Richards Stadium",
+      "city": "North Sound",
+      "country": "Antigua"
+    },
+    "winnerId": "aus-w",
+    "resultText": "Australia won by 8 wickets",
+    "innings": [
+      {
+        "teamId": "eng-w",
+        "runs": 105,
+        "wickets": 10,
+        "overs": "19.4"
+      },
+      {
+        "teamId": "aus-w",
+        "runs": 106,
+        "wickets": 2,
+        "overs": "15.1"
+      }
+    ],
+    "scoreline": "ENG 105 (19.4) · AUS 106/2 (15.1)",
+    "potmName": "Ashleigh Gardner",
+    "headline": "Gardner leads Australia to a fourth T20 title",
+    "collections": [
+      "world-cup-finals",
+      "womens-classics"
+    ],
+    "era": "2010s",
+    "hype": 3
+  },
+  {
+    "id": "wt20-2020-final",
+    "date": "2020-03-08",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Women's T20 World Cup 2020",
+    "stage": "Final",
+    "format": "T20",
+    "gender": "women",
+    "teamIds": [
+      "aus-w",
+      "ind-w"
+    ],
+    "venue": {
+      "id": "melbourne-cricket-ground",
+      "name": "Melbourne Cricket Ground",
+      "city": "Melbourne",
+      "country": "Australia"
+    },
+    "winnerId": "aus-w",
+    "resultText": "Australia won by 85 runs",
+    "innings": [
+      {
+        "teamId": "aus-w",
+        "runs": 184,
+        "wickets": 4,
+        "overs": "20"
+      },
+      {
+        "teamId": "ind-w",
+        "runs": 99,
+        "wickets": 10,
+        "overs": "19.1"
+      }
+    ],
+    "scoreline": "AUS 184/4 (20) · IND 99 (19.1)",
+    "potmName": "Alyssa Healy",
+    "headline": "86,174 at the MCG watch Healy blitz India",
+    "collections": [
+      "world-cup-finals",
+      "womens-classics"
+    ],
+    "era": "2020s",
+    "hype": 4
+  },
+  {
+    "id": "wwc-2022-final",
+    "date": "2022-04-03",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Women's Cricket World Cup 2022",
+    "stage": "Final",
+    "format": "ODI",
+    "gender": "women",
+    "teamIds": [
+      "aus-w",
+      "eng-w"
+    ],
+    "venue": {
+      "id": "hagley-oval",
+      "name": "Hagley Oval",
+      "city": "Christchurch",
+      "country": "New Zealand"
+    },
+    "winnerId": "aus-w",
+    "resultText": "Australia won by 71 runs",
+    "innings": [
+      {
+        "teamId": "aus-w",
+        "runs": 356,
+        "wickets": 5,
+        "overs": "50"
+      },
+      {
+        "teamId": "eng-w",
+        "runs": 285,
+        "wickets": 10,
+        "overs": "43.4"
+      }
+    ],
+    "scoreline": "AUS 356/5 (50) · ENG 285 (43.4)",
+    "potmName": "Alyssa Healy",
+    "headline": "Healy's 170 powers Australia to a seventh title",
+    "collections": [
+      "world-cup-finals",
+      "womens-classics"
+    ],
+    "era": "2020s",
+    "hype": 4
+  },
+  {
+    "id": "wt20-2023-final",
+    "date": "2023-02-26",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Women's T20 World Cup 2023",
+    "stage": "Final",
+    "format": "T20",
+    "gender": "women",
+    "teamIds": [
+      "aus-w",
+      "sa-w"
+    ],
+    "venue": {
+      "id": "newlands",
+      "name": "Newlands",
+      "city": "Cape Town",
+      "country": "South Africa"
+    },
+    "winnerId": "aus-w",
+    "resultText": "Australia won by 19 runs",
+    "innings": [
+      {
+        "teamId": "aus-w",
+        "runs": 156,
+        "wickets": 6,
+        "overs": "20"
+      },
+      {
+        "teamId": "sa-w",
+        "runs": 137,
+        "wickets": 6,
+        "overs": "20"
+      }
+    ],
+    "scoreline": "AUS 156/6 (20) · SA 137/6 (20)",
+    "potmName": "Beth Mooney",
+    "headline": "Mooney's 74* denies South Africa at Newlands",
+    "collections": [
+      "world-cup-finals",
+      "womens-classics"
+    ],
+    "era": "2020s",
+    "hype": 3
+  },
+  {
+    "id": "wt20-2024-final",
+    "date": "2024-10-20",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Women's T20 World Cup 2024",
+    "stage": "Final",
+    "format": "T20",
+    "gender": "women",
+    "teamIds": [
+      "nz-w",
+      "sa-w"
+    ],
+    "venue": {
+      "id": "dubai-international-stadium",
+      "name": "Dubai International Cricket Stadium",
+      "city": "Dubai",
+      "country": "UAE"
+    },
+    "winnerId": "nz-w",
+    "resultText": "New Zealand won by 32 runs",
+    "innings": [
+      {
+        "teamId": "nz-w",
+        "runs": 158,
+        "wickets": 5,
+        "overs": "20"
+      },
+      {
+        "teamId": "sa-w",
+        "runs": 126,
+        "wickets": 9,
+        "overs": "20"
+      }
+    ],
+    "scoreline": "NZ 158/5 (20) · SA 126/9 (20)",
+    "potmName": "Amelia Kerr",
+    "headline": "Amelia Kerr wins New Zealand's first T20 crown",
+    "collections": [
+      "world-cup-finals",
+      "womens-classics"
+    ],
+    "era": "2020s",
+    "hype": 4
+  },
+  {
+    "id": "wwc-2025-final",
+    "date": "2025-11-02",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Women's Cricket World Cup 2025",
+    "stage": "Final",
+    "format": "ODI",
+    "gender": "women",
+    "teamIds": [
+      "ind-w",
+      "sa-w"
+    ],
+    "venue": {
+      "id": "dy-patil-stadium",
+      "name": "DY Patil Stadium",
+      "city": "Navi Mumbai",
+      "country": "India"
+    },
+    "winnerId": "ind-w",
+    "resultText": "India won by 52 runs",
+    "innings": [
+      {
+        "teamId": "ind-w",
+        "runs": 298,
+        "wickets": 7,
+        "overs": "50"
+      },
+      {
+        "teamId": "sa-w",
+        "runs": 246,
+        "wickets": 10,
+        "overs": "45.3"
+      }
+    ],
+    "scoreline": "IND 298/7 (50) · SA 246 (45.3)",
+    "potmName": "Shafali Verma",
+    "headline": "India's women win their first World Cup",
+    "collections": [
+      "world-cup-finals",
+      "womens-classics"
+    ],
+    "era": "2020s",
+    "hype": 5
+  },
+  {
+    "id": "wwc-2017-sf-derby",
+    "date": "2017-07-20",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Women's World Cup 2017",
+    "stage": "Semi-final",
+    "format": "ODI",
+    "gender": "women",
+    "teamIds": [
+      "ind-w",
+      "aus-w"
+    ],
+    "venue": {
+      "id": "county-ground-derby",
+      "name": "County Ground",
+      "city": "Derby",
+      "country": "England"
+    },
+    "winnerId": "ind-w",
+    "resultText": "India won by 36 runs",
+    "innings": [
+      {
+        "teamId": "ind-w",
+        "runs": 281,
+        "wickets": 4,
+        "overs": "42"
+      },
+      {
+        "teamId": "aus-w",
+        "runs": 245,
+        "wickets": 10,
+        "overs": "40.1"
+      }
+    ],
+    "scoreline": "IND 281/4 (42) · AUS 245 (40.1)",
+    "potmName": "Harmanpreet Kaur",
+    "headline": "Harmanpreet's 171* knocks out Australia",
+    "collections": [
+      "womens-classics"
+    ],
+    "era": "2010s",
+    "hype": 5
+  },
+  {
+    "id": "wwc-2025-sf-navi-mumbai",
+    "date": "2025-10-30",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Women's Cricket World Cup 2025",
+    "stage": "Semi-final",
+    "format": "ODI",
+    "gender": "women",
+    "teamIds": [
+      "aus-w",
+      "ind-w"
+    ],
+    "venue": {
+      "id": "dy-patil-stadium",
+      "name": "DY Patil Stadium",
+      "city": "Navi Mumbai",
+      "country": "India"
+    },
+    "winnerId": "ind-w",
+    "resultText": "India won by 5 wickets",
+    "innings": [
+      {
+        "teamId": "aus-w",
+        "runs": 338,
+        "wickets": 10,
+        "overs": "49.5"
+      },
+      {
+        "teamId": "ind-w",
+        "runs": 341,
+        "wickets": 5,
+        "overs": "48.3"
+      }
+    ],
+    "scoreline": "AUS 338 (49.5) · IND 341/5 (48.3)",
+    "potmName": "Jemimah Rodrigues",
+    "headline": "Jemimah's 127* chases down a record 339",
+    "collections": [
+      "womens-classics",
+      "greatest-chases"
+    ],
+    "era": "2020s",
+    "hype": 5
+  },
+  {
+    "id": "t20i-2022-indw-ausw-super-over",
+    "date": "2022-12-11",
+    "competitionId": "international",
+    "competitionName": "Australia Women tour of India 2022",
+    "stage": "2nd T20I",
+    "format": "T20",
+    "gender": "women",
+    "teamIds": [
+      "aus-w",
+      "ind-w"
+    ],
+    "venue": {
+      "id": "dy-patil-stadium",
+      "name": "DY Patil Stadium",
+      "city": "Navi Mumbai",
+      "country": "India"
+    },
+    "winnerId": "ind-w",
+    "resultText": "Match tied; India won the Super Over",
+    "innings": [
+      {
+        "teamId": "aus-w",
+        "runs": 187,
+        "wickets": 1,
+        "overs": "20"
+      },
+      {
+        "teamId": "ind-w",
+        "runs": 187,
+        "wickets": 5,
+        "overs": "20"
+      }
+    ],
+    "scoreline": "AUS 187/1 (20) · IND 187/5 (20) · Super Over: IND 20/1, AUS 16/1",
+    "potmName": "Smriti Mandhana",
+    "headline": "Mandhana stars as India win a Super Over",
+    "collections": [
+      "womens-classics",
+      "super-over-madness"
+    ],
+    "era": "2020s",
+    "hype": 3
+  },
+  {
+    "id": "odi-2006-434-johannesburg",
+    "date": "2006-03-12",
+    "competitionId": "international",
+    "competitionName": "Australia tour of South Africa 2006",
+    "stage": "5th ODI",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "aus",
+      "sa"
+    ],
+    "venue": {
+      "id": "wanderers-stadium",
+      "name": "Wanderers Stadium",
+      "city": "Johannesburg",
+      "country": "South Africa"
+    },
+    "winnerId": "sa",
+    "resultText": "South Africa won by 1 wicket",
+    "innings": [
+      {
+        "teamId": "aus",
+        "runs": 434,
+        "wickets": 4,
+        "overs": "50"
+      },
+      {
+        "teamId": "sa",
+        "runs": 438,
+        "wickets": 9,
+        "overs": "49.5"
+      }
+    ],
+    "scoreline": "AUS 434/4 (50) · SA 438/9 (49.5)",
+    "potmName": "Herschelle Gibbs & Ricky Ponting",
+    "headline": "The 438 game: South Africa chase down 434",
+    "collections": [
+      "greatest-chases"
+    ],
+    "era": "2000s",
+    "hype": 5
+  },
+  {
+    "id": "wc-2023-maxwell-201",
+    "date": "2023-11-07",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Cricket World Cup 2023",
+    "stage": "League stage",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "afg",
+      "aus"
+    ],
+    "venue": {
+      "id": "wankhede-stadium",
+      "name": "Wankhede Stadium",
+      "city": "Mumbai",
+      "country": "India"
+    },
+    "winnerId": "aus",
+    "resultText": "Australia won by 3 wickets",
+    "innings": [
+      {
+        "teamId": "afg",
+        "runs": 291,
+        "wickets": 5,
+        "overs": "50"
+      },
+      {
+        "teamId": "aus",
+        "runs": 293,
+        "wickets": 7,
+        "overs": "46.5"
+      }
+    ],
+    "scoreline": "AFG 291/5 (50) · AUS 293/7 (46.5)",
+    "potmName": "Glenn Maxwell",
+    "headline": "Maxwell's 201* on one leg from 91/7",
+    "collections": [
+      "greatest-chases"
+    ],
+    "era": "2020s",
+    "hype": 5
+  },
+  {
+    "id": "odi-2002-natwest-final",
+    "date": "2002-07-13",
+    "competitionId": "international",
+    "competitionName": "NatWest Series 2002",
+    "stage": "Final",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "eng",
+      "ind"
+    ],
+    "venue": {
+      "id": "lords",
+      "name": "Lord's",
+      "city": "London",
+      "country": "England"
+    },
+    "winnerId": "ind",
+    "resultText": "India won by 2 wickets",
+    "innings": [
+      {
+        "teamId": "eng",
+        "runs": 325,
+        "wickets": 5,
+        "overs": "50"
+      },
+      {
+        "teamId": "ind",
+        "runs": 326,
+        "wickets": 8,
+        "overs": "49.3"
+      }
+    ],
+    "scoreline": "ENG 325/5 (50) · IND 326/8 (49.3)",
+    "potmName": "Mohammad Kaif",
+    "headline": "Kaif and Yuvraj chase 326; Ganguly's shirt flies",
+    "collections": [
+      "greatest-chases"
+    ],
+    "era": "2000s",
+    "hype": 5
+  },
+  {
+    "id": "wc-2011-ire-eng",
+    "date": "2011-03-02",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Cricket World Cup 2011",
+    "stage": "Group B",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "eng",
+      "ire"
+    ],
+    "venue": {
+      "id": "m-chinnaswamy-stadium",
+      "name": "M. Chinnaswamy Stadium",
+      "city": "Bengaluru",
+      "country": "India"
+    },
+    "winnerId": "ire",
+    "resultText": "Ireland won by 3 wickets",
+    "innings": [
+      {
+        "teamId": "eng",
+        "runs": 327,
+        "wickets": 8,
+        "overs": "50"
+      },
+      {
+        "teamId": "ire",
+        "runs": 329,
+        "wickets": 7,
+        "overs": "49.1"
+      }
+    ],
+    "scoreline": "ENG 327/8 (50) · IRE 329/7 (49.1)",
+    "potmName": "Kevin O'Brien",
+    "headline": "Kevin O'Brien's 50-ball hundred stuns England",
+    "collections": [
+      "greatest-chases"
+    ],
+    "era": "2010s",
+    "hype": 5
+  },
+  {
+    "id": "odi-2012-hobart-kohli",
+    "date": "2012-02-28",
+    "competitionId": "international",
+    "competitionName": "Commonwealth Bank Series 2011-12",
+    "stage": "Group match",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "sl",
+      "ind"
+    ],
+    "venue": {
+      "id": "bellerive-oval",
+      "name": "Bellerive Oval",
+      "city": "Hobart",
+      "country": "Australia"
+    },
+    "winnerId": "ind",
+    "resultText": "India won by 7 wickets",
+    "innings": [
+      {
+        "teamId": "sl",
+        "runs": 320,
+        "wickets": 4,
+        "overs": "50"
+      },
+      {
+        "teamId": "ind",
+        "runs": 321,
+        "wickets": 3,
+        "overs": "36.4"
+      }
+    ],
+    "scoreline": "SL 320/4 (50) · IND 321/3 (36.4)",
+    "potmName": "Virat Kohli",
+    "headline": "Kohli's 133* chases 321 in 36.4 overs",
+    "collections": [
+      "greatest-chases"
+    ],
+    "era": "2010s",
+    "hype": 4
+  },
+  {
+    "id": "t20wc-2022-ind-pak-mcg",
+    "date": "2022-10-23",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Men's T20 World Cup 2022",
+    "stage": "Super 12, Group 2",
+    "format": "T20",
+    "gender": "men",
+    "teamIds": [
+      "pak",
+      "ind"
+    ],
+    "venue": {
+      "id": "melbourne-cricket-ground",
+      "name": "Melbourne Cricket Ground",
+      "city": "Melbourne",
+      "country": "Australia"
+    },
+    "winnerId": "ind",
+    "resultText": "India won by 4 wickets",
+    "innings": [
+      {
+        "teamId": "pak",
+        "runs": 159,
+        "wickets": 8,
+        "overs": "20"
+      },
+      {
+        "teamId": "ind",
+        "runs": 160,
+        "wickets": 6,
+        "overs": "20"
+      }
+    ],
+    "scoreline": "PAK 159/8 (20) · IND 160/6 (20)",
+    "potmName": "Virat Kohli",
+    "headline": "Kohli's 82* and the Rauf sixes at the MCG",
+    "collections": [
+      "greatest-chases"
+    ],
+    "era": "2020s",
+    "hype": 5
+  },
+  {
+    "id": "odi-1986-sharjah-miandad",
+    "date": "1986-04-18",
+    "competitionId": "international",
+    "competitionName": "Austral-Asia Cup 1986",
+    "stage": "Final",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "ind",
+      "pak"
+    ],
+    "venue": {
+      "id": "sharjah-cricket-stadium",
+      "name": "Sharjah Cricket Association Stadium",
+      "city": "Sharjah",
+      "country": "UAE"
+    },
+    "winnerId": "pak",
+    "resultText": "Pakistan won by 1 wicket",
+    "innings": [
+      {
+        "teamId": "ind",
+        "runs": 245,
+        "wickets": 7,
+        "overs": "50"
+      },
+      {
+        "teamId": "pak",
+        "runs": 248,
+        "wickets": 9,
+        "overs": "50"
+      }
+    ],
+    "scoreline": "IND 245/7 (50) · PAK 248/9 (50)",
+    "potmName": "Javed Miandad",
+    "headline": "Miandad hits the last ball for six in Sharjah",
+    "collections": [
+      "greatest-chases"
+    ],
+    "era": "1980s",
+    "hype": 5
+  },
+  {
+    "id": "wc-2015-sf-eden-park",
+    "date": "2015-03-24",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Cricket World Cup 2015",
+    "stage": "Semi-final",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "sa",
+      "nz"
+    ],
+    "venue": {
+      "id": "eden-park",
+      "name": "Eden Park",
+      "city": "Auckland",
+      "country": "New Zealand"
+    },
+    "winnerId": "nz",
+    "resultText": "New Zealand won by 4 wickets (D/L method)",
+    "innings": [
+      {
+        "teamId": "sa",
+        "runs": 281,
+        "wickets": 5,
+        "overs": "43"
+      },
+      {
+        "teamId": "nz",
+        "runs": 299,
+        "wickets": 6,
+        "overs": "42.5"
+      }
+    ],
+    "scoreline": "SA 281/5 (43) · NZ 299/6 (42.5)",
+    "potmName": "Grant Elliott",
+    "headline": "Elliott's six sends New Zealand to a first final",
+    "collections": [
+      "greatest-chases"
+    ],
+    "era": "2010s",
+    "hype": 5
+  },
+  {
+    "id": "wc-1999-sf-edgbaston",
+    "date": "1999-06-17",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Cricket World Cup 1999",
+    "stage": "Semi-final",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "aus",
+      "sa"
+    ],
+    "venue": {
+      "id": "edgbaston",
+      "name": "Edgbaston",
+      "city": "Birmingham",
+      "country": "England"
+    },
+    "winnerId": null,
+    "resultText": "Match tied; Australia advanced on Super Six standing",
+    "innings": [
+      {
+        "teamId": "aus",
+        "runs": 213,
+        "wickets": 10,
+        "overs": "49.2"
+      },
+      {
+        "teamId": "sa",
+        "runs": 213,
+        "wickets": 10,
+        "overs": "49.4"
+      }
+    ],
+    "scoreline": "AUS 213 (49.2) · SA 213 (49.4)",
+    "potmName": "Shane Warne",
+    "headline": "Klusener, Donald and the run-out that tied it",
+    "collections": [],
+    "era": "1990s",
+    "hype": 5
+  },
+  {
+    "id": "wc-1983-kapil-175",
+    "date": "1983-06-18",
+    "competitionId": "world-cup",
+    "competitionName": "Prudential World Cup 1983",
+    "stage": "Group B",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "ind",
+      "zim"
+    ],
+    "venue": {
+      "id": "nevill-ground",
+      "name": "Nevill Ground",
+      "city": "Tunbridge Wells",
+      "country": "England"
+    },
+    "winnerId": "ind",
+    "resultText": "India won by 31 runs",
+    "innings": [
+      {
+        "teamId": "ind",
+        "runs": 266,
+        "wickets": 8,
+        "overs": "60"
+      },
+      {
+        "teamId": "zim",
+        "runs": 235,
+        "wickets": 10,
+        "overs": "57"
+      }
+    ],
+    "scoreline": "IND 266/8 (60) · ZIM 235 (57)",
+    "potmName": "Kapil Dev",
+    "headline": "Kapil's 175* rescues India from 17/5",
+    "collections": [],
+    "era": "1980s",
+    "hype": 4
+  },
+  {
+    "id": "wc-1983-zim-aus",
+    "date": "1983-06-09",
+    "competitionId": "world-cup",
+    "competitionName": "Prudential World Cup 1983",
+    "stage": "Group B",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "zim",
+      "aus"
+    ],
+    "venue": {
+      "id": "trent-bridge",
+      "name": "Trent Bridge",
+      "city": "Nottingham",
+      "country": "England"
+    },
+    "winnerId": "zim",
+    "resultText": "Zimbabwe won by 13 runs",
+    "innings": [
+      {
+        "teamId": "zim",
+        "runs": 239,
+        "wickets": 6,
+        "overs": "60"
+      },
+      {
+        "teamId": "aus",
+        "runs": 226,
+        "wickets": 7,
+        "overs": "60"
+      }
+    ],
+    "scoreline": "ZIM 239/6 (60) · AUS 226/7 (60)",
+    "potmName": "Duncan Fletcher",
+    "headline": "Debutants Zimbabwe topple Australia",
+    "collections": [],
+    "era": "1980s",
+    "hype": 3
+  },
+  {
+    "id": "odi-2010-gwalior-200",
+    "date": "2010-02-24",
+    "competitionId": "international",
+    "competitionName": "South Africa tour of India 2010",
+    "stage": "2nd ODI",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "ind",
+      "sa"
+    ],
+    "venue": {
+      "id": "captain-roop-singh-stadium",
+      "name": "Captain Roop Singh Stadium",
+      "city": "Gwalior",
+      "country": "India"
+    },
+    "winnerId": "ind",
+    "resultText": "India won by 153 runs",
+    "innings": [
+      {
+        "teamId": "ind",
+        "runs": 401,
+        "wickets": 3,
+        "overs": "50"
+      },
+      {
+        "teamId": "sa",
+        "runs": 248,
+        "wickets": 10,
+        "overs": "42.5"
+      }
+    ],
+    "scoreline": "IND 401/3 (50) · SA 248 (42.5)",
+    "potmName": "Sachin Tendulkar",
+    "headline": "Tendulkar makes the first men's ODI 200",
+    "collections": [],
+    "era": "2010s",
+    "hype": 5
+  },
+  {
+    "id": "t20wc-2007-six-sixes",
+    "date": "2007-09-19",
+    "competitionId": "world-cup",
+    "competitionName": "ICC World Twenty20 2007",
+    "stage": "Super Eight",
+    "format": "T20",
+    "gender": "men",
+    "teamIds": [
+      "ind",
+      "eng"
+    ],
+    "venue": {
+      "id": "kingsmead",
+      "name": "Kingsmead",
+      "city": "Durban",
+      "country": "South Africa"
+    },
+    "winnerId": "ind",
+    "resultText": "India won by 18 runs",
+    "innings": [
+      {
+        "teamId": "ind",
+        "runs": 218,
+        "wickets": 4,
+        "overs": "20"
+      },
+      {
+        "teamId": "eng",
+        "runs": 200,
+        "wickets": 6,
+        "overs": "20"
+      }
+    ],
+    "scoreline": "IND 218/4 (20) · ENG 200/6 (20)",
+    "potmName": "Yuvraj Singh",
+    "headline": "Yuvraj hits Broad for six sixes in an over",
+    "collections": [],
+    "era": "2000s",
+    "hype": 5
+  },
+  {
+    "id": "t20wc-2016-ind-ban",
+    "date": "2016-03-23",
+    "competitionId": "world-cup",
+    "competitionName": "ICC World Twenty20 2016",
+    "stage": "Super 10, Group 2",
+    "format": "T20",
+    "gender": "men",
+    "teamIds": [
+      "ind",
+      "ban"
+    ],
+    "venue": {
+      "id": "m-chinnaswamy-stadium",
+      "name": "M. Chinnaswamy Stadium",
+      "city": "Bengaluru",
+      "country": "India"
+    },
+    "winnerId": "ind",
+    "resultText": "India won by 1 run",
+    "innings": [
+      {
+        "teamId": "ind",
+        "runs": 146,
+        "wickets": 7,
+        "overs": "20"
+      },
+      {
+        "teamId": "ban",
+        "runs": 145,
+        "wickets": 9,
+        "overs": "20"
+      }
+    ],
+    "scoreline": "IND 146/7 (20) · BAN 145/9 (20)",
+    "potmName": "Ravichandran Ashwin",
+    "headline": "Dhoni's last-ball run-out steals a 1-run win",
+    "collections": [],
+    "era": "2010s",
+    "hype": 4
+  },
+  {
+    "id": "wc-2023-afg-eng",
+    "date": "2023-10-15",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Cricket World Cup 2023",
+    "stage": "League stage",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "afg",
+      "eng"
+    ],
+    "venue": {
+      "id": "arun-jaitley-stadium",
+      "name": "Arun Jaitley Stadium",
+      "city": "Delhi",
+      "country": "India"
+    },
+    "winnerId": "afg",
+    "resultText": "Afghanistan won by 69 runs",
+    "innings": [
+      {
+        "teamId": "afg",
+        "runs": 284,
+        "wickets": 10,
+        "overs": "49.5"
+      },
+      {
+        "teamId": "eng",
+        "runs": 215,
+        "wickets": 10,
+        "overs": "40.3"
+      }
+    ],
+    "scoreline": "AFG 284 (49.5) · ENG 215 (40.3)",
+    "potmName": "Mujeeb Ur Rahman",
+    "headline": "Afghanistan stun champions England in Delhi",
+    "collections": [],
+    "era": "2020s",
+    "hype": 4
+  },
+  {
+    "id": "wc-2023-ned-sa",
+    "date": "2023-10-17",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Cricket World Cup 2023",
+    "stage": "League stage",
+    "format": "ODI",
+    "gender": "men",
+    "teamIds": [
+      "ned",
+      "sa"
+    ],
+    "venue": {
+      "id": "hpca-stadium",
+      "name": "HPCA Stadium",
+      "city": "Dharamsala",
+      "country": "India"
+    },
+    "winnerId": "ned",
+    "resultText": "Netherlands won by 38 runs",
+    "innings": [
+      {
+        "teamId": "ned",
+        "runs": 245,
+        "wickets": 8,
+        "overs": "43"
+      },
+      {
+        "teamId": "sa",
+        "runs": 207,
+        "wickets": 10,
+        "overs": "42.5"
+      }
+    ],
+    "scoreline": "NED 245/8 (43) · SA 207 (42.5)",
+    "potmName": "Scott Edwards",
+    "headline": "Edwards' 78* sparks a Dutch upset of South Africa",
+    "collections": [],
+    "era": "2020s",
+    "hype": 3
+  },
+  {
+    "id": "t20i-2020-hamilton-super-over",
+    "date": "2020-01-29",
+    "competitionId": "international",
+    "competitionName": "India tour of New Zealand 2020",
+    "stage": "3rd T20I",
+    "format": "T20",
+    "gender": "men",
+    "teamIds": [
+      "ind",
+      "nz"
+    ],
+    "venue": {
+      "id": "seddon-park",
+      "name": "Seddon Park",
+      "city": "Hamilton",
+      "country": "New Zealand"
+    },
+    "winnerId": "ind",
+    "resultText": "Match tied; India won the Super Over",
+    "innings": [
+      {
+        "teamId": "ind",
+        "runs": 179,
+        "wickets": 5,
+        "overs": "20"
+      },
+      {
+        "teamId": "nz",
+        "runs": 179,
+        "wickets": 6,
+        "overs": "20"
+      }
+    ],
+    "scoreline": "IND 179/5 (20) · NZ 179/6 (20) · Super Over: NZ 17, IND 20",
+    "potmName": "Rohit Sharma",
+    "headline": "Rohit's last two balls: back-to-back sixes",
+    "collections": [
+      "super-over-madness"
+    ],
+    "era": "2020s",
+    "hype": 4
+  },
+  {
+    "id": "t20i-2020-wellington-super-over",
+    "date": "2020-01-31",
+    "competitionId": "international",
+    "competitionName": "India tour of New Zealand 2020",
+    "stage": "4th T20I",
+    "format": "T20",
+    "gender": "men",
+    "teamIds": [
+      "ind",
+      "nz"
+    ],
+    "venue": {
+      "id": "sky-stadium",
+      "name": "Sky Stadium",
+      "city": "Wellington",
+      "country": "New Zealand"
+    },
+    "winnerId": "ind",
+    "resultText": "Match tied; India won the Super Over",
+    "innings": [
+      {
+        "teamId": "ind",
+        "runs": 165,
+        "wickets": 8,
+        "overs": "20"
+      },
+      {
+        "teamId": "nz",
+        "runs": 165,
+        "wickets": 7,
+        "overs": "20"
+      }
+    ],
+    "scoreline": "IND 165/8 (20) · NZ 165/7 (20) · Super Over: NZ 13, IND 16",
+    "potmName": "Shardul Thakur",
+    "headline": "Another tie, another Super Over win for India",
+    "collections": [
+      "super-over-madness"
+    ],
+    "era": "2020s",
+    "hype": 3
+  },
+  {
+    "id": "t20wc-2024-usa-pak-dallas",
+    "date": "2024-06-06",
+    "competitionId": "world-cup",
+    "competitionName": "ICC Men's T20 World Cup 2024",
+    "stage": "Group A",
+    "format": "T20",
+    "gender": "men",
+    "teamIds": [
+      "usa",
+      "pak"
+    ],
+    "venue": {
+      "id": "grand-prairie-stadium",
+      "name": "Grand Prairie Stadium",
+      "city": "Dallas",
+      "country": "USA"
+    },
+    "winnerId": "usa",
+    "resultText": "Match tied; USA won the Super Over",
+    "innings": [
+      {
+        "teamId": "pak",
+        "runs": 159,
+        "wickets": 7,
+        "overs": "20"
+      },
+      {
+        "teamId": "usa",
+        "runs": 159,
+        "wickets": 3,
+        "overs": "20"
+      }
+    ],
+    "scoreline": "PAK 159/7 (20) · USA 159/3 (20) · Super Over: USA 18, PAK 13",
+    "potmName": "Monank Patel",
+    "headline": "USA beat Pakistan in a Super Over in Dallas",
+    "collections": [
+      "super-over-madness"
+    ],
+    "era": "2020s",
+    "hype": 4
+  },
+  {
+    "id": "t20i-2024-bengaluru-double-super-over",
+    "date": "2024-01-17",
+    "competitionId": "international",
+    "competitionName": "Afghanistan tour of India 2024",
+    "stage": "3rd T20I",
+    "format": "T20",
+    "gender": "men",
+    "teamIds": [
+      "ind",
+      "afg"
+    ],
+    "venue": {
+      "id": "m-chinnaswamy-stadium",
+      "name": "M. Chinnaswamy Stadium",
+      "city": "Bengaluru",
+      "country": "India"
+    },
+    "winnerId": "ind",
+    "resultText": "Match tied; India won the second Super Over",
+    "innings": [
+      {
+        "teamId": "ind",
+        "runs": 212,
+        "wickets": 4,
+        "overs": "20"
+      },
+      {
+        "teamId": "afg",
+        "runs": 212,
+        "wickets": 6,
+        "overs": "20"
+      }
+    ],
+    "scoreline": "IND 212/4 (20) · AFG 212/6 (20) · Super Overs: AFG 16, IND 16; IND 11, AFG 1",
+    "potmName": "Rohit Sharma",
+    "headline": "Rohit's 121* and two Super Overs in Bengaluru",
+    "collections": [
+      "super-over-madness"
+    ],
+    "era": "2020s",
+    "hype": 4
+  },
+  {
+    "id": "test-1981-headingley",
+    "date": "1981-07-16",
+    "competitionId": "international",
+    "competitionName": "The Ashes 1981",
+    "stage": "3rd Test",
+    "format": "Test",
+    "gender": "men",
+    "teamIds": [
+      "aus",
+      "eng"
+    ],
+    "venue": {
+      "id": "headingley",
+      "name": "Headingley",
+      "city": "Leeds",
+      "country": "England"
+    },
+    "winnerId": "eng",
+    "resultText": "England won by 18 runs (after following on)",
+    "innings": [
+      {
+        "teamId": "aus",
+        "runs": 401,
+        "wickets": 9,
+        "overs": ""
+      },
+      {
+        "teamId": "eng",
+        "runs": 174,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "eng",
+        "runs": 356,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "aus",
+        "runs": 111,
+        "wickets": 10,
+        "overs": ""
+      }
+    ],
+    "scoreline": "AUS 401/9d & 111 · ENG 174 & 356",
+    "potmName": "Ian Botham",
+    "headline": "Botham's 149*, Willis' 8 for 43: Botham's Ashes",
+    "collections": [
+      "test-thrillers"
+    ],
+    "era": "1980s",
+    "hype": 5
+  },
+  {
+    "id": "test-1986-chennai-tie",
+    "date": "1986-09-18",
+    "competitionId": "international",
+    "competitionName": "Australia tour of India 1986",
+    "stage": "1st Test",
+    "format": "Test",
+    "gender": "men",
+    "teamIds": [
+      "aus",
+      "ind"
+    ],
+    "venue": {
+      "id": "ma-chidambaram-stadium",
+      "name": "M. A. Chidambaram Stadium",
+      "city": "Madras",
+      "country": "India"
+    },
+    "winnerId": null,
+    "resultText": "Match tied",
+    "innings": [
+      {
+        "teamId": "aus",
+        "runs": 574,
+        "wickets": 7,
+        "overs": ""
+      },
+      {
+        "teamId": "ind",
+        "runs": 397,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "aus",
+        "runs": 170,
+        "wickets": 5,
+        "overs": ""
+      },
+      {
+        "teamId": "ind",
+        "runs": 347,
+        "wickets": 10,
+        "overs": ""
+      }
+    ],
+    "scoreline": "AUS 574/7d & 170/5d · IND 397 & 347",
+    "potmName": "Dean Jones & Kapil Dev",
+    "headline": "The second tied Test: Jones' 210 in Madras heat",
+    "collections": [
+      "test-thrillers"
+    ],
+    "era": "1980s",
+    "hype": 5
+  },
+  {
+    "id": "test-1993-adelaide",
+    "date": "1993-01-23",
+    "competitionId": "international",
+    "competitionName": "Frank Worrell Trophy 1992-93",
+    "stage": "4th Test",
+    "format": "Test",
+    "gender": "men",
+    "teamIds": [
+      "wi",
+      "aus"
+    ],
+    "venue": {
+      "id": "adelaide-oval",
+      "name": "Adelaide Oval",
+      "city": "Adelaide",
+      "country": "Australia"
+    },
+    "winnerId": "wi",
+    "resultText": "West Indies won by 1 run",
+    "innings": [
+      {
+        "teamId": "wi",
+        "runs": 252,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "aus",
+        "runs": 213,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "wi",
+        "runs": 146,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "aus",
+        "runs": 184,
+        "wickets": 10,
+        "overs": ""
+      }
+    ],
+    "scoreline": "WI 252 & 146 · AUS 213 & 184",
+    "potmName": "Curtly Ambrose",
+    "headline": "Walsh removes McDermott: West Indies by one run",
+    "collections": [
+      "test-thrillers"
+    ],
+    "era": "1990s",
+    "hype": 5
+  },
+  {
+    "id": "test-1994-karachi",
+    "date": "1994-09-28",
+    "competitionId": "international",
+    "competitionName": "Australia tour of Pakistan 1994",
+    "stage": "1st Test",
+    "format": "Test",
+    "gender": "men",
+    "teamIds": [
+      "aus",
+      "pak"
+    ],
+    "venue": {
+      "id": "national-stadium",
+      "name": "National Stadium",
+      "city": "Karachi",
+      "country": "Pakistan"
+    },
+    "winnerId": "pak",
+    "resultText": "Pakistan won by 1 wicket",
+    "innings": [
+      {
+        "teamId": "aus",
+        "runs": 337,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "pak",
+        "runs": 256,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "aus",
+        "runs": 232,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "pak",
+        "runs": 315,
+        "wickets": 9,
+        "overs": ""
+      }
+    ],
+    "scoreline": "AUS 337 & 232 · PAK 256 & 315/9",
+    "potmName": "Shane Warne",
+    "headline": "Inzamam and Mushtaq steal a one-wicket win",
+    "collections": [
+      "test-thrillers",
+      "greatest-chases"
+    ],
+    "era": "1990s",
+    "hype": 4
+  },
+  {
+    "id": "test-1999-bridgetown",
+    "date": "1999-03-26",
+    "competitionId": "international",
+    "competitionName": "Frank Worrell Trophy 1999",
+    "stage": "3rd Test",
+    "format": "Test",
+    "gender": "men",
+    "teamIds": [
+      "aus",
+      "wi"
+    ],
+    "venue": {
+      "id": "kensington-oval",
+      "name": "Kensington Oval",
+      "city": "Bridgetown",
+      "country": "Barbados"
+    },
+    "winnerId": "wi",
+    "resultText": "West Indies won by 1 wicket",
+    "innings": [
+      {
+        "teamId": "aus",
+        "runs": 490,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "wi",
+        "runs": 329,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "aus",
+        "runs": 146,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "wi",
+        "runs": 311,
+        "wickets": 9,
+        "overs": ""
+      }
+    ],
+    "scoreline": "AUS 490 & 146 · WI 329 & 311/9",
+    "potmName": "Brian Lara",
+    "headline": "Lara's 153* wins it by one wicket",
+    "collections": [
+      "test-thrillers",
+      "greatest-chases"
+    ],
+    "era": "1990s",
+    "hype": 5
+  },
+  {
+    "id": "test-2001-kolkata",
+    "date": "2001-03-11",
+    "competitionId": "international",
+    "competitionName": "Border-Gavaskar Trophy 2001",
+    "stage": "2nd Test",
+    "format": "Test",
+    "gender": "men",
+    "teamIds": [
+      "aus",
+      "ind"
+    ],
+    "venue": {
+      "id": "eden-gardens",
+      "name": "Eden Gardens",
+      "city": "Kolkata",
+      "country": "India"
+    },
+    "winnerId": "ind",
+    "resultText": "India won by 171 runs (after following on)",
+    "innings": [
+      {
+        "teamId": "aus",
+        "runs": 445,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "ind",
+        "runs": 171,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "ind",
+        "runs": 657,
+        "wickets": 7,
+        "overs": ""
+      },
+      {
+        "teamId": "aus",
+        "runs": 212,
+        "wickets": 10,
+        "overs": ""
+      }
+    ],
+    "scoreline": "AUS 445 & 212 · IND 171 & 657/7d",
+    "potmName": "VVS Laxman",
+    "headline": "Laxman's 281 ends Australia's 16-Test streak",
+    "collections": [
+      "test-thrillers"
+    ],
+    "era": "2000s",
+    "hype": 5
+  },
+  {
+    "id": "test-2005-edgbaston",
+    "date": "2005-08-04",
+    "competitionId": "international",
+    "competitionName": "The Ashes 2005",
+    "stage": "2nd Test",
+    "format": "Test",
+    "gender": "men",
+    "teamIds": [
+      "eng",
+      "aus"
+    ],
+    "venue": {
+      "id": "edgbaston",
+      "name": "Edgbaston",
+      "city": "Birmingham",
+      "country": "England"
+    },
+    "winnerId": "eng",
+    "resultText": "England won by 2 runs",
+    "innings": [
+      {
+        "teamId": "eng",
+        "runs": 407,
+        "wickets": 10,
+        "overs": "79.2"
+      },
+      {
+        "teamId": "aus",
+        "runs": 308,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "eng",
+        "runs": 182,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "aus",
+        "runs": 279,
+        "wickets": 10,
+        "overs": ""
+      }
+    ],
+    "scoreline": "ENG 407 & 182 · AUS 308 & 279",
+    "potmName": "Andrew Flintoff",
+    "headline": "Kasprowicz gloved, England win by two runs",
+    "collections": [
+      "test-thrillers"
+    ],
+    "era": "2000s",
+    "hype": 5
+  },
+  {
+    "id": "test-2019-durban",
+    "date": "2019-02-13",
+    "competitionId": "international",
+    "competitionName": "Sri Lanka tour of South Africa 2019",
+    "stage": "1st Test",
+    "format": "Test",
+    "gender": "men",
+    "teamIds": [
+      "sa",
+      "sl"
+    ],
+    "venue": {
+      "id": "kingsmead",
+      "name": "Kingsmead",
+      "city": "Durban",
+      "country": "South Africa"
+    },
+    "winnerId": "sl",
+    "resultText": "Sri Lanka won by 1 wicket",
+    "innings": [
+      {
+        "teamId": "sa",
+        "runs": 235,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "sl",
+        "runs": 191,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "sa",
+        "runs": 259,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "sl",
+        "runs": 304,
+        "wickets": 9,
+        "overs": ""
+      }
+    ],
+    "scoreline": "SA 235 & 259 · SL 191 & 304/9",
+    "potmName": "Kusal Perera",
+    "headline": "Kusal Perera's 153* and a last-wicket 78",
+    "collections": [
+      "test-thrillers",
+      "greatest-chases"
+    ],
+    "era": "2010s",
+    "hype": 5
+  },
+  {
+    "id": "test-2019-headingley",
+    "date": "2019-08-22",
+    "competitionId": "international",
+    "competitionName": "The Ashes 2019",
+    "stage": "3rd Test",
+    "format": "Test",
+    "gender": "men",
+    "teamIds": [
+      "aus",
+      "eng"
+    ],
+    "venue": {
+      "id": "headingley",
+      "name": "Headingley",
+      "city": "Leeds",
+      "country": "England"
+    },
+    "winnerId": "eng",
+    "resultText": "England won by 1 wicket",
+    "innings": [
+      {
+        "teamId": "aus",
+        "runs": 179,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "eng",
+        "runs": 67,
+        "wickets": 10,
+        "overs": "27.5"
+      },
+      {
+        "teamId": "aus",
+        "runs": 246,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "eng",
+        "runs": 362,
+        "wickets": 9,
+        "overs": "125.4"
+      }
+    ],
+    "scoreline": "AUS 179 & 246 · ENG 67 & 362/9",
+    "potmName": "Ben Stokes",
+    "headline": "Stokes' 135* after England's 67 all out",
+    "collections": [
+      "test-thrillers",
+      "greatest-chases"
+    ],
+    "era": "2010s",
+    "hype": 5
+  },
+  {
+    "id": "test-2021-gabba",
+    "date": "2021-01-15",
+    "competitionId": "international",
+    "competitionName": "Border-Gavaskar Trophy 2020-21",
+    "stage": "4th Test",
+    "format": "Test",
+    "gender": "men",
+    "teamIds": [
+      "aus",
+      "ind"
+    ],
+    "venue": {
+      "id": "the-gabba",
+      "name": "The Gabba",
+      "city": "Brisbane",
+      "country": "Australia"
+    },
+    "winnerId": "ind",
+    "resultText": "India won by 3 wickets",
+    "innings": [
+      {
+        "teamId": "aus",
+        "runs": 369,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "ind",
+        "runs": 336,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "aus",
+        "runs": 294,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "ind",
+        "runs": 329,
+        "wickets": 7,
+        "overs": "97"
+      }
+    ],
+    "scoreline": "AUS 369 & 294 · IND 336 & 329/7",
+    "potmName": "Rishabh Pant",
+    "headline": "Pant breaches Fortress Gabba",
+    "collections": [
+      "test-thrillers",
+      "greatest-chases"
+    ],
+    "era": "2020s",
+    "hype": 5
+  },
+  {
+    "id": "test-2023-wellington",
+    "date": "2023-02-24",
+    "competitionId": "international",
+    "competitionName": "England tour of New Zealand 2023",
+    "stage": "2nd Test",
+    "format": "Test",
+    "gender": "men",
+    "teamIds": [
+      "eng",
+      "nz"
+    ],
+    "venue": {
+      "id": "basin-reserve",
+      "name": "Basin Reserve",
+      "city": "Wellington",
+      "country": "New Zealand"
+    },
+    "winnerId": "nz",
+    "resultText": "New Zealand won by 1 run (after following on)",
+    "innings": [
+      {
+        "teamId": "eng",
+        "runs": 435,
+        "wickets": 8,
+        "overs": ""
+      },
+      {
+        "teamId": "nz",
+        "runs": 209,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "nz",
+        "runs": 483,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "eng",
+        "runs": 256,
+        "wickets": 10,
+        "overs": ""
+      }
+    ],
+    "scoreline": "ENG 435/8d & 256 · NZ 209 & 483",
+    "potmName": "Kane Williamson",
+    "headline": "New Zealand follow on and win by one run",
+    "collections": [
+      "test-thrillers"
+    ],
+    "era": "2020s",
+    "hype": 5
+  },
+  {
+    "id": "test-2024-gabba-shamar",
+    "date": "2024-01-25",
+    "competitionId": "international",
+    "competitionName": "Frank Worrell Trophy 2023-24",
+    "stage": "2nd Test",
+    "format": "Test",
+    "gender": "men",
+    "teamIds": [
+      "wi",
+      "aus"
+    ],
+    "venue": {
+      "id": "the-gabba",
+      "name": "The Gabba",
+      "city": "Brisbane",
+      "country": "Australia"
+    },
+    "winnerId": "wi",
+    "resultText": "West Indies won by 8 runs",
+    "innings": [
+      {
+        "teamId": "wi",
+        "runs": 311,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "aus",
+        "runs": 289,
+        "wickets": 9,
+        "overs": ""
+      },
+      {
+        "teamId": "wi",
+        "runs": 193,
+        "wickets": 10,
+        "overs": ""
+      },
+      {
+        "teamId": "aus",
+        "runs": 207,
+        "wickets": 10,
+        "overs": ""
+      }
+    ],
+    "scoreline": "WI 311 & 193 · AUS 289/9d & 207",
+    "potmName": "Shamar Joseph",
+    "headline": "Shamar Joseph's 7 for 68 stuns Australia",
+    "collections": [
+      "test-thrillers"
+    ],
+    "era": "2020s",
+    "hype": 5
+  }
+]
