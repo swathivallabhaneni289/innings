@@ -52,7 +52,7 @@ The full plan, with every decision that filled a gap, is in [`docs/PLAN.md`](doc
 ## What's left out on purpose
 
 - **Live mood reactions, Season Wrapped, team fan clubs and AI summaries of reviews.** The plan marks these as later.
-- **Store releases.** The same code builds for iPhone and Android, and both have been run: on the iOS Simulator and on an Android emulator. On real phones it opens through Expo Go. App Store and Play Store builds need developer accounts.
+- **Store releases.** The same code builds for iPhone and Android, and both have been run: on the iOS Simulator and on an Android emulator. On a real phone, install a development build (`npx expo run:android --device`, or `npx expo run:ios --device` with a free Apple ID); Expo Go from the stores only opens projects on the newest Expo SDK. App Store and Play Store builds need developer accounts.
 - **Real accounts.** Everyone is a guest with a device token for now.
 
 ## How it's built
@@ -82,7 +82,7 @@ npm install
 make app          # Expo dev server; press i for iOS, a for Android
 ```
 
-On a real phone, install **Expo Go**, join the same Wi-Fi as your computer and scan the QR code. The app finds the API on your computer automatically; set `EXPO_PUBLIC_API_URL` to point it somewhere else.
+On a real phone, connect it by cable and run `npx expo run:android --device` or `npx expo run:ios --device`. Keep the phone on the same Wi-Fi as your computer: the app finds the API there automatically. Set `EXPO_PUBLIC_API_URL` to point it somewhere else.
 
 ```bash
 make test         # Go tests
