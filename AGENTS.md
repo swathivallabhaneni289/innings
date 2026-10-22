@@ -1,4 +1,9 @@
-This is an Expo/React Native mobile application. Prioritize mobile-first patterns, performance, and cross-platform compatibility.
+This is Innings: an Expo/React Native app (iPhone + Android, TypeScript, `src/`) backed by a Go API (`cmd/api`, `internal/`, SQLite). Prioritize mobile-first patterns, performance, and cross-platform compatibility.
+
+- Run the API with `make api` (port 8088) and the app with `make app` (Metro on port 8082).
+- The JSON contract is `src/domain/types.ts` + `src/domain/api.ts`; Go mirrors it in `internal/domain`. Never send `null` for a list.
+- Design system: "Matchday Ticket" (`src/theme/tokens.ts`, `src/components/`). Take colours from `useTheme()`; render text with `<Txt>`.
+- Planning record (GSD): `.planning/`. Product plan and decisions: `docs/PLAN.md`.
 
 ## Expo has changed — do not trust your training data
 

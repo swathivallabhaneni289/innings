@@ -39,3 +39,15 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# local API database
+innings.db*
+
+# secrets
+.env
+
+# logs
+*.log
+
+# Claude Code local state
+.claude/scheduled_tasks.lock
