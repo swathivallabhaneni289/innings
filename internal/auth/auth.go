@@ -50,7 +50,7 @@ func (s *Service) Bootstrap(ctx context.Context, token string) (domain.User, str
 		ID:              "u-" + store.RandomHex(8),
 		Name:            "Guest Fan",
 		Handle:          "fan-" + suffix,
-		AvatarColour:    "#B3261E",
+		AvatarColour:    "#3B3F6B",
 		FavouriteTeamID: "ind",
 		Bio:             "",
 	}
