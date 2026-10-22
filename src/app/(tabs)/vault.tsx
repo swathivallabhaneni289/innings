@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 
 import { Empty, Panel, QueryState, Screen, SectionHeader, Txt } from '@/components';
@@ -13,14 +13,20 @@ import { Top5Pager } from '@/features/vault/Top5Pager';
 export default function VaultScreen() {
   const vault = useVault();
   const rankings = useRankings({ format: 'all', era: 'all' });
+  // The spinner shows only while the fan pulls, never over loaded tickets during a background refetch.
+  const [pulling, setPulling] = useState(false);
+
+  const refresh = async () => {
+    setPulling(true);
+    try {
+      await Promise.all([vault.refetch(), rankings.refetch()]);
+    } finally {
+      setPulling(false);
+    }
+  };
+
   return (
-    <Screen
-      title="The Vault"
-      onRefresh={() => {
-        vault.refetch();
-        rankings.refetch();
-      }}
-      refreshing={vault.isRefetching}>
+    <Screen title="The Vault" onRefresh={refresh} refreshing={pulling}>
       <Txt variant="body" tone="soft" style={{ marginBottom: 4 }}>
         Every great game you were part of.
       </Txt>
@@ -95,7 +101,7 @@ function VaultBody({ vault }: { vault: VaultResponse }) {
               showsHorizontalScrollIndicator={false}
               style={{ marginHorizontal: -20 }}
               contentContainerStyle={{ paddingHorizontal: 20 }}>
-              {matches.map((item) => (
+              {matches.slice(0, 8).map((item) => (
                 <ClassicCard key={item.match.id} item={item} />
               ))}
             </ScrollView>

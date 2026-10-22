@@ -215,7 +215,7 @@ function WinnerStep({
                 <Txt variant="display" numberOfLines={1} style={{ color: fg, fontSize: compact ? 28 : 36, lineHeight: compact ? 32 : 40 }}>
                   {team.short}
                 </Txt>
-                <Txt variant="bodySmall" numberOfLines={1} style={{ color: on ? t.onInk : t.inkSoft, marginTop: 2 }}>
+                <Txt variant="bodySmall" numberOfLines={2} style={{ color: on ? t.onInk : t.inkSoft, marginTop: 2, textAlign: 'center' }}>
                   {team.name}
                 </Txt>
                 {split ? (

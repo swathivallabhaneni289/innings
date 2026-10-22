@@ -18,6 +18,16 @@ export function serialFor(match: Pick<Match, 'id'>): string {
   return `No. ${String((Math.abs(h) % 9999) + 1).padStart(4, '0')}`;
 }
 
+const CODE_EM = 0.56; // Big Shoulders Black, average cap width (generous, so "RCB-W" never runs off the stock)
+
+/**
+ * Font size for a team code printed in stadium type: the biggest size (up to `max`) at which `chars` capitals fit
+ * into `width`. Deterministic on purpose — `adjustsFontSizeToFit` shrinks condensed display faces to specks.
+ */
+export function codeFontSize(chars: number, width: number, max: number, min = 26): number {
+  return Math.floor(Math.max(min, Math.min(max, width / (Math.max(1, chars) * CODE_EM))));
+}
+
 /**
  * Card stock with a perforated stub. `side="right"` tears off on the right (list cards);
  * `side="bottom"` tears off along the bottom (the Match Page masthead). `stub` is the tear-off's content.

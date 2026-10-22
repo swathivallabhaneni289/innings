@@ -9,6 +9,12 @@ import type { Match } from '@/domain/types';
 export const matchYear = (m: Pick<Match, 'startTime' | 'classic'>) =>
   m.classic?.date ? m.classic.date.slice(0, 4) : String(new Date(m.startTime).getFullYear());
 
+/**
+ * "ICC Men's T20 World Cup" from "ICC Men's T20 World Cup 2022" (also drops seasons like "2020-21"), for fine print
+ * that already prints the year big beside it.
+ */
+export const competitionNoYear = (name: string) => name.replace(/\s+\d{4}(-\d{2,4})?$/, '');
+
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 /** "2 Apr" — the anniversary day of a classic. */

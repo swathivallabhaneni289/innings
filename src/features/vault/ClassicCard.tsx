@@ -33,7 +33,7 @@ export function ClassicCard({ item }: { item: RatedMatch }) {
               <Txt variant="display" style={styles.year}>
                 {matchYear(match)}
               </Txt>
-              <Txt variant="label" tone="soft" numberOfLines={1} style={styles.fine}>
+              <Txt variant="label" tone="soft" numberOfLines={2} style={styles.fine}>
                 {match.format} · {match.stage}
               </Txt>
             </View>

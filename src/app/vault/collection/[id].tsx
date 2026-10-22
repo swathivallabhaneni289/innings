@@ -1,4 +1,5 @@
 import { useLocalSearchParams } from 'expo-router';
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { Empty, Panel, QueryState, Screen, Txt } from '@/components';
@@ -13,8 +14,20 @@ export default function CollectionScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const vault = useVault();
   const title = vault.data?.collections.find((s) => s.collection.id === id)?.collection.title ?? COLLECTIONS.find((c) => c.id === id)?.title ?? 'Collection';
+  // The spinner shows only while the fan pulls, never over loaded tickets during a background refetch.
+  const [pulling, setPulling] = useState(false);
+
+  const refresh = async () => {
+    setPulling(true);
+    try {
+      await vault.refetch();
+    } finally {
+      setPulling(false);
+    }
+  };
+
   return (
-    <Screen back title={title} onRefresh={() => vault.refetch()} refreshing={vault.isRefetching}>
+    <Screen back title={title} onRefresh={refresh} refreshing={pulling}>
       <QueryState q={vault} loadingLabel="Opening the archive…">
         {(v) => <CollectionBody vault={v} id={id} />}
       </QueryState>

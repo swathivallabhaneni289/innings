@@ -11,7 +11,9 @@ import { fonts, stockFor, useTheme } from '@/theme';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-const competitionOf = (m: Match) => (m.classic ? m.classic.competitionName : competitionShort(m.competitionId));
+// Short competition names ("World Cup", "INTL", "IPL"): a classic's full name ("ICC Men's T20 World Cup 2022")
+// clipped on these slim tickets, and the stub already prints its full date.
+const competitionOf = (m: Match) => competitionShort(m.competitionId);
 
 /** "Today", "Sat 24 Oct"; classics print their recorded date, "2 Apr 2011". */
 function dateOf(m: Match, now: number) {
@@ -65,7 +67,7 @@ function SlimTicket({
       main={
         <View style={styles.main}>
           <View style={styles.fineRow}>
-            <Txt variant="label" numberOfLines={1} style={styles.fine}>
+            <Txt variant="label" numberOfLines={line ? 2 : 1} style={styles.fine}>
               {fine}
             </Txt>
             {line && m.state !== 'live' ? null : <StateTag m={m} />}

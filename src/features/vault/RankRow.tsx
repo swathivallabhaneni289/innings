@@ -6,17 +6,18 @@ import { getTeam } from '@/data';
 import type { RatedMatch } from '@/domain/api';
 import { competitionShort } from '@/domain/constants';
 import { fonts, useTheme } from '@/theme';
-import { matchYear } from './top5';
+import { competitionNoYear, matchYear } from './top5';
 
 /**
  * One line of the all-time fan rankings: the rank in big stadium type, the match in plain type,
- * the fans' average in mono beside the balls. Rows sit in a white card; `last` drops the hairline under the final row.
+ * the fans' average in mono beside the balls, the fan count in plain type. Rows sit in a white card; `last` drops the hairline under the final row.
  */
 export function RankRow({ rank, item, compact = false, last = false }: { rank: number; item: RatedMatch; compact?: boolean; last?: boolean }) {
   const t = useTheme();
   const { match } = item;
   const [a, b] = match.teamIds.map(getTeam);
-  const competition = match.classic?.competitionName ?? competitionShort(match.competitionId);
+  // The year already sits at the end of the title row, so the competition drops it.
+  const competition = match.classic ? competitionNoYear(match.classic.competitionName) : competitionShort(match.competitionId);
   return (
     <Pressable
       accessibilityRole="button"
@@ -26,7 +27,7 @@ export function RankRow({ rank, item, compact = false, last = false }: { rank: n
         styles.row,
         { borderBottomColor: t.rule, borderBottomWidth: last ? 0 : StyleSheet.hairlineWidth, opacity: pressed ? 0.7 : 1 },
       ]}>
-      <Txt variant="display" style={styles.rank} numberOfLines={1} adjustsFontSizeToFit>
+      <Txt variant="display" style={styles.rank} numberOfLines={1}>
         {rank}
       </Txt>
       <View style={{ flex: 1 }}>
@@ -47,7 +48,7 @@ export function RankRow({ rank, item, compact = false, last = false }: { rank: n
             {match.classic.headline}
           </Txt>
         ) : null}
-        <Txt variant="bodySmall" tone="soft" numberOfLines={1} style={{ marginTop: 1 }}>
+        <Txt variant="bodySmall" tone="soft" numberOfLines={2} style={{ marginTop: 1 }}>
           {match.stage} · {competition}
         </Txt>
         <View style={styles.ratingRow}>
@@ -55,7 +56,7 @@ export function RankRow({ rank, item, compact = false, last = false }: { rank: n
           <Txt variant="mono" style={{ marginLeft: 8 }}>
             {item.ratingCount > 0 ? item.ratingAvg.toFixed(2) : '–'}
           </Txt>
-          <Txt variant="monoSmall" tone="faint" style={{ marginLeft: 6 }}>
+          <Txt variant="bodySmall" tone="soft" style={{ marginLeft: 8, fontFamily: fonts.ui }}>
             {item.ratingCount.toLocaleString()} {item.ratingCount === 1 ? 'fan' : 'fans'}
           </Txt>
         </View>
@@ -66,7 +67,8 @@ export function RankRow({ rank, item, compact = false, last = false }: { rank: n
 
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 14 },
-  rank: { width: 48, fontSize: 44, lineHeight: 44, marginTop: -2 },
+  // Fixed width, no auto-shrink: every rank prints at full stadium size (adjustsFontSizeToFit shrank "2" to a speck).
+  rank: { width: 56, minWidth: 56, fontSize: 44, lineHeight: 48, marginTop: -4 },
   titleRow: { flexDirection: 'row', alignItems: 'baseline' },
   ratingRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
 });

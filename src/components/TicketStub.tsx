@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { StyleSheet, View, type ViewStyle } from 'react-native';
-import Svg, { Line, Path, Rect } from 'react-native-svg';
+import Svg, { Line, Path } from 'react-native-svg';
 
 import { getTeam } from '@/data';
 import { competitionShort } from '@/domain/constants';
@@ -32,21 +32,20 @@ export function Barcode({ seed, width, height, color }: { seed: string; width: n
   const t = useTheme();
   let h = 2166136261;
   for (let i = 0; i < seed.length; i++) h = Math.imul(h ^ seed.charCodeAt(i), 16777619);
-  const bars: { x: number; w: number }[] = [];
+  // One path for all bars: a barcode is drawn as a single shape, which keeps long ticket lists fast.
+  let d = '';
   let x = 0;
   while (x < width) {
     h = Math.imul(h ^ (h >>> 13), 1274126177);
     const bw = 1 + (Math.abs(h) % 3);
     const gap = 1 + (Math.abs(h >>> 7) % 2);
     if (x + bw > width) break;
-    bars.push({ x, w: bw });
+    d += `M${x} 0h${bw}v${height}h${-bw}Z`;
     x += bw + gap;
   }
   return (
     <Svg width={width} height={height} accessibilityElementsHidden>
-      {bars.map((b, i) => (
-        <Rect key={i} x={b.x} y={0} width={b.w} height={height} fill={color ?? t.ink} />
-      ))}
+      <Path d={d} fill={color ?? t.ink} />
     </Svg>
   );
 }
@@ -201,15 +200,13 @@ export function MatchTicket({
                 {b.short}
               </Txt>
             </View>
-            {caption ? (
-              <Txt variant="bodySmall" tone="soft" numberOfLines={1} style={{ marginTop: 2 }}>
-                {caption}
-              </Txt>
-            ) : null}
+            <Txt variant="bodySmall" tone="soft" numberOfLines={1} style={{ marginTop: 2 }}>
+              {caption ?? `${match.venue.name}, ${match.venue.city}`}
+            </Txt>
           </View>
           <View style={styles.footer}>
             <Txt variant="monoSmall" numberOfLines={1} style={{ flexShrink: 1 }}>
-              {ticketDate(match)} · {match.venue.name}
+              {ticketDate(match)}
             </Txt>
             {rating != null ? <BallRating value={rating} size={lg ? 15 : 12} gap={2} /> : null}
           </View>

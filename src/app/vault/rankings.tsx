@@ -20,9 +20,20 @@ export default function RankingsScreen() {
   const vault = useVault();
   const rankings = useRankings({ format, era });
   const eras = vault.data?.eras ?? [];
+  // The spinner shows only while the fan pulls; filter changes and background refetches stay quiet.
+  const [pulling, setPulling] = useState(false);
+
+  const refresh = async () => {
+    setPulling(true);
+    try {
+      await rankings.refetch();
+    } finally {
+      setPulling(false);
+    }
+  };
 
   return (
-    <Screen back title="Fan rankings" onRefresh={() => rankings.refetch()} refreshing={rankings.isRefetching}>
+    <Screen back title="Fan rankings" onRefresh={refresh} refreshing={pulling}>
       <Txt variant="body" tone="soft" style={{ marginBottom: 18 }}>
         The highest-rated matches ever, by the fans who watched them.
       </Txt>
@@ -52,7 +63,7 @@ export default function RankingsScreen() {
         {(r) =>
           r.matches.length === 0 ? (
             <Panel>
-              <Empty title="No play today" body="No rated classics for this format and era. Try a wider net." />
+              <Empty title={era === 'all' ? 'Nothing rated here yet' : 'Nothing rated in this era yet'} body={emptyBody(format, era)} />
             </Panel>
           ) : (
             <Panel style={{ paddingVertical: 2 }}>
@@ -65,6 +76,14 @@ export default function RankingsScreen() {
       </QueryState>
     </Screen>
   );
+}
+
+/** "No fan-rated Test matches from the 1970s yet. Try All." — reads cleanly for every filter combination. */
+function emptyBody(format: Format | 'all', era: string) {
+  const kind = format === 'all' ? 'matches' : `${format} matches`;
+  const when = era === 'all' ? '' : ` from the ${era}`;
+  const nudge = era !== 'all' ? ' Try another era, or All.' : format !== 'all' ? ' Try All formats.' : '';
+  return `No fan-rated ${kind}${when} yet.${nudge}`;
 }
 
 function FilterRow({ children }: { children: ReactNode }) {

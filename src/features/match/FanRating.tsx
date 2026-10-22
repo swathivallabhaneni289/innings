@@ -9,7 +9,10 @@ const BAR_MAX = 72;
 const thousands = (n: number) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 const compact = (n: number) => (n >= 10_000 ? `${Math.round(n / 1000)}k` : n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n));
 
-/** AFTER: the crowd's verdict — big average, five balls, and the ten half-ball buckets as a bar chart. */
+/**
+ * AFTER: the crowd's verdict — big average, five balls, and the ten half-ball buckets as a bar chart.
+ * The most-picked bucket prints in ink, the rest faint: no red here, red is for live, stamps and serials.
+ */
 export function FanRating({ fans }: { fans: FanSummary }) {
   const t = useTheme();
   if (fans.ratingCount === 0) {
@@ -27,7 +30,7 @@ export function FanRating({ fans }: { fans: FanSummary }) {
         <View style={{ marginLeft: 14, flex: 1 }}>
           <BallRating value={fans.ratingAvg} size={22} gap={4} />
           <Txt variant="bodySmall" tone="soft" style={{ marginTop: 6 }}>
-            Out of 5, from {thousands(fans.ratingCount)} {fans.ratingCount === 1 ? 'rating' : 'ratings'}
+            Out of 5 balls, from {thousands(fans.ratingCount)} {fans.ratingCount === 1 ? 'rating' : 'ratings'}
           </Txt>
         </View>
       </View>
@@ -42,12 +45,13 @@ export function FanRating({ fans }: { fans: FanSummary }) {
               style={{
                 width: '100%',
                 height: count > 0 ? Math.max(2, Math.round((count / max) * BAR_MAX)) : 1,
-                backgroundColor: count === 0 ? t.rule : i === peak ? t.red : t.ink,
+                backgroundColor: count === 0 ? t.rule : i === peak ? t.ink : t.inkFaint,
               }}
             />
           </View>
         ))}
       </View>
+      {/* Ticks at whole balls; the unit is named in the line under the average. */}
       <View style={[styles.axis, { borderTopColor: t.rule }]}>
         {buckets.map((_, i) => (
           <View key={i} style={styles.col}>
@@ -57,9 +61,6 @@ export function FanRating({ fans }: { fans: FanSummary }) {
           </View>
         ))}
       </View>
-      <Txt variant="label" tone="faint" align="right" style={{ fontSize: 9, marginTop: 2 }}>
-        Balls
-      </Txt>
     </Panel>
   );
 }

@@ -4,7 +4,7 @@ import { SectionHeader } from '@/components';
 import { useMe, type MatchPageResponse } from '@/data';
 import { FanRating } from './FanRating';
 import { Header } from './Header';
-import { FriendsWatching, LiveScoreboard, ReactionsSoon, ResultCard } from './LiveScoreboard';
+import { FriendsWatching, LiveScoreboard, ResultCard } from './LiveScoreboard';
 import { LogAction } from './LogAction';
 import { PlayerRatings } from './PlayerRatings';
 import { PredictionResults } from './PredictionResults';
@@ -47,9 +47,6 @@ function Live({ data }: { data: MatchPageResponse }) {
   return (
     <View>
       <LiveScoreboard match={data.match} />
-      <View style={{ marginTop: 10 }}>
-        <ReactionsSoon />
-      </View>
       <SectionHeader title="Friends watching now" />
       <FriendsWatching users={data.friendsWatching} emptyText="None of your friends are watching this one. Yet." />
       <View style={{ marginTop: 12 }}>

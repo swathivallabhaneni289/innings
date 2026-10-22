@@ -4,7 +4,7 @@ import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Avatar, Button, CricketBall, MatchTicket, QueryState, Screen, SectionHeader, TeamBadge, Txt } from '@/components';
-import { getPlayer, matchTitle, playerName, useActions, useLogItem, useNow } from '@/data';
+import { getPlayer, matchTitle, playerName, useActions, useLogItem, useMe, useNow } from '@/data';
 import type { FeedItem } from '@/domain/api';
 import type { Reply } from '@/domain/types';
 import { placeLine } from '@/features/feed/FeedCard';
@@ -16,14 +16,13 @@ import { fonts, useTheme } from '@/theme';
 export default function StubScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const q = useLogItem(id);
+  const me = useMe();
   const item = q.data;
+  // The ticket below already carries the teams, so the title names whose stub this is.
+  const title = !item ? 'Stub' : item.user.id === me.data?.id ? 'Your stub' : `${item.user.name.split(' ')[0]}'s stub`;
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-      <Screen
-        back
-        title={item ? matchTitle(item.match) : 'Stub'}
-        kicker={item ? `${stubNo(item.log.stubNo)} · ${item.user.name.split(' ')[0]}'s stub` : undefined}
-        scroll={false}>
+      <Screen back title={title} kicker={item ? stubNo(item.log.stubNo) : undefined} scroll={false}>
         <QueryState q={q}>{(d) => <StubBody item={d} />}</QueryState>
       </Screen>
     </KeyboardAvoidingView>
@@ -179,7 +178,16 @@ function StubBody({ item }: { item: FeedItem }) {
             maxLength={500}
             style={[styles.input, { color: t.ink, borderColor: t.rule, backgroundColor: t.card }]}
           />
-          <Button label="Post" size="sm" onPress={post} loading={posting} disabled={!text.trim()} style={{ marginLeft: 10 }} />
+          {/* Outlined until there's something to post, so the empty state reads as waiting, not broken. */}
+          <Button
+            label="Post"
+            size="sm"
+            kind={text.trim() || posting ? 'primary' : 'outline'}
+            onPress={post}
+            loading={posting}
+            disabled={!text.trim()}
+            style={{ marginLeft: 10 }}
+          />
         </View>
       </View>
     </View>

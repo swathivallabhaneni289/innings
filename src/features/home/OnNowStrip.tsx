@@ -5,7 +5,8 @@ import { CricketBall, Empty, LiveTag, TicketStub, Txt } from '@/components';
 import { Barcode } from '@/components/TicketStub';
 import { getTeam, useNow } from '@/data';
 import { competitionShort } from '@/domain/constants';
-import type { InningsScore, Match } from '@/domain/types';
+import type { InningsScore, Match, MatchState } from '@/domain/types';
+import { serialFor } from '@/features/match/TicketFrame';
 import { clock, countdown, inningsLine, isLocked } from '@/lib/format';
 import { fonts, stockFor, useTheme } from '@/theme';
 import { TeamCodes } from './TeamCodes';
@@ -13,25 +14,35 @@ import { TeamCodes } from './TeamCodes';
 const HEIGHT = 152;
 const STUB = 72;
 const PAD = 14; // TicketStub's main padding
+const GAP = 12; // between tickets; the snap interval is a ticket plus this gap
 
-/** "On now": live matches first, then the rest of today's fixtures, each printed as a ticket on its competition's stock. */
+// Live first, then the rest of today's fixtures, then anything already finished. Within a group, the API's order.
+const STATE_ORDER: Record<MatchState, number> = { live: 0, upcoming: 1, completed: 2 };
+
+/** "On now": live matches first, then the rest of today's fixtures, finished ones last; each printed as a ticket on its competition's stock. */
 export function OnNowStrip({ matches }: { matches: Match[] }) {
   const { width } = useWindowDimensions();
   if (matches.length === 0) {
     return <Empty title="No play today" body="Nothing live or on today's fixture list. The Vault is always open." />;
   }
+  // Copy before sorting: `matches` is the query cache's array. Array sort is stable, so API order holds per group.
+  const ordered = [...matches].sort((a, b) => STATE_ORDER[a.state] - STATE_ORDER[b.state]);
   // One ticket fills the row; several leave the next one peeking in from the right.
-  const ticketW = matches.length === 1 ? width - 40 : Math.min(320, width - 84);
+  const ticketW = ordered.length === 1 ? width - 40 : Math.min(320, width - 84);
   return (
     <ScrollView
-      key={matches.map((m) => m.id).join(',')}
+      // A new set of matches remounts the strip, so it always opens at the first ticket.
+      key={ordered.map((m) => m.id).join(',')}
       horizontal
       showsHorizontalScrollIndicator={false}
       style={styles.strip}
       contentContainerStyle={styles.stripContent}
-      snapToInterval={ticketW + 12}
+      contentOffset={{ x: 0, y: 0 }}
+      contentInsetAdjustmentBehavior="never"
+      snapToInterval={ticketW + GAP}
+      snapToAlignment="start"
       decelerationRate="fast">
-      {matches.map((m) => (
+      {ordered.map((m) => (
         <OnNowTicket key={m.id} match={m} width={ticketW} />
       ))}
     </ScrollView>
@@ -66,7 +77,7 @@ function OnNowTicket({ match: m, width }: { match: Match; width: number }) {
     <Pressable
       onPress={() => router.push('/match/' + m.id)}
       accessibilityRole="button"
-      style={({ pressed }) => [{ marginRight: 12, opacity: pressed ? 0.88 : 1 }]}>
+      style={({ pressed }) => [{ opacity: pressed ? 0.88 : 1 }]}>
       <TicketStub
         stock={stockFor(m, t)}
         height={HEIGHT}
@@ -114,18 +125,20 @@ function OnNowTicket({ match: m, width }: { match: Match; width: number }) {
                   <Txt variant="bodySmall" tone="soft" numberOfLines={1}>
                     {m.venue.name}, {m.venue.city}
                   </Txt>
-                  <Txt variant="bodySmall" numberOfLines={1} style={{ fontFamily: fonts.ui, marginTop: 2 }}>
-                    {locked ? (
-                      'Waiting on the first ball'
-                    ) : (
-                      <>
-                        Locks in{' '}
-                        <Txt variant="mono" style={{ fontSize: 13 }}>
-                          {countdown(m.startTime, now)}
-                        </Txt>
-                      </>
-                    )}
-                  </Txt>
+                  {locked ? (
+                    <Txt variant="bodySmall" numberOfLines={1} style={{ fontFamily: fonts.ui, marginTop: 2 }}>
+                      Waiting on the first ball
+                    </Txt>
+                  ) : (
+                    <View style={[styles.lockRow, { marginTop: 2 }]}>
+                      <Txt variant="bodySmall" style={{ fontFamily: fonts.ui }}>
+                        Locks in
+                      </Txt>
+                      <Txt variant="mono" style={{ marginLeft: 6 }}>
+                        {countdown(m.startTime, now)}
+                      </Txt>
+                    </View>
+                  )}
                 </>
               )}
             </View>
@@ -138,10 +151,15 @@ function OnNowTicket({ match: m, width }: { match: Match; width: number }) {
             </View>
           ) : (
             <View style={styles.stub}>
-              <Txt variant="label" tone="red" style={{ fontSize: 9.5, letterSpacing: 0.6 }}>
-                {m.format}
-              </Txt>
-              <Barcode seed={m.id} width={40} height={50} />
+              <View style={{ alignItems: 'center' }}>
+                <Txt variant="label" tone="red" style={{ fontSize: 9.5, letterSpacing: 0.4 }}>
+                  {serialFor(m)}
+                </Txt>
+                <Txt variant="label" tone="soft" style={{ fontSize: 9, letterSpacing: 0.6, marginTop: 2 }}>
+                  {m.format}
+                </Txt>
+              </View>
+              <Barcode seed={m.id} width={40} height={44} />
               {done ? (
                 <Txt variant="label" tone="soft" style={{ fontSize: 8.5, letterSpacing: 0.4 }}>
                   Full time
@@ -163,9 +181,10 @@ function OnNowTicket({ match: m, width }: { match: Match; width: number }) {
 
 const styles = StyleSheet.create({
   strip: { marginHorizontal: -20 },
-  stripContent: { paddingHorizontal: 20 },
+  stripContent: { paddingHorizontal: 20, gap: GAP },
   main: { flex: 1, justifyContent: 'space-between' },
   row: { flexDirection: 'row', alignItems: 'center' },
+  lockRow: { flexDirection: 'row', alignItems: 'baseline' },
   fine: { fontSize: 10, flex: 1, marginRight: 8 },
   stub: { flex: 1, alignItems: 'center', justifyContent: 'space-between' },
   predictWrap: { flex: 1, alignSelf: 'stretch', alignItems: 'center', justifyContent: 'center' },

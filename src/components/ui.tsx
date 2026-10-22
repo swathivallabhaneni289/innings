@@ -149,32 +149,47 @@ export function TeamBadge({ teamId, size = 'md' }: { teamId: string; size?: 'sm'
 
 // ---------- Split bar ----------
 
-/** Two-team share bar, e.g. friends' predictions. Shares are 0..1 keyed by team id. */
+/**
+ * Two-team share bar, e.g. friends' predictions. Shares are 0..1 keyed by team id.
+ * Ink and faint ink only (red is kept for live and stamps); each team code carries its kit-colour underline.
+ */
 export function SplitBar({ teamIds, shares, label }: { teamIds: [string, string]; shares: Record<string, number>; label?: string }) {
   const t = useTheme();
   const a = shares[teamIds[0]] ?? 0;
   const b = shares[teamIds[1]] ?? 0;
   const total = a + b;
   const left = total > 0 ? a / total : 0.5;
+  const leftPct = total > 0 ? pct(left) : '–';
+  const rightPct = total > 0 ? pct(1 - left) : '–';
   return (
-    <View>
+    <View accessible accessibilityLabel={`${label ? `${label}. ` : ''}${getTeam(teamIds[0]).short} ${leftPct}, ${getTeam(teamIds[1]).short} ${rightPct}`}>
       {label ? (
         <Txt variant="bodySmall" tone="soft" style={{ marginBottom: 6 }}>
           {label}
         </Txt>
       ) : null}
       <View style={styles.splitLabels}>
-        <Txt variant="mono">
-          {getTeam(teamIds[0]).short} {total > 0 ? pct(left) : '–'}
-        </Txt>
-        <Txt variant="mono">
-          {total > 0 ? pct(1 - left) : '–'} {getTeam(teamIds[1]).short}
-        </Txt>
+        <View style={styles.splitSide}>
+          <View>
+            <TeamBadge teamId={teamIds[0]} size="sm" />
+          </View>
+          <Txt variant="mono" style={{ marginLeft: 8, marginBottom: 4 }}>
+            {leftPct}
+          </Txt>
+        </View>
+        <View style={styles.splitSide}>
+          <Txt variant="mono" style={{ marginRight: 8, marginBottom: 4 }}>
+            {rightPct}
+          </Txt>
+          <View>
+            <TeamBadge teamId={teamIds[1]} size="sm" />
+          </View>
+        </View>
       </View>
       <View style={styles.splitTrack}>
         <View style={{ flex: Math.max(left, 0.001), backgroundColor: t.ink }} />
         <View style={{ width: 3 }} />
-        <View style={{ flex: Math.max(1 - left, 0.001), backgroundColor: t.red }} />
+        <View style={{ flex: Math.max(1 - left, 0.001), backgroundColor: t.inkFaint }} />
       </View>
     </View>
   );
@@ -232,7 +247,8 @@ const styles = StyleSheet.create({
   chip: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, paddingHorizontal: 14, minHeight: 40, marginRight: 8 },
   dot: { width: 6, height: 6, borderRadius: 3, marginRight: 6 },
   headerRow: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
-  splitLabels: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 },
+  splitLabels: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 8 },
+  splitSide: { flexDirection: 'row', alignItems: 'center' },
   splitTrack: { flexDirection: 'row', height: 8 },
   live: { flexDirection: 'row', alignItems: 'center' },
   panel: { padding: 16 },

@@ -1,13 +1,14 @@
 import { StyleSheet, View } from 'react-native';
 
-import { Avatar, CricketBall, LiveTag, Panel, Rule, Txt } from '@/components';
+import { Avatar, CricketBall, LiveTag, Panel, Rule, TeamBadge, Txt } from '@/components';
 import { getTeam } from '@/data';
 import type { InningsScore, Match, User } from '@/domain/types';
 import { inningsLine } from '@/lib/format';
 import { fonts, useTheme } from '@/theme';
 
 /**
- * Both sides on scoreboard lines. `battingTeamId` marks the side in (live); `winnerId` marks the winner (result).
+ * Both sides on scoreboard lines: the team code in stadium type over its kit-colour bar, the full name, the score.
+ * `battingTeamId` marks the side in (live); `winnerId` marks the winner (result).
  * Renders nothing when there are no innings to show (some Vault classics).
  */
 export function InningsTable({
@@ -34,9 +35,11 @@ export function InningsTable({
         const won = winnerId === id;
         return (
           <View key={id} style={[styles.line, i > 0 ? { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: t.rule } : null]}>
-            <View style={[styles.stripe, { backgroundColor: team.colour }]} />
+            <View style={styles.code}>
+              <TeamBadge teamId={id} size="md" />
+            </View>
             <View style={styles.name}>
-              <Txt variant="h3" tone={battingTeamId && !batting ? 'soft' : 'ink'} numberOfLines={1} style={{ flexShrink: 1 }}>
+              <Txt variant="body" tone={battingTeamId && !batting ? 'soft' : 'ink'} numberOfLines={2} style={styles.teamName}>
                 {team.name}
               </Txt>
               {batting ? (
@@ -81,7 +84,7 @@ export function LiveScoreboard({ match }: { match: Match }) {
       {live?.statusText ? (
         <>
           <Rule style={{ marginTop: 4, marginBottom: 12 }} />
-          <Txt variant="body" tone="red" style={{ fontFamily: fonts.uiBold }}>
+          <Txt variant="body" style={{ fontFamily: fonts.uiBold }}>
             {live.statusText}
           </Txt>
         </>
@@ -105,15 +108,6 @@ export function ResultCard({ match }: { match: Match }) {
       </Txt>
       <InningsTable match={match} innings={innings} winnerId={r.winnerId} />
     </Panel>
-  );
-}
-
-/** DURING: quick reactions are planned for later — one quiet line, so the space is honest about it. */
-export function ReactionsSoon() {
-  return (
-    <Txt variant="bodySmall" tone="faint">
-      Live reactions are coming soon.
-    </Txt>
   );
 }
 
@@ -141,12 +135,13 @@ export function FriendsWatching({ users, emptyText }: { users: User[]; emptyText
 }
 
 const styles = StyleSheet.create({
-  line: { flexDirection: 'row', alignItems: 'center', paddingVertical: 9 },
-  stripe: { width: 4, height: 22, marginRight: 10 },
+  line: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10 },
+  code: { width: 58 },
   name: { flex: 1, flexDirection: 'row', alignItems: 'center', marginRight: 10 },
+  teamName: { flexShrink: 1, fontFamily: fonts.ui, fontSize: 14, lineHeight: 19 },
   marker: { marginLeft: 8 },
   won: { fontSize: 10, marginLeft: 8 },
-  score: { textAlign: 'right' },
+  score: { textAlign: 'right', flexShrink: 0 },
   head: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 },
   friends: { flexDirection: 'row', flexWrap: 'wrap' },
   friend: { width: 64, alignItems: 'center', marginRight: 6, marginBottom: 12 },

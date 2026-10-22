@@ -48,16 +48,7 @@ function FinishedRow({ item }: { item: Item }) {
             </Txt>
             <BallRating value={rated ? Math.round(ratingAvg * 2) / 2 : 0} size={12} gap={2} />
             <Txt variant="bodySmall" tone="soft" style={{ marginTop: 4, fontSize: 12, lineHeight: 16 }}>
-              {rated ? (
-                <>
-                  <Txt variant="mono" tone="soft" style={{ fontSize: 11.5 }}>
-                    {ratingCount.toLocaleString()}
-                  </Txt>{' '}
-                  {ratingCount === 1 ? 'rating' : 'ratings'}
-                </>
-              ) : (
-                'No ratings yet'
-              )}
+              {rated ? `${ratingCount.toLocaleString()} ${ratingCount === 1 ? 'rating' : 'ratings'}` : 'No ratings yet'}
             </Txt>
           </View>
         </View>

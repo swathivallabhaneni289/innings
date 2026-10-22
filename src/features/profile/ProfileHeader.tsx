@@ -27,7 +27,7 @@ export function ProfileHeader({ data }: { data: UserResponse }) {
           </Txt>
           <View style={styles.teamRow}>
             <TeamBadge teamId={user.favouriteTeamId} size="sm" />
-            <Txt variant="bodySmall" tone="soft" numberOfLines={1} style={styles.teamName}>
+            <Txt variant="bodySmall" tone="soft" numberOfLines={2} style={styles.teamName}>
               {team.name}
             </Txt>
           </View>
@@ -57,7 +57,14 @@ export function ProfileHeader({ data }: { data: UserResponse }) {
               onPress={() => router.push('/friends')}
               style={styles.action}
             />
-            <Button label="Edit profile" kind="ghost" size="sm" onPress={() => router.push('/settings')} style={styles.action} />
+            <Button
+              label="Edit profile"
+              kind="outline"
+              size="sm"
+              icon={<Feather name="edit-2" size={13} color={t.ink} />}
+              onPress={() => router.push('/settings')}
+              style={styles.action}
+            />
           </>
         ) : (
           <FollowButton userId={user.id} following={following} />
@@ -73,6 +80,6 @@ const styles = StyleSheet.create({
   teamRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
   teamName: { marginLeft: 8, flexShrink: 1, fontFamily: fonts.ui },
   bio: { marginTop: 16 },
-  actions: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 16 },
+  actions: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginTop: 16 },
   action: { minHeight: 44 },
 });

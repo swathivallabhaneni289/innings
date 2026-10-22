@@ -5,9 +5,14 @@ import { Txt } from '@/components';
 import { fonts, useTheme } from '@/theme';
 import { STEP_SHORT, STEP_TITLES, type StepId } from './draft';
 
+/** The whole Log flow, counted once: every log is "of 4", whichever way the fan came in. */
+const FLOW: StepId[] = ['match', 'rating', 'players', 'place'];
+
 /**
- * The flow's title bar: a quiet "Step 2 of 3", the step title, a plain close button, and a slim segmented
- * progress bar with one segment per step. Finished segments can be tapped to go back.
+ * The flow's title bar: a quiet "Step 2 of 4", the step title, a plain close button, and a slim segmented
+ * progress bar with one segment per step. Numbering runs against the full flow, so "Rate it" is always step 2,
+ * whether the match was picked here or came preset from a Match Page, and the count never resets. A step that
+ * doesn't apply to this match (no XI to rate) shows struck through. Finished segments can be tapped to go back.
  */
 export function LogHeader({
   steps,
@@ -16,16 +21,15 @@ export function LogHeader({
   onJump,
   title,
 }: {
-  steps: StepId[] | null; // null while the match is still loading (step count unknown)
+  steps: StepId[] | null; // the steps this log actually visits; null while the match is still loading
   current: StepId | 'printed';
   onClose: () => void;
   onJump: (s: StepId) => void;
   title?: string;
 }) {
   const t = useTheme();
-  const idx = steps && current !== 'printed' ? steps.indexOf(current) : -1;
-  const kicker =
-    current === 'printed' ? 'Close of play' : steps && idx >= 0 ? `Step ${idx + 1} of ${steps.length}` : 'Log a match';
+  const at = current === 'printed' ? -1 : FLOW.indexOf(current);
+  const kicker = current === 'printed' ? 'Close of play' : at >= 0 ? `Step ${at + 1} of ${FLOW.length}` : 'Log a match';
   return (
     <View style={styles.wrap}>
       <View style={styles.top}>
@@ -45,34 +49,41 @@ export function LogHeader({
           <Feather name="x" size={24} color={t.ink} />
         </Pressable>
       </View>
-      {steps && current !== 'printed' ? (
+      {current !== 'printed' ? (
         <View style={styles.progress}>
-          {steps.map((s, i) => {
-            const done = i < idx;
-            const now = i === idx;
+          {FLOW.map((s, i) => {
+            // The match step is always settled once you're past it (picked here or preset); only players can be skipped.
+            const skipped = s !== 'match' && !!steps && !steps.includes(s);
+            const done = i < at && !skipped;
+            const now = i === at;
+            const canJump = done && !!steps && steps.includes(s);
             return (
               <Pressable
                 key={s}
-                disabled={!done}
+                disabled={!canJump}
                 onPress={() => onJump(s)}
                 hitSlop={{ top: 10, bottom: 10 }}
                 accessibilityRole="button"
-                accessibilityState={{ selected: now, disabled: !done }}
-                accessibilityLabel={`Step ${i + 1}: ${STEP_TITLES[s]}${done ? ', done' : ''}`}
+                accessibilityState={{ selected: now, disabled: !canJump }}
+                accessibilityLabel={`Step ${i + 1}: ${STEP_TITLES[s]}${skipped ? ', not needed for this match' : done ? ', done' : ''}`}
                 style={styles.segment}>
                 <View style={[styles.bar, { backgroundColor: done || now ? t.ink : t.rule }]} />
                 <Txt
                   numberOfLines={1}
                   tone={now ? 'ink' : done ? 'soft' : 'faint'}
-                  style={{ fontFamily: now ? fonts.uiBold : fonts.ui, fontSize: 12, lineHeight: 16, marginTop: 6 }}>
+                  style={{
+                    fontFamily: now ? fonts.uiBold : fonts.ui,
+                    fontSize: 12,
+                    lineHeight: 16,
+                    marginTop: 6,
+                    textDecorationLine: skipped ? 'line-through' : 'none',
+                  }}>
                   {STEP_SHORT[s]}
                 </Txt>
               </Pressable>
             );
           })}
         </View>
-      ) : current !== 'printed' ? (
-        <View style={styles.progressSpace} /> // keeps the title still while the step count loads
       ) : null}
     </View>
   );
@@ -85,5 +96,4 @@ const styles = StyleSheet.create({
   progress: { flexDirection: 'row', gap: 6, marginTop: 14 },
   segment: { flex: 1, paddingTop: 2 },
   bar: { height: 3 },
-  progressSpace: { marginTop: 14, height: 27 },
 });

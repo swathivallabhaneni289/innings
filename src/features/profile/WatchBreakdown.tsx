@@ -52,7 +52,7 @@ export function WatchBreakdown({ stats, isMe }: { stats: FanStats; isMe: boolean
           <View
             key={v.id}
             style={[styles.venue, { borderTopColor: t.rule, borderTopWidth: i === 0 ? 0 : StyleSheet.hairlineWidth }]}>
-            <Txt variant="bodySmall" numberOfLines={1} style={{ flex: 1, fontFamily: fonts.ui }}>
+            <Txt variant="bodySmall" numberOfLines={2} style={{ flex: 1, fontFamily: fonts.ui }}>
               {v.name}
             </Txt>
             <Txt variant="bodySmall" tone="soft" numberOfLines={1} style={{ marginLeft: 8 }}>

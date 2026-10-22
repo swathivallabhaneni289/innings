@@ -7,7 +7,7 @@ import { getTeam } from '@/data';
 import type { VaultResponse } from '@/domain/api';
 import { fonts, stockFor, useTheme } from '@/theme';
 import { Perforation } from './Perforation';
-import { anniversary, matchYear } from './top5';
+import { anniversary, competitionNoYear, matchYear } from './top5';
 
 type OnThisDayData = NonNullable<VaultResponse['onThisDay']>;
 
@@ -25,9 +25,9 @@ export function OnThisDay({ data }: { data: OnThisDayData }) {
     <Pressable onPress={() => router.push(`/match/${match.id}`)} accessibilityRole="button">
       {({ pressed }) => (
         <View style={[styles.ticket, { backgroundColor: stockFor(match, t), opacity: pressed ? 0.88 : 1 }]}>
-          <Txt variant="label" numberOfLines={1}>
+          <Txt variant="label" numberOfLines={2}>
             Admit one · {match.stage}
-            {c ? ` · ${c.competitionName}` : ''}
+            {c ? ` · ${competitionNoYear(c.competitionName)}` : ''}
           </Txt>
 
           <View style={styles.yearRow}>

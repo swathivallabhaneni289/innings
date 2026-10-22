@@ -51,7 +51,7 @@ export function Screen({
           </Txt>
         ) : null}
         {title ? (
-          <Txt variant="h1" numberOfLines={1}>
+          <Txt variant="h1" numberOfLines={2}>
             {title}
           </Txt>
         ) : null}
@@ -65,7 +65,7 @@ export function Screen({
         {bar}
         {scroll ? (
           <ScrollView
-            contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 110 }, contentStyle]}
+            contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 140 }, contentStyle]}
             refreshControl={onRefresh ? <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={t.red} /> : undefined}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}>

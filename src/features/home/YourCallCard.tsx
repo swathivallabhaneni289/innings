@@ -71,16 +71,20 @@ function LockCountdown({ match }: { match: Match }) {
       </Txt>
     );
   }
+  // "Locks in" is a phrase you read (Schibsted); only the ticking digits are printed in mono.
   return (
-    <Txt variant="bodySmall" style={{ fontFamily: fonts.ui }}>
-      Locks in{' '}
-      <Txt variant="mono" style={{ fontSize: 13 }}>
+    <View style={styles.countdown}>
+      <Txt variant="bodySmall" style={{ fontFamily: fonts.ui }}>
+        Locks in
+      </Txt>
+      <Txt variant="mono" style={{ marginLeft: 6 }}>
         {countdown(match.startTime, now)}
       </Txt>
-    </Txt>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  countdown: { flexDirection: 'row', alignItems: 'baseline' },
 });

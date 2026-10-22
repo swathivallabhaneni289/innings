@@ -3,10 +3,14 @@
 // command line without tapping the simulator. Inert in normal runs.
 import { router } from 'expo-router';
 import { useEffect } from 'react';
+import { LogBox } from 'react-native';
 
 import { usePrefs } from '@/data/store';
 
 const DRIVER = process.env.EXPO_PUBLIC_QA_DRIVER;
+
+// Screenshots should show the app, not dev-only warning toasts.
+if (__DEV__ && DRIVER) LogBox.ignoreAllLogs();
 
 export function useQaDriver() {
   useEffect(() => {

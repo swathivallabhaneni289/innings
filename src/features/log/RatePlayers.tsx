@@ -130,7 +130,7 @@ export function RatePlayers({
             </Txt>
           )}
         </View>
-        <Txt variant="monoSmall" tone="soft">
+        <Txt variant="bodySmall" tone="soft" style={{ fontFamily: fonts.ui }}>
           {rated} rated
         </Txt>
       </Panel>

@@ -39,7 +39,7 @@ export function ClassicRow({
         <Pressable onPress={() => router.push(`/match/${match.id}`)} accessibilityRole="button">
           {({ pressed }) => (
             <View style={{ opacity: pressed ? 0.7 : 1 }}>
-              <Txt variant="label" numberOfLines={1}>
+              <Txt variant="label" numberOfLines={2}>
                 {ticketDate(match)} · {match.format} · {match.stage}
               </Txt>
               <View style={styles.teams}>
@@ -75,7 +75,7 @@ export function ClassicRow({
                 <Txt variant="mono" style={{ marginLeft: 8 }}>
                   {item.ratingCount > 0 ? item.ratingAvg.toFixed(1) : '–'}
                 </Txt>
-                <Txt variant="monoSmall" tone="soft" style={{ marginLeft: 6, flex: 1 }} numberOfLines={1}>
+                <Txt variant="bodySmall" tone="soft" style={{ marginLeft: 8, flex: 1, fontFamily: fonts.ui }} numberOfLines={1}>
                   {item.ratingCount.toLocaleString()} {item.ratingCount === 1 ? 'fan' : 'fans'}
                 </Txt>
                 <Barcode seed={match.id} width={44} height={18} />

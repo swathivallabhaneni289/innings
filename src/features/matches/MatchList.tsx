@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { Txt } from '@/components';
 import type { MatchesResponse } from '@/data';
 import { useNow } from '@/data';
-import { useTheme } from '@/theme';
+import { fonts, useTheme } from '@/theme';
 import { groupMatches } from './group';
 import { MatchCard } from './MatchCard';
 
@@ -41,7 +41,7 @@ function DayHeader({ title, date, live, count }: { title: string; date?: string;
           </Txt>
         ) : null}
       </View>
-      <Txt variant="monoSmall" tone="faint" style={{ fontSize: 11 }}>
+      <Txt variant="bodySmall" tone="soft" style={{ fontFamily: fonts.ui }}>
         {count} {count === 1 ? 'match' : 'matches'}
       </Txt>
     </View>

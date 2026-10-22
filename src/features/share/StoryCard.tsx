@@ -46,7 +46,7 @@ export function StoryCard({ match, log, ref }: { match: Match; log: MatchLog; re
               word={log.instantClassic ? '❤️ Instant classic' : undefined}
               style={{ marginTop: 8 }}
             />
-            <Txt variant="body" numberOfLines={1} style={{ marginTop: 6 }}>
+            <Txt variant="body" numberOfLines={2} style={{ marginTop: 6 }}>
               {placeLine(log)}
             </Txt>
 
