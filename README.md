@@ -4,6 +4,8 @@
 
 I took this from a written plan to a working app for iPhone and Android by directing Claude Code, Anthropic's AI coding assistant. The idea, the plan and the product calls (a Go backend, the Matchday Ticket look, one app for both phones) are mine; Claude wrote the code to my prompts. The app is React Native with Expo, backed by a Go API and SQLite.
 
+**Docs:** [Requirements](docs/REQUIREMENTS.md) · [Product plan](docs/PLAN.md) · [API](docs/API.md) · [Build record](.planning/ROADMAP.md)
+
 **On Android** (Pixel 8 emulator):
 
 | Home | Matches | Match Page | Log it |
@@ -47,7 +49,7 @@ Innings treats every match like a release on opening night, the way Letterboxd t
 | Bragging points | +10 winner, +15 top scorer, +15 top wicket-taker, +10 upset; 3–4 correct winners in a row ×1.5, 5+ ×2 | The plan said streaks multiply but not how; this keeps a hot streak worth chasing without swamping single matches. Tied top scorers all count. | |
 | Look | "Matchday Ticket": every match printed as a ticket on its competition's card stock | The first pass (a paper scorebook) felt generic. I sketched three directions and chose the one that makes the stub worth sharing. | |
 
-The full plan, with every decision that filled a gap, is in [`docs/PLAN.md`](docs/PLAN.md). The build was run as GSD phases; the requirements, roadmap and per-phase plans and summaries are in [`.planning/`](.planning).
+The full plan, with every decision that filled a gap, is in [`docs/PLAN.md`](docs/PLAN.md). What v1.0 has to do, how each requirement is checked and where it's built is in [`docs/REQUIREMENTS.md`](docs/REQUIREMENTS.md): 64 of 64 built. The build was run as GSD phases; the roadmap and per-phase plans and summaries are in [`.planning/`](.planning).
 
 ## What's left out on purpose
 
@@ -74,7 +76,7 @@ flowchart LR
 
 ## Run it
 
-You need Go 1.26+, Node 20+, and either Xcode (iOS Simulator), Android Studio (Android Emulator) or the Expo Go app on your phone.
+You need Go 1.26+, Node 20+, and Xcode (iOS Simulator) or Android Studio (Android Emulator). For a real phone, see below.
 
 ```bash
 make api          # Go API on http://localhost:8088 (creates innings.db on first run)
@@ -101,6 +103,6 @@ internal/domain    JSON types, scoring, aggregates
 src/app            Expo Router screens (tabs, match, log, vault, profile)
 src/features       screen components by area
 src/components     design system: tickets, ball ratings, stamp
-docs               plan, API reference, Vault sources
+docs               plan, requirements, API reference, Vault sources
 .planning          GSD project record: requirements, roadmap, phases
 ```

@@ -3,7 +3,7 @@ This is Innings: an Expo/React Native app (iPhone + Android, TypeScript, `src/`)
 - Run the API with `make api` (port 8088) and the app with `make app` (Metro on port 8082).
 - The JSON contract is `src/domain/types.ts` + `src/domain/api.ts`; Go mirrors it in `internal/domain`. Never send `null` for a list.
 - Design system: "Matchday Ticket" (`src/theme/tokens.ts`, `src/components/`). Take colours from `useTheme()`; render text with `<Txt>`.
-- Planning record (GSD): `.planning/`. Product plan and decisions: `docs/PLAN.md`.
+- Planning record (GSD): `.planning/`. Product plan and decisions: `docs/PLAN.md`. Requirements with acceptance checks: `docs/REQUIREMENTS.md` (same IDs as `.planning/REQUIREMENTS.md`; keep both in step).
 
 ## Expo has changed — do not trust your training data
 
