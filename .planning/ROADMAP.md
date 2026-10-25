@@ -4,7 +4,9 @@
 
 Innings delivers a cricket fan's diary in six phases. Phase 1 fixes the shared JSON contract, the Expo scaffold, the first design system and the data layer. Phase 2 builds the Go API and the simulated cricket world it serves. Phase 3 builds the core loop (Matches tab, the Match Page in its three states, the Log flow and the ticket stub). Phase 4 adds the social layer and predictions on top. Phase 5 adds the Vault and the Profile. Phase 6 re-skins the app in the chosen Matchday Ticket direction and prepares the repo to be shown.
 
-All six phases were planned and built on 2026-10-22 in one evening, by a lead agent directing parallel sub-agents with strict file ownership. The milestone is complete: 8 of 8 plans, 64 of 64 v1 requirements. The Phase 1 contract (`src/domain/types.ts`, `src/domain/api.ts`, `docs/API.md`) was the fixed interface every workstream built against.
+All six phases were planned and built on 2026-10-22 in one evening, by a lead agent directing parallel sub-agents with strict file ownership. Milestone v1.0 is complete: 8 of 8 plans, 64 of 64 v1 requirements.
+
+Milestone v1.1 (Accounts) added Phase 7 on 2026-10-25 at the developer's request: phone sign-in and a Beli-style onboarding, replacing the guest accounts. It is complete. The Phase 1 contract (`src/domain/types.ts`, `src/domain/api.ts`, `docs/API.md`) was the fixed interface every workstream built against.
 
 ## Phases
 
@@ -19,6 +21,10 @@ All six phases were planned and built on 2026-10-22 in one evening, by a lead ag
 - [x] **Phase 4: Social & predictions** - Home, friends' feed, predictions with the lock, Fans' Player of the Match, Bragging Board (completed 2026-10-22)
 - [x] **Phase 5: Vault & Profile** - Fact-checked classics, rankings, Top 5, profile stats, share card (completed 2026-10-22)
 - [x] **Phase 6: Design pass & release prep** - Matchday Ticket re-skin, UI review and fixes, icons, Android, README, GitHub (completed 2026-10-22)
+
+**Milestone v1.1: Accounts**
+
+- [x] **Phase 7: Phone sign-in & onboarding** - Phone number and text code, fan card with @username, find friends, sign out, delete account (completed 2026-10-25)
 
 ## Phase Details
 
@@ -148,10 +154,33 @@ Plans:
 
 **UI hint**: yes
 
+### Phase 7: Phone sign-in & onboarding
+
+**Goal**: Fans sign in with their phone number like on Beli, set up a fan card, find their friends, and can sign out or delete their account
+**Depends on**: Phase 6
+**Requirements**: ACCT-01, ACCT-02, ACCT-03, ACCT-04, ACCT-05, ACCT-06, ACCT-07, ACCT-08
+**Success Criteria** (what must be TRUE):
+
+  1. A new number gets a code, verifies, picks a name and a unique @username, finds friends and lands on Home
+  2. The same number on another phone opens the same account
+  3. Wrong, expired and reused codes and too many requests are refused with clear messages; an unconfigured server hands out no codes
+  4. Sign out ends this device's session; delete account removes everything the fan made
+  5. A brand-new account with no history looks right on every screen
+
+*Outcome:* all five criteria met on the Android emulator and in a 70-check end-to-end API run. Real text messages still need an SMS provider account (SMS-01); in dev mode the code shows on screen.
+
+**Plans**: 1/1 plans executed
+
+Plans:
+
+- [x] 07-01-PLAN.md: Contract, server, app screens, Android run
+
+**UI hint**: yes
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 (2's two plans ran in parallel, as did 5's)
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 (2's two plans ran in parallel, as did 5's; 7's server and app ran in parallel against one contract)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -161,3 +190,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 (2's two plans 
 | 4. Social & predictions | 1/1 | Complete | 2026-10-22 |
 | 5. Vault & Profile | 2/2 | Complete | 2026-10-22 |
 | 6. Design pass & release prep | 1/1 | Complete | 2026-10-22 |
+| 7. Phone sign-in & onboarding | 1/1 | Complete | 2026-10-25 |

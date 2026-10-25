@@ -91,12 +91,25 @@ Derived from every bullet in `docs/PLAN.md`, with the gaps settled in its "Build
 
 - [x] **PLAT-01**: One Expo codebase runs on iPhone and Android as a native development build (Expo Go from the stores only opens the newest SDK)
 - [x] **PLAT-02**: Go API with SQLite, embedded migrations and Postgres-portable SQL; `make api` needs no setup
-- [x] **PLAT-03**: Guest accounts: `POST /v1/bootstrap` creates or resumes a guest; the token lives on the device
+- [x] **PLAT-03**: Guest accounts: `POST /v1/bootstrap` creates or resumes a guest; the token lives on the device *(v1.0; replaced in v1.1 by phone sign-in, ACCT-01 to ACCT-07)*
 - [x] **PLAT-04**: A deterministic simulated world (fixtures, XIs, live scores, friends, fans, crowd) needs no API keys
 - [x] **PLAT-05**: One JSON contract in TypeScript, mirrored in Go, consumed through typed react-query hooks
 - [x] **PLAT-06**: Android readiness: the app checked on an Android emulator or device (icons, fonts, API host, system navigation)
 - [x] **PLAT-07**: App icon, adaptive icon and splash in the chosen direction
 - [x] **PLAT-08**: README and the GitHub repository (private, `swathivallabhaneni289/innings`)
+
+## v1.1 Requirements: Accounts
+
+Added 2026-10-25 when the developer asked for "a proper sign in like how Beli has".
+
+- [x] **ACCT-01**: Sign up and sign in with a phone number and a 6-digit text code; the same flow works for new and returning fans, on any number of phones
+- [x] **ACCT-02**: Codes expire after 10 minutes and allow 5 tries; a new code after 30 seconds, at most 5 an hour per number and 20 sign-ins an hour per IP address
+- [x] **ACCT-03**: Codes are texted through Twilio Verify when it is configured; in dev mode (`make api`) the code shows on screen and in the server log; with neither, sign-in is refused
+- [x] **ACCT-04**: New fans set up a fan card: name, a unique @username checked as they type, favourite team and an optional photo
+- [x] **ACCT-05**: Find friends from contacts (numbers hashed on the phone, matched on the server, never stored), invite the rest through the share sheet, and follow suggested fans
+- [x] **ACCT-06**: Sign out of this phone; delete the account and everything it made
+- [x] **ACCT-07**: The session token lives in the phone's secure storage and only its hash on the server; a signed-out or unknown token sends the fan back to sign-in
+- [x] **ACCT-08**: A brand-new account with no history looks right on every screen
 
 ## v2 Requirements
 
@@ -104,7 +117,7 @@ From the plan's "Later" list, plus items deferred by build decisions on 2026-10-
 
 ### Later (from the plan)
 
-- **LIVE-01**: Live mood reactions during a match (the Match Page shows a "coming soon" placeholder row)
+- **LIVE-01**: Live mood reactions during a match
 - **WRAP-01**: Season Wrapped, an end-of-season shareable summary (the Profile shows a "Later this season" placeholder)
 - **CLUB-01**: Team fan clubs
 - **AI-01**: AI summaries of fan reviews
@@ -112,7 +125,8 @@ From the plan's "Later" list, plus items deferred by build decisions on 2026-10-
 ### Deferred by decision
 
 - **DATA-01**: Fixtures, squads and live scores from CricketData.org or SportMonks behind the same `World` methods
-- **ACCT-01**: Email sign-in that keeps a guest's history
+- **SMS-01**: Real text messages: an SMS provider account, a sender ID and, for Indian numbers, DLT registration
+- **ACCT-09**: Sign in with Apple and Google
 - **MEDIA-01**: Upload log and profile photos to server storage (today they are device-local file URIs)
 - **STORE-01**: EAS builds and App Store / Play Store submission
 
@@ -145,13 +159,15 @@ From the plan's "Later" list, plus items deferred by build decisions on 2026-10-
 | SOC-05, LOG-07 | Phase 5 | Complete |
 | DESIGN-06, DESIGN-07 | Phase 6 | Complete |
 | PLAT-06, PLAT-07, PLAT-08 | Phase 6 | Complete |
+| ACCT-01, ACCT-02, ACCT-03, ACCT-04, ACCT-05, ACCT-06, ACCT-07, ACCT-08 | Phase 7 | Complete |
 
 **Coverage:**
 
 - v1 requirements: 64 total (64 complete, 0 pending)
-- Mapped to phases: 64
+- v1.1 requirements: 8 total (8 complete, 0 pending)
+- Mapped to phases: 72
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-10-22*
-*Last updated: 2026-10-25, Phase 6 requirements checked off; PLAT-01, PLAT-08 and DESIGN-07 reworded to match what shipped. The readable version with acceptance checks is `docs/REQUIREMENTS.md`.*
+*Last updated: 2026-10-25, after Phase 7 (phone sign-in) shipped. The readable version with acceptance checks is `docs/REQUIREMENTS.md`.*

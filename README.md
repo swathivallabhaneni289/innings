@@ -14,6 +14,12 @@ I took this from a written plan to a working app for iPhone and Android by direc
 | **The Vault** | **Profile** | **A friend's stub** | **Floodlights** |
 | <img src="docs/screenshots/android-vault.png" width="200" alt="On This Day in the Vault"> | <img src="docs/screenshots/android-profile.png" width="200" alt="Profile with stats and stubs"> | <img src="docs/screenshots/android-stub.png" width="200" alt="A logged ticket stub"> | <img src="docs/screenshots/android-floodlights.png" width="200" alt="The dark floodlights theme"> |
 
+**Signing in** (Android): your phone number, a 6-digit code, your fan card, then your people.
+
+| Welcome | The code | Fan card | Find friends |
+| --- | --- | --- | --- |
+| <img src="docs/screenshots/android-welcome.png" width="200" alt="Welcome screen with a season ticket"> | <img src="docs/screenshots/android-signin-code.png" width="200" alt="Entering the 6-digit code"> | <img src="docs/screenshots/android-fancard.png" width="200" alt="Setting up a fan card with a username"> | <img src="docs/screenshots/android-find-friends.png" width="200" alt="Finding friends from contacts"> |
+
 **On iPhone** (iPhone 17 Pro simulator):
 
 | Home | Match Page | Log it | The Vault | Profile | Floodlights |
@@ -36,11 +42,14 @@ Innings treats every match like a release on opening night, the way Letterboxd t
 | **Vault** | 58 classic matches in five collections (World Cup Finals, Greatest Chases, Test Match Thrillers, Super Over Madness, Women's Cricket Classics), all-time fan rankings by format and era, On This Day, and your pinned Top 5. |
 | **Profile** | Your Top 5 as big tickets, matches logged, average rating, prediction accuracy and points, every stub you've collected, where you've watched from, and your rank among friends with badges like *Called the Upset*. |
 
+Getting in works the way Beli does it. You type your phone number and we text you a 6-digit code; the same two steps make a new account or sign you back in on another phone. New fans set up a fan card with their name, a unique @username and a favourite team, then find friends from their contacts (the numbers are hashed on the phone and never stored), invite the rest, or follow a few fans to fill the feed. Settings has sign out and delete account.
+
 ## Key decisions
 
 | Decision | What I chose | Why | What it costs |
 | --- | --- | --- | --- |
-| Backend | A Go API (standard library `net/http`) with SQLite, instead of the Supabase the plan suggested | Go is what I build backends in. SQLite with embedded migrations means `make api` runs with no setup; the SQL stays Postgres-ready. | No managed auth or storage yet: guest accounts and device-local photos. |
+| Backend | A Go API (standard library `net/http`) with SQLite, instead of the Supabase the plan suggested | Go is what I build backends in. SQLite with embedded migrations means `make api` runs with no setup; the SQL stays Postgres-ready. | No managed storage yet: photos stay on the phone. |
+| Accounts | Phone number and a texted code, like Beli, with a unique @username | No passwords to forget, one flow for new and returning fans, and contacts make finding friends easy. | Real texts need an SMS provider (Twilio Verify is wired in) and cost a few cents per sign-in. Until then the server runs in dev mode and shows the code on screen. |
 | Phones | One Expo / React Native app for iPhone and Android | One codebase, native on both. Phone screens can't be built well in Go, so Go does the server and the app does the screens. | Two languages in one repo. |
 | Match data | A deterministic simulated cricket world, built around server start | No paid cricket API key is needed to try it, and there's always something live, about to start and just finished. Real current XIs and real grounds. | Scores aren't real. A CricketData.org or SportMonks client can replace the simulation behind the same interface. |
 | The Vault | Real matches only, each fact-checked | Fans know these games by heart; one wrong date ruins the trust. All 58 were checked against public scorecards; sources are in [`docs/VAULT_SOURCES.md`](docs/VAULT_SOURCES.md). | Slower to grow by hand. |
@@ -49,13 +58,13 @@ Innings treats every match like a release on opening night, the way Letterboxd t
 | Bragging points | +10 winner, +15 top scorer, +15 top wicket-taker, +10 upset; 3–4 correct winners in a row ×1.5, 5+ ×2 | The plan said streaks multiply but not how; this keeps a hot streak worth chasing without swamping single matches. Tied top scorers all count. | |
 | Look | "Matchday Ticket": every match printed as a ticket on its competition's card stock | The first pass (a paper scorebook) felt generic. I sketched three directions and chose the one that makes the stub worth sharing. | |
 
-The full plan, with every decision that filled a gap, is in [`docs/PLAN.md`](docs/PLAN.md). What v1.0 has to do, how each requirement is checked and where it's built is in [`docs/REQUIREMENTS.md`](docs/REQUIREMENTS.md): 64 of 64 built. The build was run as GSD phases; the roadmap and per-phase plans and summaries are in [`.planning/`](.planning).
+The full plan, with every decision that filled a gap, is in [`docs/PLAN.md`](docs/PLAN.md). What the app has to do, how each requirement is checked and where it's built is in [`docs/REQUIREMENTS.md`](docs/REQUIREMENTS.md): all 72 built. The build was run as GSD phases; the roadmap and per-phase plans and summaries are in [`.planning/`](.planning).
 
 ## What's left out on purpose
 
 - **Live mood reactions, Season Wrapped, team fan clubs and AI summaries of reviews.** The plan marks these as later.
 - **Store releases.** The same code builds for iPhone and Android, and both have been run: on the iOS Simulator and on an Android emulator. On a real phone, install a development build (`npx expo run:android --device`, or `npx expo run:ios --device` with a free Apple ID); Expo Go from the stores only opens projects on the newest Expo SDK. App Store and Play Store builds need developer accounts.
-- **Real accounts.** Everyone is a guest with a device token for now.
+- **Real text messages.** Sign-in works end to end, but `make api` runs in dev mode: no text is sent and the code appears on the screen and in the server log. Set `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` and `TWILIO_VERIFY_SERVICE_SID` to send real ones. Sending to Indian numbers also needs DLT registration, which I haven't confirmed Twilio covers.
 
 ## How it's built
 
@@ -79,17 +88,19 @@ flowchart LR
 You need Go 1.26+, Node 20+, and Xcode (iOS Simulator) or Android Studio (Android Emulator). For a real phone, see below.
 
 ```bash
-make api          # Go API on http://localhost:8088 (creates innings.db on first run)
+make api          # Go API on http://localhost:8088, sign-in codes in dev mode (creates innings.db on first run)
 npm install
 make app          # Expo dev server; press i for iOS, a for Android
 ```
 
 On a real phone, connect it by cable and run `npx expo run:android --device` or `npx expo run:ios --device`. Keep the phone on the same Wi-Fi as your computer: the app finds the API there automatically. Set `EXPO_PUBLIC_API_URL` to point it somewhere else.
 
+If you installed a build from before sign-in existed, install again the same way. Sign-in added native pieces (secure storage for the session, contacts, hashing) that an old build doesn't have. To sign in, type any number; in dev mode the code shows on the screen, so tap it to fill it in.
+
 ```bash
 make test         # Go tests
 npx tsc --noEmit  # TypeScript check
-make reset-db     # start again with a fresh guest
+make reset-db     # start again with an empty database
 ```
 
 ## Project layout

@@ -24,14 +24,16 @@ Capture how fans felt about a match, not what happened in it. Cricbuzz covers th
 - [x] Fans have a profile: Top 5 stubs, stats, stub collection, where they watched, predictor rank and badges
 - [x] The app wears the chosen Matchday Ticket design across every screen in both themes (Phase 6)
 - [x] The repo is ready to show: icons, Android check, README, GitHub (Phase 6)
+- [x] Fans sign in with a phone number and a texted code, set up a fan card with a unique @username, find friends from contacts, and can sign out or delete their account (Phase 7, v1.1)
 
-See REQUIREMENTS.md for the full checkable list (64 v1 requirements across 6 phases, all complete). `docs/REQUIREMENTS.md` is the same list written for readers, with acceptance checks and where each one lives in the code.
+See REQUIREMENTS.md for the full checkable list (64 v1 and 8 v1.1 requirements across 7 phases, all complete). `docs/REQUIREMENTS.md` is the same list written for readers, with acceptance checks and where each one lives in the code.
 
 ### Out of Scope
 
 - Supabase: replaced by the Go API and SQLite (see Key Decisions)
 - Live cricket data from a paid API: the simulation stands in until a CricketData.org or SportMonks key exists
-- Email or social sign-in: guest accounts only for v1
+- Sign in with Apple, Google or email: phone sign-in only for now (ACCT-09)
+- Real text messages: need an SMS provider account; dev mode shows the code on screen (SMS-01)
 - App Store and Play Store builds: need the developer's Apple and Google accounts
 - The heritage scorebook look: built first, then superseded by direction C (see Key Decisions)
 - Launch tactics from the plan (launch before a big series, seed with friends and the developer's AI club): not build tasks
@@ -63,7 +65,8 @@ See REQUIREMENTS.md for the full checkable list (64 v1 requirements across 6 pha
 | Backend in Go | Developer asked for Go; RNDMRoll already uses the same Expo plus Go split | Built 2026-10-22 (`cmd/api`, `internal/`) |
 | Phone app in Expo SDK 57, React Native, TypeScript | One codebase runs on iPhone and Android; Go cannot build native phone screens well | Built 2026-10-22 (`src/`) |
 | Go API plus SQLite replaces Supabase from the plan | Zero-setup local runs; embedded migrations; SQL stays portable to Postgres for production | Built 2026-10-22 (`internal/store`) |
-| Guest accounts via `POST /v1/bootstrap` token | Fastest path to a usable loop; token stored on the device | Built; email sign-in deferred to v2 |
+| Guest accounts via `POST /v1/bootstrap` token | Fastest path to a usable loop; token stored on the device | Built in v1.0; replaced by phone sign-in in v1.1 |
+| Phone and text-code sign-in, like Beli | Developer asked for "a proper sign in like how Beli has" (2026-10-25): no passwords, one flow for new and returning fans, contacts for finding friends | Built 2026-10-25 (Phase 7); Twilio Verify wired in, dev mode shows the code |
 | Simulated world instead of a cricket API | No API key available; deterministic, so tests can pin exact numbers | Built (`internal/sim`); real API swap is v2 |
 | Streak multiplier x1 / x1.5 / x2 | Plan said "streaks multiply" without numbers: 1 to 2 correct winners x1, 3 to 4 x1.5, 5 or more x2 | Built (`internal/domain/scoring.go`) |
 | Upset measured at lock time | The split must be frozen at the first ball or late picks could move it | Built |
@@ -80,4 +83,4 @@ See REQUIREMENTS.md for the full checkable list (64 v1 requirements across 6 pha
 | Private GitHub repository | Developer's choice | `swathivallabhaneni289/innings`, branch `main` |
 
 ---
-*Last updated: 2026-10-25 after v1.0 was completed and the requirements document was added*
+*Last updated: 2026-10-25 after v1.1 (phone sign-in) was completed*
