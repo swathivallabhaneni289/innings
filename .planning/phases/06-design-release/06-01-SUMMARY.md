@@ -44,7 +44,7 @@ status: complete
 
 ## Accomplishments
 
-- **Tokens and type** (`src/theme/tokens.ts`): concrete ground #ECEAE4, flat white cards, ink #16171A, overprint red #D23A2E (live, stamps, serials and the Log ball only), pitch green #2F6B3A (wins only). A stock colour per competition, Test and Vault classic, darkened for floodlights. Big Shoulders Display for codes and numbers, Schibsted Grotesk for UI and reviews, IBM Plex Mono for fine print. Oswald, Source Serif and the paper grain are gone.
+- **Tokens and type** (`src/theme/tokens.ts`): concrete ground #ECEAE4, flat white cards, ink #16171A, overprint red #D23A2E (live, stamps, serials, the Log ball and small text actions), pitch green #2F6B3A (wins only). A stock colour per competition, Test and Vault classic, darkened for floodlights. Big Shoulders Display for codes and numbers, Schibsted Grotesk for UI and reviews, IBM Plex Mono for fine print. Oswald, Source Serif and the paper grain are gone.
 - **The ticket** (`src/components/TicketStub.tsx`): square-cut card with two notches at a dotted perforation, a tear-off stub with a red serial and a barcode seeded from the match id, horizontal or vertical. `MatchTicket` prints a match on its stock in three sizes; feed stubs carry a red rubber-stamp rating.
 - **Components** (`src/components/ui.tsx`): solid ink primary buttons; square chips at 40pt minimum height; the friends' split bar in ink and faint ink with a team-colour underline under each code; `Txt` sets a line height for any custom font size so initials and big numbers don't clip.
 - **UI review** (`06-UI-REVIEW.md`): 22 iPhone captures (18 in paper, 4 in floodlights) scored 16/24. All 12 prioritized fixes were applied in `ff22e3f`:
@@ -62,7 +62,7 @@ status: complete
 
 ## Decisions Made
 
-- Red means live, stamps and serials. Anywhere else it became ink or faint ink.
+- Red means live, stamps, serials and the Log ball, plus small text actions (See all, PREDICT, ghost buttons). Split bars, chart peaks, format codes and "Edit profile" moved to ink or faint ink.
 - Phones run a development build (`npx expo run:android --device`, `npx expo run:ios --device`). Expo Go from the stores only opens projects on the newest SDK, so it can't open this SDK 57 project.
 - Guests start with a muted ink avatar (#3B3F6B) instead of red, so red keeps its meaning.
 

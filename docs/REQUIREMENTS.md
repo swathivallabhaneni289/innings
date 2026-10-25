@@ -93,14 +93,14 @@ Each table lists the requirement, a check that proves it, and where it lives.
 | MATCH-06 | Show fan player ratings out of 10 and crown the Fans' Player of the Match beside the official one, with "Fans disagree!" when they differ | A player needs at least 3 ratings to be crowned (`TestPlayerAveragesAndPotm`) | `features/match/PlayerRatings.tsx` |
 | MATCH-07 | Show prediction results for the fan and friends, with the points each earned | `TestScoreOne` | `features/match/PredictionResults.tsx` |
 | MATCH-08 | Show reviews in two lists: popular (most liked, all fans) and friends' | Popular is sorted by likes | `features/match/Reviews.tsx` |
-| MATCH-09 | Summarise where fans watched as shares by place | Shares add up to 100% (`TestWatchShares`) | `features/match/WatchSummary.tsx` |
+| MATCH-09 | Summarise where fans watched as shares by place | Each place's share of all logs, largest first (`TestWatchShares`) | `features/match/WatchSummary.tsx` |
 | MATCH-10 | Offer "Log this match" on finished matches and Vault classics | The button opens the Log flow with this match already picked | `features/match/LogAction.tsx` |
 
 ### Predictions and bragging points
 
 | ID | The app must… | Check | Built in |
 | --- | --- | --- | --- |
-| PRED-01 | Let the fan pick winner, top run-scorer and top wicket-taker on the Match Page and on Home, show the friends' split, and allow changes until the lock | Changing a pick before the start saves the new one (`TestPredictionUpcoming`) | `features/predict/PredictionPicker.tsx`, `features/match/PredictionSection.tsx` |
+| PRED-01 | Let the fan pick winner, top run-scorer and top wicket-taker on the Match Page and on Home, show the friends' split, and allow changes until the lock | A pick saved before the start shows on the Match Page, and a winner who isn't playing is rejected (`TestPredictionUpcoming`). Saving again replaces the pick | `features/predict/PredictionPicker.tsx`, `features/match/PredictionSection.tsx` |
 | PRED-02 | Lock predictions at the first ball | After the start, `PUT /v1/matches/{id}/prediction` returns 409 `locked` (`TestPredictionLocked`, `TestIsLocked`), and the app shows the picks read-only | `domain/scoring.go`, `writes.go` |
 | PRED-03 | Award points: winner +10, top run-scorer +15, top wicket-taker +15 | `TestScoreOne` | `domain/scoring.go` |
 | PRED-04 | Add a +10 upset bonus when the winning team had under 30% of fan picks at lock time | `TestScoreOne` | `domain/scoring.go` |
@@ -129,8 +129,8 @@ Each table lists the requirement, a check that proves it, and where it lives.
 | VAULT-02 | Rank matches by fan rating of all time, filterable by format and era | `/v1/vault/rankings?format=T20&era=2020s` (`TestEveryGET`) | `app/vault/rankings.tsx` |
 | VAULT-03 | Let fans log an old match with "I watched this" and keep the place note as the memory | Log a classic: the note shows on its stub | `features/vault/ClassicRow.tsx` |
 | VAULT-04 | Show On This Day: a classic played on today's date, or the next anniversary, with a nudge to log it | The card shows the year and how long ago it was | `features/vault/OnThisDay.tsx` |
-| VAULT-05 | Let fans pin and unpin up to five matches as their Top 5 | A sixth pin, a duplicate or an unknown match returns 400; an empty Top 5 is allowed (`TestTop5AndMe`) | `features/vault/top5.ts`, `Top5Pager.tsx` |
-| VAULT-06 | Hold about 50 real classics, each fact-checked | 58 shipped. Each was checked by three independent reviewers, with sources in [`VAULT_SOURCES.md`](VAULT_SOURCES.md) (`TestClassics`) | `internal/sim/classics.json` |
+| VAULT-05 | Let fans pin and unpin up to five matches as their Top 5 | A sixth pin or an unknown match returns 400 and an empty Top 5 is allowed (`TestTop5AndMe`); a duplicate is refused in `writes.go` | `features/vault/top5.ts`, `Top5Pager.tsx` |
+| VAULT-06 | Hold about 50 real classics, each fact-checked | 58 shipped. Each was checked three times against public scorecards by independent checker agents, with sources in [`VAULT_SOURCES.md`](VAULT_SOURCES.md) (`TestClassics`) | `internal/sim/classics.json` |
 
 ### Profile
 
@@ -254,7 +254,7 @@ For example, the fifth correct winner in a row, calling an upset and the top sco
 
 ### Accessibility
 
-- Interactive elements carry accessibility roles (61) and labels (46).
+- The code sets accessibility roles in 61 places and labels in 46.
 - Filter chips are at least 40 pt tall.
 - Ratings and split bars have spoken labels, e.g. "IND 62%, AUS 38%".
 - Not done yet: a full pass with VoiceOver and TalkBack.
@@ -292,7 +292,7 @@ The look is called **Matchday Ticket**: every match is printed as a ticket on ca
   | Colour | Hex | Used for |
   | --- | --- | --- |
   | Ink | #16171A | Text; primary buttons are solid ink |
-  | Red | #D23A2E | Only for live, stamps, serials and the Log ball |
+  | Red | #D23A2E | Live, stamps, serials and the Log ball, plus small text actions (See all, PREDICT, ghost buttons) |
   | Green | #2F6B3A | Only for wins |
 
 - **Type:**

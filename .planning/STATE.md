@@ -70,7 +70,7 @@ Recent decisions:
 - [Phase 02]: No cricket API key; `internal/sim` generates the world around server start. `INNINGS_ANCHOR` pins the clock for repeatable runs
 - [Phase 02]: Build decisions settled the plan's gaps: streak x1 / x1.5 / x2, upset at lock time, tied top scorers all count, half-balls everywhere, Fans' Player of the Match needs 3 ratings, Bragging Board is the last 7 days
 - [Phase 05]: The Vault ships 58 real matches; 3 independent checker agents confirmed all 58 (0 fixed, 0 dropped); sources in `docs/VAULT_SOURCES.md`
-- [Phase 06]: Direction C, Matchday Ticket, chosen by the developer on 2026-10-22 over A Almanack and B Pavilion Scoreboard, and built across every screen. Red is kept for live, stamps, serials and the Log ball; green for wins only
+- [Phase 06]: Direction C, Matchday Ticket, chosen by the developer on 2026-10-22 over A Almanack and B Pavilion Scoreboard, and built across every screen. Red is kept for live, stamps, serials, the Log ball and small text actions (See all, PREDICT, ghost buttons); green for wins only
 - [Phase 06]: Phones run a development build; Expo Go from the stores only opens the newest SDK
 - [Phase 06]: The GitHub repo is private
 
