@@ -26,9 +26,11 @@ type view struct {
 	matchIdx    map[string]domain.Match
 	teamMap     map[string]domain.Team
 
-	realUsers map[string]domain.User
-	realOrder []domain.User
-	follows   map[string][]string // real user id → ids they follow
+	realUsers   map[string]domain.User
+	realOrder   []domain.User
+	listedOrder []domain.User       // real users who finished sign-up (Store.ListedUsers)
+	listedIDs   map[string]bool     // ids of listedOrder
+	follows     map[string][]string // real user id → ids they follow
 
 	logList     []domain.MatchLog // sim + real, newest first
 	logIdx      map[string]domain.MatchLog
@@ -160,6 +162,29 @@ func (v *view) user(id string) (domain.User, bool) {
 	v.loadUsers()
 	u, ok := v.realUsers[id]
 	return u, ok
+}
+
+// listedUsers are the real users who finished sign-up: the only real users search, friend lists and contact
+// matches show. Everyone else (half-signed-up accounts, pre-sign-in guests) still resolves through user() so their
+// existing logs, replies and board rows keep working.
+func (v *view) listedUsers() []domain.User {
+	if v.listedIDs == nil {
+		v.listedOrder = must(v.s.Store.ListedUsers(v.ctx))
+		v.listedIDs = map[string]bool{}
+		for _, u := range v.listedOrder {
+			v.listedIDs[u.ID] = true
+		}
+	}
+	return v.listedOrder
+}
+
+// listed reports whether id may appear in search and friend lists: simulated fans always, real users once onboarded.
+func (v *view) listed(id string) bool {
+	if _, ok := v.s.World.User(id); ok {
+		return true
+	}
+	v.listedUsers()
+	return v.listedIDs[id]
 }
 
 func (v *view) isReal(id string) bool {

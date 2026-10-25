@@ -140,6 +140,13 @@ type User struct {
 	PhotoURI        string `json:"photoUri,omitempty"`
 }
 
+// Account is the signed-in fan's own account. Private: never part of a public profile.
+type Account struct {
+	Phone     string `json:"phone"`     // E.164
+	Onboarded bool   `json:"onboarded"` // name and @username chosen, sign-up finished
+	CreatedAt string `json:"createdAt"`
+}
+
 type MatchLog struct {
 	ID             string         `json:"id"`
 	UserID         string         `json:"userId"`

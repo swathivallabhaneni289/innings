@@ -3,6 +3,14 @@
 //	PORT            listen port (default 8088; 8080 is often taken by other local APIs)
 //	DB_PATH         SQLite file (default ./innings.db)
 //	INNINGS_ANCHOR  optional RFC 3339 time to pin the simulated clock (default: process start)
+//
+// Sign-in codes (docs/API.md → Auth, "SMS providers"):
+//
+//	TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_VERIFY_SERVICE_SID
+//	                all three: codes go through Twilio Verify (setting only some is a startup error)
+//	INNINGS_DEV_OTP=1
+//	                with no Twilio settings: the server makes codes, logs them and returns them as devCode
+//	                (what `make api` does). With neither, /v1/auth/start answers 503 sms-unavailable.
 package main
 
 import (
@@ -15,6 +23,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/swathivallabhaneni289/innings/internal/auth"
 	"github.com/swathivallabhaneni289/innings/internal/httpapi"
 	"github.com/swathivallabhaneni289/innings/internal/sim"
 	"github.com/swathivallabhaneni289/innings/internal/store"
@@ -44,15 +53,31 @@ func run(logger *slog.Logger) error {
 	// The sim clock starts at the anchor and runs in real time from there.
 	now := func() time.Time { return anchor.Add(time.Since(started)) }
 
+	verifier, smsMode, err := auth.VerifierFromEnv(os.Getenv, logger)
+	if err != nil {
+		return err
+	}
+
 	st, err := store.Open(dbPath)
 	if err != nil {
 		return err
 	}
 	defer st.Close()
 
+	api := httpapi.New(st, sim.NewWorld(anchor), now, logger)
+	api.Auth.Verifier = verifier
+	switch smsMode {
+	case "twilio":
+		logger.Info("sign-in codes: Twilio Verify")
+	case "dev":
+		logger.Warn("sign-in codes: DEV mode (INNINGS_DEV_OTP=1): codes are logged and returned as devCode, never texted")
+	default:
+		logger.Warn("sign-in codes: OFF (no Twilio settings and INNINGS_DEV_OTP isn't 1): /v1/auth/start answers 503")
+	}
+
 	srv := &http.Server{
 		Addr:              ":" + port,
-		Handler:           httpapi.New(st, sim.NewWorld(anchor), now, logger).Handler(),
+		Handler:           api.Handler(),
 		ReadHeaderTimeout: 10 * time.Second,
 	}
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)

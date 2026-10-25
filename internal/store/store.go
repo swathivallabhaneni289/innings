@@ -1,4 +1,4 @@
-// Package store persists real (guest) users and everything they do, in SQLite via modernc.org/sqlite.
+// Package store persists real (signed-in) users and everything they do, in SQLite via modernc.org/sqlite.
 // The SQL is kept portable to Postgres (see migrations/0001_init.sql); only Open and the pragmas are SQLite-specific.
 package store
 
@@ -108,12 +108,6 @@ func scanUser(sc interface{ Scan(...any) error }) (domain.User, error) {
 	return u, err
 }
 
-func (s *Store) CreateUser(ctx context.Context, u domain.User, token string, now time.Time) error {
-	_, err := s.db.ExecContext(ctx, `INSERT INTO users (id, token, name, handle, avatar_colour, favourite_team_id, bio, photo_uri, created_at)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`, u.ID, token, u.Name, u.Handle, u.AvatarColour, u.FavouriteTeamID, u.Bio, u.PhotoURI, ts(now))
-	return err
-}
-
 func (s *Store) userWhere(ctx context.Context, where string, arg any) (domain.User, bool, error) {
 	u, err := scanUser(s.db.QueryRowContext(ctx, `SELECT `+userCols+` FROM users WHERE `+where, arg))
 	if errors.Is(err, sql.ErrNoRows) {
@@ -122,35 +116,23 @@ func (s *Store) userWhere(ctx context.Context, where string, arg any) (domain.Us
 	return u, err == nil, err
 }
 
-func (s *Store) UserByToken(ctx context.Context, token string) (domain.User, bool, error) {
-	return s.userWhere(ctx, `token = ?`, token)
-}
-
 func (s *Store) UserByID(ctx context.Context, id string) (domain.User, bool, error) {
 	return s.userWhere(ctx, `id = ?`, id)
 }
 
-// Users returns every real user, oldest first.
+// Users returns every real user (onboarded or not), oldest first. See ListedUsers for the ones others may find.
 func (s *Store) Users(ctx context.Context) ([]domain.User, error) {
-	rows, err := s.db.QueryContext(ctx, `SELECT `+userCols+` FROM users ORDER BY created_at, id`)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	out := []domain.User{}
-	for rows.Next() {
-		u, err := scanUser(rows)
-		if err != nil {
-			return nil, err
-		}
-		out = append(out, u)
-	}
-	return out, rows.Err()
+	return s.queryUsers(ctx, `SELECT `+userCols+` FROM users ORDER BY created_at, id`)
 }
 
+// UpdateUser saves u's profile. ErrHandleTaken when another user got the same handle first (the lower(handle)
+// unique index catches the race that a check-then-write would miss).
 func (s *Store) UpdateUser(ctx context.Context, u domain.User) error {
 	_, err := s.db.ExecContext(ctx, `UPDATE users SET name = ?, handle = ?, avatar_colour = ?, favourite_team_id = ?, bio = ?, photo_uri = ? WHERE id = ?`,
 		u.Name, u.Handle, u.AvatarColour, u.FavouriteTeamID, u.Bio, u.PhotoURI, u.ID)
+	if isUniqueViolation(err) {
+		return ErrHandleTaken
+	}
 	return err
 }
 
@@ -506,8 +488,9 @@ func (s *Store) SetWatching(ctx context.Context, userID, matchID string, place *
 
 // ---- demo history ----
 
-// SeedHistory writes a new guest's demo logs, predictions and follows in one transaction. Logs get fresh ids and
-// sequential stub numbers (oldest first) so sim ids can never collide between guests.
+// SeedHistory writes demo logs, predictions and follows for userID in one transaction. Logs get fresh ids and
+// sequential stub numbers (oldest first) so sim ids can never collide between users. New accounts start empty, so
+// the server no longer calls it; it is kept for seeding demo data.
 func (s *Store) SeedHistory(ctx context.Context, userID string, logs []domain.MatchLog, preds []domain.Prediction, follows []string, now time.Time) error {
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {

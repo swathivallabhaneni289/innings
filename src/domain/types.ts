@@ -121,6 +121,13 @@ export interface User {
   photoUri?: string;
 }
 
+/** The signed-in fan's own account. Private: never part of a public profile. */
+export interface Account {
+  phone: string; // E.164, e.g. "+919876543210"
+  onboarded: boolean; // true once the fan has chosen a name and @username and finished sign-up
+  createdAt: string;
+}
+
 /** One logged match: the "ticket stub". */
 export interface MatchLog {
   id: string;

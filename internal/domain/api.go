@@ -93,9 +93,35 @@ type BoardRow struct {
 	IsMe   bool `json:"isMe"`
 }
 
+type AuthStartResponse struct {
+	Phone            string `json:"phone"`
+	ResendInSeconds  int    `json:"resendInSeconds"`
+	ExpiresInSeconds int    `json:"expiresInSeconds"`
+	DevCode          string `json:"devCode,omitempty"`
+}
+
+type AuthVerifyResponse struct {
+	Token   string  `json:"token"`
+	Me      User    `json:"me"`
+	Account Account `json:"account"`
+	IsNew   bool    `json:"isNew"`
+}
+
+type HandleCheckResponse struct {
+	Handle    string  `json:"handle"`
+	Available bool    `json:"available"`
+	Reason    *string `json:"reason"`  // "invalid" | "reserved" | "taken" | null
+	Message   *string `json:"message"` // human text when not available
+}
+
+type ContactsMatchResponse struct {
+	Matches []FriendRow `json:"matches"`
+}
+
 type BootstrapResponse struct {
 	Token      string            `json:"token"`
 	Me         User              `json:"me"`
+	Account    Account           `json:"account"`
 	Teams      map[string]Team   `json:"teams"`
 	Players    map[string]Player `json:"players"`
 	ServerTime string            `json:"serverTime"`

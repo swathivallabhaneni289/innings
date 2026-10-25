@@ -1,5 +1,6 @@
 // Response shapes of the Go API (docs/API.md). Go mirrors these exactly; see internal/domain/api.go.
 import type {
+  Account,
   BadgeDef,
   Collection,
   Match,
@@ -86,10 +87,40 @@ export interface BoardRow {
 
 // ---- Endpoint responses ----
 
-/** POST /v1/bootstrap */
+/** POST /v1/auth/start {phone} — texts a 6-digit code. The answer is the same whether or not the number has an account. */
+export interface AuthStartResponse {
+  phone: string; // the number as E.164
+  resendInSeconds: number; // wait this long before asking for another code
+  expiresInSeconds: number; // how long the code works
+  devCode?: string; // only when the server runs with INNINGS_DEV_OTP=1 and no SMS provider
+}
+
+/** POST /v1/auth/verify {phone, code} — signs in, creating the account the first time this number verifies. */
+export interface AuthVerifyResponse {
+  token: string;
+  me: User;
+  account: Account;
+  isNew: boolean;
+}
+
+/** GET /v1/handles/{handle} — is this @username free? Your own current handle counts as available. */
+export interface HandleCheckResponse {
+  handle: string; // lower-cased, as it would be saved
+  available: boolean;
+  reason: 'invalid' | 'reserved' | 'taken' | null;
+  message: string | null; // human text when not available
+}
+
+/** POST /v1/contacts/match {hashes} — SHA-256 hex of contacts' E.164 numbers (max 5000). Nothing is stored. */
+export interface ContactsMatchResponse {
+  matches: { user: User; following: boolean }[];
+}
+
+/** POST /v1/bootstrap (needs a session) — the fan, their account and the catalog. */
 export interface BootstrapResponse {
   token: string;
   me: User;
+  account: Account;
   teams: Record<string, Team>;
   players: Record<string, Player>;
   serverTime: string;

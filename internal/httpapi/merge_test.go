@@ -1,6 +1,8 @@
 package httpapi
 
 import (
+	"context"
+	"net/http"
 	"strings"
 	"testing"
 )
@@ -8,6 +10,7 @@ import (
 // TestMergeRules checks the sim + real merge rules against the fake world, where every number is known.
 func TestMergeRules(t *testing.T) {
 	c := newTestAPI(t, newFakeWorld(testNow))
+	c.seedFakeHistory()
 
 	page := c.getJSON("/v1/matches/done")
 	fans := page["fans"].(map[string]any)
@@ -142,9 +145,33 @@ func TestMergeRules(t *testing.T) {
 		t.Errorf("player outside XI: %d %s", status, b)
 	}
 	c.do("PUT", "/v1/matches/soon/prediction", map[string]string{"winnerId": "mi", "topRunScorerId": "mi-p0", "topWicketTakerId": "csk-p1"})
-	other := &client{t: t, base: c.base}
-	other.token = other.bootstrap("")
+	other := c.another()
 	if sp := other.getJSON("/v1/matches/soon")["split"].(map[string]any); sp["total"] != 1.0 || sp["friendsTotal"] != 0.0 {
 		t.Errorf("split after a real prediction: %v", sp)
+	}
+}
+
+// seedFakeHistory gives c the history guest accounts used to start with (fakeWorld.DemoHistory), which the
+// numbers above depend on. The follow and the logs go through the API. The prediction can't: it is on a match that
+// has finished, and the API rightly refuses those (409 locked), so it is written to the store directly.
+func (c *client) seedFakeHistory() {
+	c.t.Helper()
+	logs, preds, follows := newFakeWorld(testNow).DemoHistory(c.id, testNow)
+	for _, id := range follows {
+		if status, b := c.do("POST", "/v1/users/"+id+"/follow", nil); status != http.StatusOK {
+			c.t.Fatalf("follow %s: %d %s", id, status, b)
+		}
+	}
+	for _, l := range logs {
+		body := map[string]any{"matchId": l.MatchID, "rating": l.Rating, "watchedAt": l.WatchedAt, "review": l.Review}
+		if status, b := c.do("POST", "/v1/logs", body); status != http.StatusCreated {
+			c.t.Fatalf("log %s: %d %s", l.MatchID, status, b)
+		}
+	}
+	for _, p := range preds {
+		p.UserID = c.id
+		if err := c.api.Store.SavePrediction(context.Background(), p); err != nil {
+			c.t.Fatal(err)
+		}
 	}
 }

@@ -3,16 +3,20 @@ package httpapi
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
 	"log/slog"
 
+	"github.com/swathivallabhaneni289/innings/internal/auth"
 	"github.com/swathivallabhaneni289/innings/internal/sim"
 	"github.com/swathivallabhaneni289/innings/internal/store"
 )
@@ -35,19 +39,49 @@ func init() {
 	}
 }
 
+// testClock is the sign-in clock in tests (code expiry, resend gaps, rate limits). It starts at testNow and only
+// moves when a test advances it; the sim clock stays pinned at testNow.
+type testClock struct {
+	mu sync.Mutex
+	t  time.Time
+}
+
+func (c *testClock) now() time.Time { c.mu.Lock(); defer c.mu.Unlock(); return c.t }
+
+func (c *testClock) advance(d time.Duration) { c.mu.Lock(); defer c.mu.Unlock(); c.t = c.t.Add(d) }
+
 type client struct {
 	t     *testing.T
 	base  string
 	token string
+	api   *Server
+	clock *testClock
+	phone string // the number this client signed in with
+	id    string // the signed-in user's id
 }
 
-// eachWorld runs fn against the real sim (empty until it lands, full after) and against a small fake world.
+// eachWorld runs fn against the real sim (empty until it lands, full after) and against a small fake world. Each
+// run signs in a fresh phone number.
 func eachWorld(t *testing.T, fn func(t *testing.T, c *client)) {
 	t.Run("sim", func(t *testing.T) { fn(t, newTestAPI(t, sim.NewWorld(testAnchor))) })
 	t.Run("fake", func(t *testing.T) { fn(t, newTestAPI(t, newFakeWorld(testNow))) })
 }
 
+var phoneSeq atomic.Int64
+
+// nextPhone is a phone number no other test client has used, so no two share a code row or send log.
+func nextPhone() string { return fmt.Sprintf("+9190%08d", phoneSeq.Add(1)) }
+
+// newTestAPI starts a server in dev sign-in mode and returns a client signed in as a new fan.
 func newTestAPI(t *testing.T, world World) *client {
+	t.Helper()
+	c := newTestServer(t, world)
+	c.signIn(nextPhone())
+	return c
+}
+
+// newTestServer starts a server in dev sign-in mode on its own database and returns a client with no session.
+func newTestServer(t *testing.T, world World) *client {
 	t.Helper()
 	st, err := store.Open(filepath.Join(t.TempDir(), "api.db"))
 	if err != nil {
@@ -55,14 +89,77 @@ func newTestAPI(t *testing.T, world World) *client {
 	}
 	t.Cleanup(func() { st.Close() })
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	srv := httptest.NewServer(New(st, world, func() time.Time { return testNow }, logger).Handler())
+	api := New(st, world, func() time.Time { return testNow }, logger)
+	clock := &testClock{t: testNow}
+	api.Auth.Now = clock.now
+	api.Auth.Verifier = auth.DevVerifier{Log: logger}
+	srv := httptest.NewServer(api.Handler())
 	t.Cleanup(srv.Close)
-	c := &client{t: t, base: srv.URL}
-	c.token = c.bootstrap("")
-	return c
+	return &client{t: t, base: srv.URL, api: api, clock: clock}
+}
+
+// another returns a client signed in as a new fan on the same server.
+func (c *client) another() *client {
+	c.t.Helper()
+	o := &client{t: c.t, base: c.base, api: c.api, clock: c.clock}
+	o.signIn(nextPhone())
+	return o
+}
+
+// device returns a second client for the same fan: same number, its own session.
+func (c *client) device() *client {
+	c.t.Helper()
+	c.clock.advance(auth.ResendGap) // the number just had a code
+	o := &client{t: c.t, base: c.base, api: c.api, clock: c.clock}
+	o.signIn(c.phone)
+	return o
+}
+
+// startCode asks for a code for phone and returns the devCode (dev mode).
+func (c *client) startCode(phone string) string {
+	c.t.Helper()
+	status, b, _ := c.req("POST", "/v1/auth/start", map[string]string{"phone": phone})
+	var out struct {
+		DevCode string `json:"devCode"`
+	}
+	json.Unmarshal(b, &out)
+	if status != http.StatusOK || len(out.DevCode) != 6 {
+		c.t.Fatalf("start %s: %d %s", phone, status, b)
+	}
+	return out.DevCode
+}
+
+// signIn signs c in as phone through /v1/auth/start and /v1/auth/verify, then checks /v1/bootstrap with the new
+// session. It returns the verify response.
+func (c *client) signIn(phone string) map[string]any {
+	c.t.Helper()
+	code := c.startCode(phone)
+	status, b := c.do("POST", "/v1/auth/verify", map[string]string{"phone": phone, "code": code})
+	var obj map[string]any
+	json.Unmarshal(b, &obj)
+	if status != http.StatusOK {
+		c.t.Fatalf("verify %s: %d %s", phone, status, b)
+	}
+	for _, k := range []string{"token", "me", "account", "isNew"} {
+		if _, ok := obj[k]; !ok {
+			c.t.Fatalf("verify: missing %s", k)
+		}
+	}
+	c.phone, c.token, c.id = phone, str(obj, "token"), str(obj, "me", "id")
+	if c.bootstrap(c.token) != c.token {
+		c.t.Fatal("bootstrap returned a different token")
+	}
+	return obj
 }
 
 func (c *client) do(method, path string, body any) (int, []byte) {
+	c.t.Helper()
+	status, b, _ := c.req(method, path, body)
+	return status, b
+}
+
+// req is do with the response headers.
+func (c *client) req(method, path string, body any) (int, []byte, http.Header) {
 	c.t.Helper()
 	var rd io.Reader
 	if body != nil {
@@ -79,7 +176,7 @@ func (c *client) do(method, path string, body any) (int, []byte) {
 	}
 	defer res.Body.Close()
 	b, _ := io.ReadAll(res.Body)
-	return res.StatusCode, b
+	return res.StatusCode, b, res.Header
 }
 
 // getJSON GETs path, expects 200, checks required keys and nulls, and returns the decoded object.
@@ -119,7 +216,8 @@ func walkNulls(t *testing.T, path, at string, v any) {
 	}
 }
 
-func (c *client) bootstrap(token string) string {
+// bootstrapStatus POSTs /v1/bootstrap with token ("" = none) and returns the status and decoded body.
+func (c *client) bootstrapStatus(token string) (int, map[string]any) {
 	c.t.Helper()
 	req, _ := http.NewRequest("POST", c.base+"/v1/bootstrap", nil)
 	if token != "" {
@@ -132,10 +230,16 @@ func (c *client) bootstrap(token string) string {
 	defer res.Body.Close()
 	var obj map[string]any
 	json.NewDecoder(res.Body).Decode(&obj)
-	if res.StatusCode != 200 {
-		c.t.Fatalf("bootstrap: %d %v", res.StatusCode, obj)
+	return res.StatusCode, obj
+}
+
+func (c *client) bootstrap(token string) string {
+	c.t.Helper()
+	status, obj := c.bootstrapStatus(token)
+	if status != 200 {
+		c.t.Fatalf("bootstrap: %d %v", status, obj)
 	}
-	for _, k := range []string{"token", "me", "teams", "players", "serverTime"} {
+	for _, k := range []string{"token", "me", "account", "teams", "players", "serverTime"} {
 		if _, ok := obj[k]; !ok {
 			c.t.Fatalf("bootstrap: missing %s", k)
 		}
@@ -165,8 +269,26 @@ func testBootstrapResumes(t *testing.T, c *client) {
 	if again := c.bootstrap(c.token); again != c.token {
 		t.Fatalf("resume returned a new token")
 	}
-	if other := c.bootstrap("not-a-real-token"); other == c.token {
-		t.Fatalf("unknown token should create a new guest")
+	// Guest bootstrap is gone: an unknown or missing token no longer creates an account; it gets 401 and the app
+	// sends the fan to sign in.
+	for _, tok := range []string{"not-a-real-token", ""} {
+		if status, obj := c.bootstrapStatus(tok); status != http.StatusUnauthorized || obj["error"] != "unauthorized" {
+			t.Fatalf("bootstrap with %q: %d %v", tok, status, obj)
+		}
+	}
+}
+
+// followFriends follows every simulated friend through the API, so the feed has their stubs (new accounts start
+// with no follows).
+func (c *client) followFriends() {
+	c.t.Helper()
+	for _, f := range list(c.getJSON("/v1/friends")["friends"]) {
+		if f.(map[string]any)["following"] == true {
+			continue
+		}
+		if status, b := c.do("POST", "/v1/users/"+str(f, "user", "id")+"/follow", nil); status != http.StatusOK {
+			c.t.Fatalf("follow: %d %s", status, b)
+		}
 	}
 }
 
@@ -198,6 +320,7 @@ func testCORSPreflight(t *testing.T, c *client) {
 func TestEveryGET(t *testing.T) { eachWorld(t, testEveryGET) }
 
 func testEveryGET(t *testing.T, c *client) {
+	c.followFriends()
 	home := c.getJSON("/v1/home", "onNow", "yourCall", "yourCallSplit", "yourCallMine", "feed", "justFinished", "board", "unread")
 	for _, q := range []string{"", "?state=live", "?state=upcoming", "?state=recent", "?competition=ipl", "?team=ind,ind-w"} {
 		c.getJSON("/v1/matches"+q, "matches", "fanRatings")
@@ -394,6 +517,7 @@ func testLogCreateUpdateKeepsStub(t *testing.T, c *client) {
 func TestLikeToggleOnSimLog(t *testing.T) { eachWorld(t, testLikeToggleOnSimLog) }
 
 func testLikeToggleOnSimLog(t *testing.T, c *client) {
+	c.followFriends()
 	feed := list(c.getJSON("/v1/home")["feed"])
 	if len(feed) == 0 {
 		t.Skip("no friend logs in the world")
@@ -416,8 +540,7 @@ func testLikeToggleOnSimLog(t *testing.T, c *client) {
 func TestFollowToggle(t *testing.T) { eachWorld(t, testFollowToggle) }
 
 func testFollowToggle(t *testing.T, c *client) {
-	other := &client{t: t, base: c.base}
-	other.token = other.bootstrap("")
+	other := c.another()
 	otherID := str(other.getJSON("/v1/users/me")["user"], "id")
 
 	_, b := c.do("POST", "/v1/users/"+otherID+"/follow", nil)

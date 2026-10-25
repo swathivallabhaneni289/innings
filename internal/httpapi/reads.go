@@ -447,8 +447,8 @@ func (s *Server) handleFriends(v *view, w http.ResponseWriter, r *http.Request) 
 		seen[u.ID] = true
 		rows = append(rows, domain.FriendRow{User: u, Following: v.iFollow(u.ID)})
 	}
-	for _, id := range v.followsOf(v.me.ID) { // real users (and public fans) I follow
-		if u, ok := v.user(id); ok && !seen[id] {
+	for _, id := range v.followsOf(v.me.ID) { // real users (once onboarded) and public fans I follow
+		if u, ok := v.user(id); ok && !seen[id] && v.listed(id) {
 			seen[id] = true
 			rows = append(rows, domain.FriendRow{User: u, Following: true})
 		}
@@ -533,8 +533,7 @@ func (s *Server) handleSearch(v *view, w http.ResponseWriter, r *http.Request) {
 	if len(resp.Matches) > 50 {
 		resp.Matches = resp.Matches[:50]
 	}
-	v.loadUsers()
-	users := append(append(slices.Clone(s.World.Friends()), s.World.PublicFans()...), v.realOrder...)
+	users := append(append(slices.Clone(s.World.Friends()), s.World.PublicFans()...), v.listedUsers()...)
 	for _, u := range users {
 		if hit(strings.ToLower(u.Name + " " + u.Handle)) {
 			resp.Users = append(resp.Users, u)

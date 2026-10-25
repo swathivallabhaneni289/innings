@@ -1,5 +1,5 @@
 // Package httpapi serves the Innings JSON API (docs/API.md) by merging the simulated world (internal/sim) with
-// real guests' rows from the store.
+// real users' rows from the store.
 package httpapi
 
 import (
@@ -34,7 +34,6 @@ type World interface {
 	Replies(logID string, now time.Time) []domain.Reply
 	Crowd(matchID string) sim.Crowd
 	FriendsWatching(matchID string, now time.Time) []string
-	DemoHistory(userID string, now time.Time) ([]domain.MatchLog, []domain.Prediction, []string)
 }
 
 var _ World = (*sim.World)(nil)
@@ -47,11 +46,13 @@ type Server struct {
 	Log   *slog.Logger
 }
 
+// New returns the API on the sim clock now. Sign-in starts with no SMS provider (every start answers 503) until
+// the caller sets Auth.Verifier, e.g. from auth.VerifierFromEnv.
 func New(st *store.Store, world World, now func() time.Time, logger *slog.Logger) *Server {
 	if logger == nil {
 		logger = slog.Default()
 	}
-	return &Server{Store: st, World: world, Now: now, Log: logger, Auth: &auth.Service{Store: st, World: world, Now: now}}
+	return &Server{Store: st, World: world, Now: now, Log: logger, Auth: auth.NewService(st, logger)}
 }
 
 // Handler returns the full API with CORS, request logging and panic recovery.
@@ -61,7 +62,9 @@ func (s *Server) Handler() http.Handler {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		io.WriteString(w, "ok")
 	})
-	mux.HandleFunc("POST /v1/bootstrap", s.handleBootstrap)
+	// Sign-in: the only API routes that don't need a session.
+	mux.HandleFunc("POST /v1/auth/start", s.handleAuthStart)
+	mux.HandleFunc("POST /v1/auth/verify", s.handleAuthVerify)
 
 	authed := func(pattern string, fn func(v *view, w http.ResponseWriter, r *http.Request)) {
 		mux.Handle(pattern, s.Auth.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -69,6 +72,13 @@ func (s *Server) Handler() http.Handler {
 			fn(s.newView(r.Context(), me), w, r)
 		})))
 	}
+	// Account.
+	authed("POST /v1/auth/logout", s.handleLogout)
+	authed("POST /v1/bootstrap", s.handleBootstrap)
+	authed("GET /v1/handles/{handle}", s.handleHandleCheck)
+	authed("POST /v1/me/onboarded", s.handleOnboarded)
+	authed("POST /v1/contacts/match", s.handleContactsMatch)
+	authed("DELETE /v1/me", s.handleDeleteMe)
 	// Reads.
 	authed("GET /v1/home", s.handleHome)
 	authed("GET /v1/matches", s.handleMatches)
@@ -99,23 +109,6 @@ func (s *Server) Handler() http.Handler {
 	return s.cors(s.logRequests(s.recoverer(mux)))
 }
 
-func (s *Server) handleBootstrap(w http.ResponseWriter, r *http.Request) {
-	me, token, err := s.Auth.Bootstrap(r.Context(), auth.BearerToken(r))
-	if err != nil {
-		s.Log.Error("bootstrap", "err", err)
-		writeErr(w, http.StatusInternalServerError, "internal", "could not create guest")
-		return
-	}
-	v := s.newView(r.Context(), me)
-	writeJSON(w, http.StatusOK, map[string]any{
-		"token":      token,
-		"me":         me,
-		"teams":      v.teams(),
-		"players":    nonNilMap(s.World.Players()),
-		"serverTime": v.now.UTC().Format(time.RFC3339),
-	})
-}
-
 // ---- middleware ----
 
 func (s *Server) cors(next http.Handler) http.Handler {
@@ -125,6 +118,7 @@ func (s *Server) cors(next http.Handler) http.Handler {
 		h.Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		h.Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
 		h.Set("Access-Control-Max-Age", "86400")
+		h.Set("Access-Control-Expose-Headers", "Retry-After") // so a web build can read the resend wait on 429s
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusNoContent)
 			return

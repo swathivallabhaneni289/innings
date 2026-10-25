@@ -1,6 +1,7 @@
 package httpapi
 
 import (
+	"errors"
 	"net/http"
 	"slices"
 	"strings"
@@ -201,6 +202,7 @@ func (s *Server) handleFollow(v *view, w http.ResponseWriter, r *http.Request) {
 func (s *Server) handleUpdateMe(v *view, w http.ResponseWriter, r *http.Request) {
 	var in struct {
 		Name            *string `json:"name"`
+		Handle          *string `json:"handle"`
 		Bio             *string `json:"bio"`
 		FavouriteTeamID *string `json:"favouriteTeamId"`
 		AvatarColour    *string `json:"avatarColour"`
@@ -217,6 +219,19 @@ func (s *Server) handleUpdateMe(v *view, w http.ResponseWriter, r *http.Request)
 			return
 		}
 		u.Name = name
+	}
+	if in.Handle != nil {
+		h := domain.NormHandle(*in.Handle)
+		switch reason, msg := s.handleProblem(v, h); reason {
+		case "":
+			u.Handle = h
+		case handleTaken:
+			writeErr(w, http.StatusConflict, "handle-taken", msg)
+			return
+		default:
+			writeErr(w, http.StatusBadRequest, "bad-handle", msg)
+			return
+		}
 	}
 	if in.Bio != nil {
 		if utf8.RuneCountInString(*in.Bio) > 160 {
@@ -239,7 +254,12 @@ func (s *Server) handleUpdateMe(v *view, w http.ResponseWriter, r *http.Request)
 	if in.PhotoURI != nil {
 		u.PhotoURI = *in.PhotoURI
 	}
-	check(s.Store.UpdateUser(v.ctx, u))
+	err := s.Store.UpdateUser(v.ctx, u)
+	if errors.Is(err, store.ErrHandleTaken) { // someone took it between the check above and this write
+		writeErr(w, http.StatusConflict, "handle-taken", "@"+u.Handle+" was just taken.")
+		return
+	}
+	check(err)
 	writeJSON(w, http.StatusOK, u)
 }
 

@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"fmt"
 	"path/filepath"
 	"testing"
 	"time"
@@ -31,13 +32,16 @@ func TestStoreRoundTrip(t *testing.T) {
 	s := openTest(t)
 	now := time.Date(2026, 3, 1, 10, 0, 0, 0, time.UTC)
 	u := domain.User{ID: "u-1", Name: "Guest", Handle: "guest", AvatarColour: "#000", FavouriteTeamID: "ind"}
-	if err := s.CreateUser(ctx, u, "tok", now); err != nil {
+	if err := s.CreateAccount(ctx, u, "+919800000001", now); err != nil {
 		t.Fatal(err)
 	}
-	if got, ok, err := s.UserByToken(ctx, "tok"); err != nil || !ok || got.ID != "u-1" {
-		t.Fatalf("by token: %v %v %v", got, ok, err)
+	if err := s.CreateSession(ctx, "tok-hash", "u-1", now); err != nil {
+		t.Fatal(err)
 	}
-	if _, ok, _ := s.UserByToken(ctx, "nope"); ok {
+	if got, ok, err := s.UserBySession(ctx, "tok-hash"); err != nil || !ok || got.ID != "u-1" {
+		t.Fatalf("by session: %v %v %v", got, ok, err)
+	}
+	if _, ok, _ := s.UserBySession(ctx, "nope"); ok {
 		t.Fatal("unknown token resolved")
 	}
 
@@ -106,8 +110,8 @@ func TestSeedHistoryUsesFreshIDs(t *testing.T) {
 		{ID: "same", MatchID: "m1", Rating: 4, WatchedAt: domain.WatchHome, CreatedAt: "2026-01-02T00:00:00Z"},
 		{ID: "same", MatchID: "m0", Rating: 3, WatchedAt: domain.WatchHome, CreatedAt: "2026-01-01T00:00:00Z"},
 	}
-	for _, id := range []string{"a", "b"} {
-		s.CreateUser(ctx, domain.User{ID: id, Name: id, Handle: id}, "t"+id, now)
+	for i, id := range []string{"a", "b"} {
+		s.CreateAccount(ctx, domain.User{ID: id, Name: id, Handle: id}, fmt.Sprintf("+9198000000%02d", i), now)
 		if err := s.SeedHistory(ctx, id, demo, []domain.Prediction{{MatchID: "m1", WinnerID: "ind"}}, []string{"f1", "f2"}, now); err != nil {
 			t.Fatal(err)
 		}
