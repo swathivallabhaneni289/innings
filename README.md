@@ -95,7 +95,7 @@ make app          # Expo dev server; press i for iOS, a for Android
 
 On a real phone, connect it by cable and run `npx expo run:android --device` or `npx expo run:ios --device`. Keep the phone on the same Wi-Fi as your computer: the app finds the API there automatically. Set `EXPO_PUBLIC_API_URL` to point it somewhere else.
 
-If you installed a build from before sign-in existed, install again the same way. Sign-in added native pieces (secure storage for the session, contacts, hashing) that an old build doesn't have. To sign in, type any number; in dev mode the code shows on the screen, so tap it to fill it in.
+If you installed a build from before sign-in existed, install again. Sign-in added native pieces (secure storage for the session, contacts, hashing) that an old build doesn't have. If you already have `ios/` or `android/` folders from that earlier build, run `npx expo prebuild --clean` first so they pick up the new permissions, then `npx expo run:ios` or `npx expo run:android`. To sign in, type any number; in dev mode the code shows on the screen, so tap it to fill it in.
 
 ```bash
 make test         # Go tests

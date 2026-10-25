@@ -8,10 +8,9 @@ import { Button, Empty, KeyboardAware, Loading, QueryState, Rule, Screen, Txt } 
 import { squads, useActions, useMatchPage, useNow, useUserProfile, type FeedItem } from '@/data';
 import type { Match, MatchLog } from '@/domain/types';
 import { StoryCard, STORY_H } from '@/features/share/StoryCard';
-import { ForceTheme } from '@/theme';
+import { ForceTheme, useTheme } from '@/theme';
 import { useShareStory } from '@/features/share/useShareStory';
 import { stubNo as fmtStubNo } from '@/lib/format';
-import { useTheme } from '@/theme';
 import { draftFromLog, emptyDraft, toNewLog, type Draft, type StepId } from './draft';
 import { LogHeader } from './LogHeader';
 import { MatchLine } from './MatchLine';

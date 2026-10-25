@@ -36,7 +36,7 @@ created: 2026-10-25
 | 07-01 | ACCT-06 | Logout ends one session; delete removes everything and other fans' screens still load | integration | `go test ./internal/httpapi -run 'TestLogoutEndsOnlyThisSession|TestDeleteAccount'`, `go test ./internal/store -run TestDeleteUser` | green |
 | 07-01 | ACCT-07 | Sessions stored hashed; unknown or missing token is 401; old guest database migrates | integration | `go test ./internal/store -run 'TestSessions|TestMigrateGuestDB'`, `go test ./internal/httpapi -run 'TestBootstrapResumes|TestUnauthorized'` | green |
 | 07-01 | ACCT-08 | Every screen on an empty account | manual (emulator) | see below | green |
-| 07-01 | all | The whole API flow end to end on a fresh database | end to end | `smoke2.py` against `INNINGS_DEV_OTP=1` on port 8096: 70 of 70 checks | green |
+| 07-01 | all | The whole API flow end to end on a fresh database | end to end | `python3 scripts/smoke.py` against a fresh `INNINGS_DEV_OTP=1` server: 70 of 70 checks | green |
 
 *Status: pending · green · red · flaky*
 
@@ -55,7 +55,8 @@ ok  	.../internal/sim
 ok  	.../internal/store
 $ npx tsc --noEmit               exit 0
 $ npx jest                       Tests: 39 passed, 39 total
-$ python3 smoke2.py              PASSED 70 checks; FAILED 0
+$ python3 scripts/smoke.py http://localhost:8096
+PASSED 70 checks; FAILED 0
 ```
 
 Migration 0002 was run on a copy of an existing `innings.db`. Its 3 old guests were kept, hidden and not onboarded, and their 15 logs and 15 follows were intact. An old guest token gets 401.
