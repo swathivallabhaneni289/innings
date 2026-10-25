@@ -14,19 +14,25 @@ const TILTS = ['-4deg', '3deg', '-2deg', '5deg', '-3deg'];
 export function PredictorRank({ stats, isMe, ownerFirstName }: { stats: FanStats; isMe: boolean; ownerFirstName: string }) {
   const [open, setOpen] = useState<BadgeDef['id'] | null>(null);
   const solo = stats.rankOf <= 1;
+  // Following fans but no call settled yet: "#9 of 9" would read as a verdict on someone who hasn't played.
+  const noCalls = !solo && stats.points === 0 && stats.accuracy == null;
   const openBadge = stats.badges.find((b) => b.id === open);
 
   return (
     <Panel>
-      {solo ? (
+      {solo || noCalls ? (
         <View>
           <Txt variant="h2">Unranked</Txt>
           <Txt variant="bodySmall" tone="soft" style={{ marginTop: 4 }}>
-            {isMe
-              ? 'Rank is counted among the fans you follow. Follow a few to start a rivalry.'
-              : `${ownerFirstName} isn't following anyone yet, so there's no table to top.`}
+            {noCalls
+              ? isMe
+                ? `No calls settled yet. Call a winner before the first ball to join the table of ${stats.rankOf}.`
+                : `${ownerFirstName} hasn't had a call settled yet.`
+              : isMe
+                ? 'Rank is counted among the fans you follow. Follow a few to start a rivalry.'
+                : `${ownerFirstName} isn't following anyone yet, so there's no table to top.`}
           </Txt>
-          {isMe ? (
+          {isMe && solo ? (
             <View style={{ flexDirection: 'row', marginTop: 12 }}>
               <Button label="Find friends" kind="outline" size="sm" onPress={() => router.push('/friends')} style={{ minHeight: 44 }} />
             </View>

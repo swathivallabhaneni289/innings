@@ -1,10 +1,10 @@
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Button, Empty, Loading, QueryState, Rule, Screen, Txt } from '@/components';
+import { Button, Empty, KeyboardAware, Loading, QueryState, Rule, Screen, Txt } from '@/components';
 import { squads, useActions, useMatchPage, useNow, useUserProfile, type FeedItem } from '@/data';
 import type { Match, MatchLog } from '@/domain/types';
 import { StoryCard, STORY_H } from '@/features/share/StoryCard';
@@ -240,7 +240,7 @@ export function LogFlow({ presetMatchId }: { presetMatchId?: string }) {
           onJump={go}
         />
       }>
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAware>
         <ScrollView
           ref={scroll}
           style={{ flex: 1 }}
@@ -270,7 +270,7 @@ export function LogFlow({ presetMatchId }: { presetMatchId?: string }) {
             </View>
           </View>
         ) : null}
-      </KeyboardAvoidingView>
+      </KeyboardAware>
       {saved ? (
         // The 9:16 story card, mounted off-screen (outside the scroll view) so it's laid out and stamped before Share.
         <View pointerEvents="none" style={styles.offscreen}>

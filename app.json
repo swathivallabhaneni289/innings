@@ -21,7 +21,10 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.innings.app"
+      "package": "com.innings.app",
+      "blockedPermissions": [
+        "android.permission.WRITE_CONTACTS"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -43,6 +46,13 @@
         "expo-image-picker",
         {
           "photosPermission": "Innings uses your photos so you can add one to a match memory."
+        }
+      ],
+      "expo-secure-store",
+      [
+        "expo-contacts",
+        {
+          "contactsPermission": "Innings uses your contacts to find friends who are already on Innings. Numbers are matched as hashes and never stored."
         }
       ]
     ],

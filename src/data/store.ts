@@ -1,4 +1,5 @@
-// On-device preferences only. Everything else lives in the Go API.
+// On-device preferences only. Everything else lives in the Go API; the session token lives in SecureStore
+// (src/data/session.ts).
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 import { create } from 'zustand';
@@ -7,10 +8,8 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import type { ThemePreference } from '@/domain/types';
 
 interface PrefsState {
-  token: string | null; // guest session token from POST /v1/bootstrap
   theme: ThemePreference;
   notificationsSeenAt: string | null; // ISO; the bell counts items newer than this
-  setToken: (token: string | null) => void;
   setTheme: (theme: ThemePreference) => void;
   markNotificationsSeen: () => void;
 }
@@ -18,17 +17,21 @@ interface PrefsState {
 export const usePrefs = create<PrefsState>()(
   persist(
     (set) => ({
-      token: null,
       theme: 'auto',
       notificationsSeenAt: null,
-      setToken: (token) => set({ token }),
       setTheme: (theme) => set({ theme }),
       markNotificationsSeen: () => set({ notificationsSeenAt: new Date().toISOString() }),
     }),
     {
       name: 'innings-prefs-v1',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: ({ token, theme, notificationsSeenAt }) => ({ token, theme, notificationsSeenAt }),
+      // v0 also kept the old guest token here. It is dropped: sign-in replaced the guest account.
+      version: 1,
+      migrate: (persisted) => {
+        const old = (persisted ?? {}) as Partial<PrefsState>;
+        return { theme: old.theme ?? 'auto', notificationsSeenAt: old.notificationsSeenAt ?? null } as PrefsState;
+      },
+      partialize: ({ theme, notificationsSeenAt }) => ({ theme, notificationsSeenAt }),
     },
   ),
 );

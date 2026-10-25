@@ -1,5 +1,6 @@
 export { BallRating } from './BallRating';
 export { CricketBall, type BallFill } from './CricketBall';
+export { KeyboardAware } from './KeyboardAware';
 export { SpinningBall, Stamp } from './Motion';
 export { Paper } from './Paper';
 export { Screen } from './Screen';

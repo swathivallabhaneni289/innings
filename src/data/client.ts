@@ -2,7 +2,7 @@ import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
 import type { Player, Team } from '@/domain/types';
-import { usePrefs } from './store';
+import { endSession, useSession } from './session';
 
 /**
  * The Go API. On a phone it is the Metro host's LAN address; on the iOS Simulator, localhost; on the Android
@@ -28,8 +28,13 @@ export class ApiError extends Error {
   }
 }
 
-export async function api<T>(path: string, opts: { method?: string; body?: unknown } = {}): Promise<T> {
-  const token = usePrefs.getState().token;
+/**
+ * One call to the Go API. Sends the session token (or `opts.token`, for a call that must outlive the session,
+ * like logout). A 401 on a request that carried the current token ends the session, which sends the fan back
+ * to sign-in; a 401 without a token (sign-in screens) is just an error.
+ */
+export async function api<T>(path: string, opts: { method?: string; body?: unknown; token?: string | null } = {}): Promise<T> {
+  const token = opts.token !== undefined ? opts.token : useSession.getState().token;
   let res: Response;
   try {
     res = await fetch(API_URL + path, {
@@ -45,7 +50,10 @@ export async function api<T>(path: string, opts: { method?: string; body?: unkno
   }
   if (res.status === 204) return undefined as T;
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new ApiError(res.status, json.error ?? 'error', json.message ?? `Request failed (${res.status})`);
+  if (!res.ok) {
+    if (res.status === 401 && token && token === useSession.getState().token) endSession();
+    throw new ApiError(res.status, json.error ?? 'error', json.message ?? `Request failed (${res.status})`);
+  }
   return json as T;
 }
 

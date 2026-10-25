@@ -8,17 +8,18 @@ import {
   SchibstedGrotesk_700Bold,
   SchibstedGrotesk_800ExtraBold,
 } from '@expo-google-fonts/schibsted-grotesk';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { ErrorState, Loading, Paper } from '@/components';
-import { useBootstrap } from '@/data';
+import { Button, ErrorState, Loading, Paper } from '@/components';
+import { loadSession, queryClient, signOut, useAccount, useBootstrap, useSession } from '@/data';
 import { usePrefsHydrated } from '@/data/store';
 import { useQaDriver } from '@/lib/qaDriver';
 import { ThemeProvider, useTheme } from '@/theme';
@@ -40,13 +41,18 @@ export default function RootLayout() {
     IBMPlexMono_600SemiBold,
   });
   const hydrated = usePrefsHydrated();
-  const [queryClient] = useState(() => new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: 10_000 } } }));
+  const sessionKnown = useSession((s) => s.status !== 'loading');
 
   useEffect(() => {
-    if (fontsLoaded && hydrated) SplashScreen.hideAsync().catch(() => {});
-  }, [fontsLoaded, hydrated]);
+    loadSession();
+  }, []);
 
-  if (!fontsLoaded || !hydrated) return null;
+  // The splash stays up until the fonts, the prefs and the stored session have all been read.
+  useEffect(() => {
+    if (fontsLoaded && hydrated && sessionKnown) SplashScreen.hideAsync().catch(() => {});
+  }, [fontsLoaded, hydrated, sessionKnown]);
+
+  if (!fontsLoaded || !hydrated || !sessionKnown) return null;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -61,31 +67,57 @@ export default function RootLayout() {
   );
 }
 
-/** Signs the guest in and loads the team/player catalog before any screen renders. */
+/**
+ * Picks the side of the gate. Exactly one group is open at a time, so Expo Router lands the fan on it by itself:
+ * (auth) when signed out, onboarding until the account is onboarded, then (app). A session found at launch is
+ * bootstrapped (catalog, me, account) before any signed-in screen renders.
+ */
 function Gate() {
   const t = useTheme();
+  const status = useSession((s) => s.status);
+  const ready = useSession((s) => s.ready);
+  const account = useAccount();
   const boot = useBootstrap();
   const { run } = boot;
   useQaDriver();
   useEffect(() => {
-    run();
-  }, [run]);
+    if (status === 'signedIn' && !ready) run();
+  }, [status, ready, run]);
 
-  if (!boot.ready) {
+  const signedIn = status === 'signedIn';
+  const onboarded = !!account.data?.onboarded;
+  const bar = <StatusBar style={t.mode === 'paper' ? 'dark' : 'light'} />;
+  const error = boot.error ?? (account.error as Error | null);
+
+  if (signedIn && (!ready || !account.data)) {
     return (
       <Paper>
-        <StatusBar style={t.mode === 'paper' ? 'dark' : 'light'} />
-        {boot.error ? <ErrorState error={boot.error} onRetry={run} /> : <Loading label="Walking out to bat…" />}
+        {bar}
+        {error && !boot.running ? (
+          <View style={{ flex: 1 }}>
+            <ErrorState error={error} onRetry={run} />
+            <Button label="Sign out" kind="ghost" size="sm" onPress={signOut} style={{ alignSelf: 'center', marginBottom: 48, minHeight: 44 }} />
+          </View>
+        ) : (
+          <Loading label="Walking out to bat…" />
+        )}
       </Paper>
     );
   }
 
   return (
     <>
-      <StatusBar style={t.mode === 'paper' ? 'dark' : 'light'} />
+      {bar}
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: t.paper } }}>
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="log/index" options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom' }} />
+        <Stack.Protected guard={!signedIn}>
+          <Stack.Screen name="(auth)" />
+        </Stack.Protected>
+        <Stack.Protected guard={signedIn && !onboarded}>
+          <Stack.Screen name="onboarding" />
+        </Stack.Protected>
+        <Stack.Protected guard={signedIn && onboarded}>
+          <Stack.Screen name="(app)" />
+        </Stack.Protected>
       </Stack>
     </>
   );

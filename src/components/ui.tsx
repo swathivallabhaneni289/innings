@@ -186,11 +186,16 @@ export function SplitBar({ teamIds, shares, label }: { teamIds: [string, string]
           </View>
         </View>
       </View>
-      <View style={styles.splitTrack}>
-        <View style={{ flex: Math.max(left, 0.001), backgroundColor: t.ink }} />
-        <View style={{ width: 3 }} />
-        <View style={{ flex: Math.max(1 - left, 0.001), backgroundColor: t.inkFaint }} />
-      </View>
+      {total > 0 ? (
+        <View style={styles.splitTrack}>
+          <View style={{ flex: Math.max(left, 0.001), backgroundColor: t.ink }} />
+          <View style={{ width: 3 }} />
+          <View style={{ flex: Math.max(1 - left, 0.001), backgroundColor: t.inkFaint }} />
+        </View>
+      ) : (
+        // No picks yet: an empty track, so it doesn't read as a 50/50 split.
+        <View style={[styles.splitTrack, { borderWidth: 1, borderColor: t.rule }]} />
+      )}
     </View>
   );
 }

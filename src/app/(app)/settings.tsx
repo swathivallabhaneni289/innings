@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Panel, QueryState, Screen, SectionHeader, Txt } from '@/components';
 import { useMe } from '@/data';
 import { API_URL } from '@/data/client';
+import { AccountSection } from '@/features/auth/AccountSection';
 import { AppearancePicker } from '@/features/profile/AppearancePicker';
 import { SettingsForm } from '@/features/profile/SettingsForm';
 
@@ -27,11 +28,13 @@ export default function SettingsScreen() {
           <AppearancePicker />
         </Panel>
 
+        <AccountSection />
+
         <SectionHeader title="About" />
         <Panel>
           <Txt variant="h3">Innings</Txt>
           <Txt variant="bodySmall" tone="soft" style={{ marginTop: 2 }}>
-            The fan's cricket diary. Every match you watched, on a ticket.
+            The fan&apos;s cricket diary. Every match you watched, on a ticket.
           </Txt>
           <Txt variant="monoSmall" tone="soft" style={{ marginTop: 12 }}>
             Version {Constants.expoConfig?.version ?? '1.0.0'}

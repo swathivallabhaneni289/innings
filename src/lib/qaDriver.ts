@@ -1,6 +1,8 @@
 // Dev-only QA driver: when Metro is started with EXPO_PUBLIC_QA_DRIVER=<url>, the app polls that URL for a
 // route (plain text, e.g. "/match/ind-aus-t20i-3") and navigates to it. Used to screenshot every screen from the
-// command line without tapping the simulator. Inert in normal runs.
+// command line without tapping the simulator. Inert in normal runs. Signed-in routes live in the (app) group,
+// which doesn't change their URLs: "/vault" and "/match/…" work as before. While signed out, a signed-in route
+// redirects to Welcome.
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { LogBox } from 'react-native';
@@ -24,9 +26,10 @@ export function useQaDriver() {
         last = target;
         if (target.startsWith('theme:')) {
           usePrefs.getState().setTheme(target.slice(6) as 'auto' | 'paper' | 'floodlights');
-        } else if (target.startsWith('/(tabs)') || target === '/') {
+        } else if (target.startsWith('/(tabs)') || target.startsWith('/(app)') || target === '/') {
           if (router.canDismiss()) router.dismissAll();
-          router.replace(target as never);
+          // Old scripts say "/(tabs)/vault"; the tabs now sit inside the (app) group.
+          router.replace(target.replace(/^\/\(tabs\)/, '/(app)/(tabs)') as never);
         } else {
           router.push(target as never);
         }

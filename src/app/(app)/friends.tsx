@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { View } from 'react-native';
 
-import { Empty, Panel, QueryState, Screen, Txt } from '@/components';
+import { Empty, Panel, QueryState, Screen, SectionHeader, Txt } from '@/components';
 import { useFriends } from '@/data';
+import { ContactsFinder } from '@/features/onboarding/ContactsFinder';
 import { FriendRow } from '@/features/profile/FriendRow';
 
 export default function FriendsScreen() {
@@ -20,6 +21,9 @@ export default function FriendsScreen() {
 
   return (
     <Screen back title="Friends" onRefresh={refresh} refreshing={pulling}>
+      <SectionHeader title="From your contacts" style={{ marginTop: 0 }} />
+      <ContactsFinder Row={FriendRow} />
+      <SectionHeader title="Fans on Innings" />
       <QueryState q={q} loadingLabel="Checking the dressing room…">
         {({ friends }) =>
           friends.length === 0 ? (
@@ -31,7 +35,7 @@ export default function FriendsScreen() {
               <Txt variant="body" tone="soft">
                 Follow fans to see their stubs in your feed and race them on the Bragging Board.
               </Txt>
-              <Txt variant="h3" style={{ marginTop: 28, marginBottom: 10 }}>
+              <Txt variant="h3" style={{ marginTop: 16, marginBottom: 10 }}>
                 Following {friends.filter((f) => f.following).length} of {friends.length}
               </Txt>
               <Panel style={{ paddingVertical: 2 }}>

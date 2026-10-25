@@ -1,9 +1,9 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useRef, useState, type ReactNode } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Avatar, Button, CricketBall, MatchTicket, QueryState, Screen, SectionHeader, TeamBadge, Txt } from '@/components';
+import { Avatar, Button, CricketBall, KeyboardAware, MatchTicket, QueryState, Screen, SectionHeader, TeamBadge, Txt } from '@/components';
 import { getPlayer, matchTitle, playerName, useActions, useLogItem, useMe, useNow } from '@/data';
 import type { FeedItem } from '@/domain/api';
 import type { Reply } from '@/domain/types';
@@ -21,11 +21,11 @@ export default function StubScreen() {
   // The ticket below already carries the teams, so the title names whose stub this is.
   const title = !item ? 'Stub' : item.user.id === me.data?.id ? 'Your stub' : `${item.user.name.split(' ')[0]}'s stub`;
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+    <KeyboardAware>
       <Screen back title={title} kicker={item ? stubNo(item.log.stubNo) : undefined} scroll={false}>
         <QueryState q={q}>{(d) => <StubBody item={d} />}</QueryState>
       </Screen>
-    </KeyboardAvoidingView>
+    </KeyboardAware>
   );
 }
 
