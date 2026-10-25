@@ -34,7 +34,7 @@ status: complete
 
 - **Completed:** 2026-10-22
 - **Duration:** not instrumented
-- **Commits:** none yet (uncommitted)
+- **Commits:** `336d7b1` (the seed ships with the simulated world) (committed together on 2026-10-22, after Phase 6)
 
 ## Accomplishments
 

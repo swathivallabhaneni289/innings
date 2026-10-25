@@ -38,7 +38,7 @@ status: complete
 
 - **Completed:** 2026-10-22
 - **Duration:** not instrumented (one evening for Phases 1 to 5)
-- **Commits:** none yet; the work is uncommitted on top of `d9d233a Initial commit`
+- **Commits:** `953c5b5` (scaffold), `08504ec` (contract), `6806462` (data layer), `98d05e3` (root layout and tab bar) (committed together on 2026-10-22, after Phase 6). The first design system was replaced in Phase 6 (`562a217`)
 
 ## Accomplishments
 
@@ -49,7 +49,7 @@ status: complete
 - Components: `Paper` (grain texture from `assets/textures/`, since removed in Phase 6, plus SVG ruled lines), `Screen`, `Txt`, `States` (`Loading`, `ErrorState`, `Empty`, `QueryState`), `ui` (Button, Chip, Panel, Rule, SectionHeader, SplitBar, Stat, TeamBadge, Avatar, LiveTag), `CricketBall`, `BallRating` (half-balls).
 - Root layout loads ten font faces, waits for stored preferences, bootstraps the guest and only then renders the stack; the Log screen is a full-screen modal.
 - Tab bar: Home, Matches, a raised red cricket ball for Log, Vault, Profile; the Log tab opens `/log` instead of switching tabs.
-- Data layer: `api()` adds the Bearer token and maps failures to `ApiError`; when the server is unreachable it says so and suggests `make api`. The API host comes from `EXPO_PUBLIC_API_URL`, else the Metro host's LAN address (so a phone in Expo Go reaches the laptop), else 127.0.0.1, port 8088.
+- Data layer: `api()` adds the Bearer token and maps failures to `ApiError`; when the server is unreachable it says so and suggests `make api`. The API host comes from `EXPO_PUBLIC_API_URL`, else the Metro host's LAN address (so a phone reaches the laptop), else 127.0.0.1, port 8088.
 
 ## Files Created/Modified
 

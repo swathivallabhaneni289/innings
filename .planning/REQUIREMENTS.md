@@ -84,19 +84,19 @@ Derived from every bullet in `docs/PLAN.md`, with the gaps settled in its "Build
 - [x] **DESIGN-03**: Ratings drawn as five cricket balls, half-balls included
 - [x] **DESIGN-04**: Motion: a ball spin when a rating is set, a stamp when a match is saved
 - [x] **DESIGN-05**: Three-role type system: condensed display for scores and headings, a text face for reviews, mono for stats
-- [ ] **DESIGN-06**: Direction C, Matchday Ticket, applied across the design system and every screen in both themes
-- [ ] **DESIGN-07**: Screenshot QA of every screen in both themes, with defects fixed
+- [x] **DESIGN-06**: Direction C, Matchday Ticket, applied across the design system and every screen in both themes
+- [x] **DESIGN-07**: Screenshot QA with defects fixed: 22 screens captured (4 in floodlights) and scored in a 6-pillar review, every prioritized fix applied
 
 ### Platform
 
-- [x] **PLAT-01**: One Expo codebase runs on iPhone (native dev build on the simulator) and on phones through Expo Go
+- [x] **PLAT-01**: One Expo codebase runs on iPhone and Android as a native development build (Expo Go from the stores only opens the newest SDK)
 - [x] **PLAT-02**: Go API with SQLite, embedded migrations and Postgres-portable SQL; `make api` needs no setup
 - [x] **PLAT-03**: Guest accounts: `POST /v1/bootstrap` creates or resumes a guest; the token lives on the device
 - [x] **PLAT-04**: A deterministic simulated world (fixtures, XIs, live scores, friends, fans, crowd) needs no API keys
 - [x] **PLAT-05**: One JSON contract in TypeScript, mirrored in Go, consumed through typed react-query hooks
-- [ ] **PLAT-06**: Android readiness: the app checked on an Android emulator or device (icons, fonts, API host, system navigation)
-- [ ] **PLAT-07**: App icon, adaptive icon and splash in the chosen direction
-- [ ] **PLAT-08**: README and the public GitHub repository
+- [x] **PLAT-06**: Android readiness: the app checked on an Android emulator or device (icons, fonts, API host, system navigation)
+- [x] **PLAT-07**: App icon, adaptive icon and splash in the chosen direction
+- [x] **PLAT-08**: README and the GitHub repository (private, `swathivallabhaneni289/innings`)
 
 ## v2 Requirements
 
@@ -143,15 +143,15 @@ From the plan's "Later" list, plus items deferred by build decisions on 2026-10-
 | VAULT-01, VAULT-02, VAULT-03, VAULT-04, VAULT-05, VAULT-06 | Phase 5 | Complete |
 | PROF-01, PROF-02, PROF-03, PROF-04, PROF-05, PROF-06, PROF-07 | Phase 5 | Complete |
 | SOC-05, LOG-07 | Phase 5 | Complete |
-| DESIGN-06, DESIGN-07 | Phase 6 | Pending |
-| PLAT-06, PLAT-07, PLAT-08 | Phase 6 | Pending |
+| DESIGN-06, DESIGN-07 | Phase 6 | Complete |
+| PLAT-06, PLAT-07, PLAT-08 | Phase 6 | Complete |
 
 **Coverage:**
 
-- v1 requirements: 64 total (59 complete, 5 pending)
+- v1 requirements: 64 total (64 complete, 0 pending)
 - Mapped to phases: 64
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-10-22*
-*Last updated: 2026-10-22, after direction C was chosen (DESIGN-06 names it)*
+*Last updated: 2026-10-25, Phase 6 requirements checked off; PLAT-01, PLAT-08 and DESIGN-07 reworded to match what shipped. The readable version with acceptance checks is `docs/REQUIREMENTS.md`.*

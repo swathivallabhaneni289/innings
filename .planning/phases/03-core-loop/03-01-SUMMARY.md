@@ -38,7 +38,7 @@ status: complete
 
 - **Completed:** 2026-10-22
 - **Duration:** not instrumented
-- **Commits:** none yet (uncommitted)
+- **Commits:** `8270558` (Matches and the Match Page), `b7bf2dd` (Log flow and stub) (committed together on 2026-10-22, after Phase 6)
 
 ## Accomplishments
 

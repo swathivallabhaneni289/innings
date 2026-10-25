@@ -12,7 +12,7 @@ Capture how fans felt about a match, not what happened in it. Cricbuzz covers th
 
 ### Validated
 
-(None yet. Built and checked by tests and typecheck on 2026-10-22; not yet used by real fans.)
+(None yet. Everything below is built and checked by tests, typecheck and screenshots on iOS and Android; it has not yet been used by real fans. The developer's phone testing is next.)
 
 ### Active
 
@@ -22,10 +22,10 @@ Capture how fans felt about a match, not what happened in it. Cricbuzz covers th
 - [x] Fans can follow friends, see their stubs on Home, and like, reply or tap "I was there too"
 - [x] Fans can browse the Vault (collections, rankings, On This Day), log old matches and pin a Top 5
 - [x] Fans have a profile: Top 5 stubs, stats, stub collection, where they watched, predictor rank and badges
-- [ ] The app wears the chosen Matchday Ticket design across every screen in both themes (Phase 6)
-- [ ] The repo is ready to show: icons, Android check, README, GitHub (Phase 6)
+- [x] The app wears the chosen Matchday Ticket design across every screen in both themes (Phase 6)
+- [x] The repo is ready to show: icons, Android check, README, GitHub (Phase 6)
 
-See REQUIREMENTS.md for the full checkable list (64 v1 requirements across 6 phases).
+See REQUIREMENTS.md for the full checkable list (64 v1 requirements across 6 phases, all complete). `docs/REQUIREMENTS.md` is the same list written for readers, with acceptance checks and where each one lives in the code.
 
 ### Out of Scope
 
@@ -54,7 +54,7 @@ See REQUIREMENTS.md for the full checkable list (64 v1 requirements across 6 pha
 - **Contract**: `src/domain/types.ts` and `src/domain/api.ts` are the JSON contract; Go mirrors them in `internal/domain`. Arrays and maps are never null.
 - **Data honesty**: the Vault holds real, verified matches only; an entry that cannot be verified is dropped.
 - **Design**: no generic AI look (the plan names dark mode by default, neon gradients and rounded cards everywhere). Direction C, Matchday Ticket, is the target from Phase 6 on.
-- **Distribution**: tonight the app runs as a native iOS dev build on the simulator and in Expo Go on phones. Store builds wait on the developer's accounts.
+- **Distribution**: the app runs as a native development build: on the iOS Simulator, on an Android emulator, and on phones with `npx expo run:ios|android --device`. Expo Go from the stores only opens projects on the newest SDK. Store builds wait on the developer's accounts.
 
 ## Key Decisions
 
@@ -73,9 +73,11 @@ See REQUIREMENTS.md for the full checkable list (64 v1 requirements across 6 pha
 | Bragging Board covers the last 7 days | "This week" made concrete: points from matches finished in the last 7 days | Built |
 | Vault: real matches only, triple fact-check | The archive is the app's credibility on no-match days | 58 confirmed, 0 fixed, 0 dropped |
 | Heritage scorebook look (first pass) | Taken from the plan's design section | Built in Phase 1; superseded 2026-10-22 |
-| Direction C, Matchday Ticket | Developer's choice from three sketched directions after the first pass felt AI-made | Chosen 2026-10-22; not yet built (Phase 6) |
+| Direction C, Matchday Ticket | Developer's choice from three sketched directions after the first pass felt AI-made | Built 2026-10-22 (Phase 6); UI review 16/24 before fixes, all prioritized fixes applied |
 | Directions A Almanack and B Pavilion Scoreboard | Sketched on the design canvas alongside C | Not chosen |
 | API on port 8088, Metro on 8082 | 8080 is used by another local API on the developer's machine | In use |
+| Phones run a development build, not store Expo Go | Store Expo Go only opens the newest SDK | README run steps use `npx expo run:ios --device` and `npx expo run:android --device` |
+| Private GitHub repository | Developer's choice | `swathivallabhaneni289/innings`, branch `main` |
 
 ---
-*Last updated: 2026-10-22 after the design direction choice*
+*Last updated: 2026-10-25 after v1.0 was completed and the requirements document was added*

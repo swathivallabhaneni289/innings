@@ -4,7 +4,7 @@
 
 Innings delivers a cricket fan's diary in six phases. Phase 1 fixes the shared JSON contract, the Expo scaffold, the first design system and the data layer. Phase 2 builds the Go API and the simulated cricket world it serves. Phase 3 builds the core loop (Matches tab, the Match Page in its three states, the Log flow and the ticket stub). Phase 4 adds the social layer and predictions on top. Phase 5 adds the Vault and the Profile. Phase 6 re-skins the app in the chosen Matchday Ticket direction and prepares the repo to be shown.
 
-Phases 1 to 5 were planned and built on 2026-10-22 in one evening, by a lead agent directing parallel sub-agents with strict file ownership. The Phase 1 contract (`src/domain/types.ts`, `src/domain/api.ts`, `docs/API.md`) was the fixed interface every workstream built against.
+All six phases were planned and built on 2026-10-22 in one evening, by a lead agent directing parallel sub-agents with strict file ownership. The milestone is complete: 8 of 8 plans, 64 of 64 v1 requirements. The Phase 1 contract (`src/domain/types.ts`, `src/domain/api.ts`, `docs/API.md`) was the fixed interface every workstream built against.
 
 ## Phases
 
@@ -18,7 +18,7 @@ Phases 1 to 5 were planned and built on 2026-10-22 in one evening, by a lead age
 - [x] **Phase 3: Core loop** - Matches tab, Match Page in three states, Log flow, ticket stub (completed 2026-10-22)
 - [x] **Phase 4: Social & predictions** - Home, friends' feed, predictions with the lock, Fans' Player of the Match, Bragging Board (completed 2026-10-22)
 - [x] **Phase 5: Vault & Profile** - Fact-checked classics, rankings, Top 5, profile stats, share card (completed 2026-10-22)
-- [ ] **Phase 6: Design pass & release prep** - Direction C chosen 2026-10-22; re-skin under way; screenshot QA, icons, Android check, README, GitHub still to do
+- [x] **Phase 6: Design pass & release prep** - Matchday Ticket re-skin, UI review and fixes, icons, Android, README, GitHub (completed 2026-10-22)
 
 ## Phase Details
 
@@ -138,11 +138,13 @@ Plans:
   4. The app has been checked on an Android emulator or device
   5. A README describes the project and how to run it; the code is pushed to GitHub
 
-**Plans**: 0/1 plans executed (06-01 in progress)
+*Outcome:* criteria 1, 3, 4 and 5 met. Criterion 2 was narrowed: 22 screens were captured and reviewed (4 of them in floodlights), and every prioritized fix was applied. The rest of the floodlights walk-through is a manual check in `06-VALIDATION.md`.
+
+**Plans**: 1/1 plans executed
 
 Plans:
 
-- [ ] 06-01-PLAN.md: Matchday Ticket re-skin, screenshot QA, icons, Android check, README, GitHub
+- [x] 06-01-PLAN.md: Matchday Ticket re-skin, screenshot QA, icons, Android check, README, GitHub
 
 **UI hint**: yes
 
@@ -158,4 +160,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 (2's two plans 
 | 3. Core loop | 1/1 | Complete | 2026-10-22 |
 | 4. Social & predictions | 1/1 | Complete | 2026-10-22 |
 | 5. Vault & Profile | 2/2 | Complete | 2026-10-22 |
-| 6. Design pass & release prep | 0/1 | In progress (direction C chosen, re-skin under way) | - |
+| 6. Design pass & release prep | 1/1 | Complete | 2026-10-22 |

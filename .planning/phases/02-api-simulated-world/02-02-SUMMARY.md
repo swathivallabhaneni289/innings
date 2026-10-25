@@ -37,7 +37,7 @@ status: complete
 
 - **Completed:** 2026-10-22
 - **Duration:** not instrumented
-- **Commits:** none yet (uncommitted)
+- **Commits:** `6743d09` (scoring and aggregates), `a8900c2` (store, guest auth and routes) (committed together on 2026-10-22, after Phase 6)
 
 ## Accomplishments
 

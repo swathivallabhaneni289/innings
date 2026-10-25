@@ -1,7 +1,7 @@
 # Phase 6: Design pass & release prep - Context
 
 **Gathered:** 2026-10-22
-**Status:** In progress (direction decided; re-skin under way)
+**Status:** Complete 2026-10-22 (see `06-01-SUMMARY.md`)
 
 <domain>
 ## Phase Boundary
@@ -34,7 +34,7 @@ Not in this phase: new features, store builds (EAS, App Store, Play Store need t
 
 ### QA and release
 - **D-12:** Screenshot QA covers every screen in both themes, driven from the command line with the existing QA driver (`src/lib/qaDriver.ts`: Metro started with `EXPO_PUBLIC_QA_DRIVER=<url>`, the app polls the URL for a route or `theme:paper` / `theme:floodlights`).
-- **D-13:** Distribution stays as tonight: native iOS dev build on the simulator, Expo Go on phones. Android is checked on an emulator or a device.
+- **D-13:** Distribution stays as tonight: native iOS dev build on the simulator, Expo Go on phones. Android is checked on an emulator or a device. *(Superseded during the phase: Expo Go from the stores only opens the newest SDK, so phones use a development build. See the summary.)*
 
 ### Claude's Discretion
 - The barcode drawing, notch geometry and how the red stamp circle sits on a feed stub.

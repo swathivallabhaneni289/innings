@@ -74,7 +74,7 @@ $ go build ./internal/domain
 |----------|-------------|------------|-------------------|
 | Fonts load and the splash hides only after fonts and stored prefs are ready | DESIGN-05 | Needs a running app | Cold-start the dev build; no flash of system font |
 | Auto follows the system scheme; Paper and Floodlights override it | DESIGN-01 | Needs the OS appearance switch | Toggle system dark mode with Auto, then force each theme in Settings |
-| Phone in Expo Go reaches the API on the laptop | PLAT-01 | Needs a device on the same network | Start `make api` and `make app`, open in Expo Go, confirm Home loads |
+| Phone reaches the API on the laptop | PLAT-01 | Needs a device on the same network | Start `make api`, install a development build with `npx expo run:android --device` or `npx expo run:ios --device`, confirm Home loads |
 
 These were not recorded as a formal walkthrough. They are folded into the Phase 6 screenshot QA, which covers every screen in both themes.
 

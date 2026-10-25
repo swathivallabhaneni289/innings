@@ -40,7 +40,7 @@ status: complete
 
 - **Completed:** 2026-10-22
 - **Duration:** not instrumented
-- **Commits:** none yet (uncommitted)
+- **Commits:** `e36e80e` (Vault), `a76f8ad` (Profile, friends and settings), `b7bf2dd` (story card) (committed together on 2026-10-22, after Phase 6)
 
 ## Accomplishments
 
