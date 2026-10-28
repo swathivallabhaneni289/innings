@@ -8,7 +8,7 @@ status: complete
 stopped_at: v1.1 complete; waiting on the developer's phone testing
 last_updated: "2026-10-28T16:15:00.000Z"
 last_activity: 2026-10-28
-last_activity_desc: Sign-in walked on an iPhone simulator and across two phones; two iPhone keyboard bugs fixed
+last_activity_desc: Welcome rebuilt as a one-screen animated story of tickets; before that, sign-in walked on iPhone and across two phones
 progress:
   total_phases: 7
   completed_phases: 7
@@ -76,6 +76,7 @@ Recent decisions:
 - [Phase 06]: The GitHub repo is private
 - [Phase 07]: Phone and text-code sign-in like Beli, replacing guest accounts (developer, 2026-10-25). Twilio Verify when configured, dev mode (`make api`) otherwise, refused with neither. New accounts start empty
 - [Phase 07]: Android draws edge to edge, so text screens use `KeyboardAware` (keyboard-height padding on Android) instead of KeyboardAvoidingView alone
+- [2026-10-28]: The developer found the scrolling Welcome page too plain and too wordy, so it's one screen with nothing to scroll: a ticket plays the five parts of the app in turn (call, rate, stub, Bragging Board, Vault) with one line each and story-style progress bars. It waits for the launch splash, pauses for screen readers, follows Reduce Motion, and scrolls only when the system text is too large to fit (`src/features/auth/WelcomeStory.tsx`)
 - [Phase 07, 2026-10-28]: `KeyboardAware` wraps the whole screen, because on iOS KeyboardAvoidingView measures itself against its parent. A screen that is one ScrollView of fields uses `automaticallyAdjustKeyboardInsets` with `KeyboardAware scrollInsets`, so iOS scrolls the focused field into view
 
 ### Pending Todos
@@ -112,7 +113,7 @@ Items acknowledged and carried forward:
 ## Session Continuity
 
 Last session: 2026-10-28
-Stopped at: iPhone and two-phone sign-in walk done and pushed; next, a livelier Welcome screen
+Stopped at: animated Welcome story pushed; the developer is trying it on their iPhone simulator
 Resume file: none
 
 - Run locally: `make api` (port 8088, SQLite file `./innings.db`, sign-in codes in dev mode; `make reset-db` wipes it) and `make app` (Metro on 8082; press `i` for iOS or `a` for Android). To sign in, type any number and tap the dev code shown on the screen.

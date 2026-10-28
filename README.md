@@ -14,11 +14,11 @@ I took this from a written plan to a working app for iPhone and Android by direc
 | **The Vault** | **Profile** | **A friend's stub** | **Floodlights** |
 | <img src="docs/screenshots/android-vault.png" width="200" alt="On This Day in the Vault"> | <img src="docs/screenshots/android-profile.png" width="200" alt="Profile with stats and stubs"> | <img src="docs/screenshots/android-stub.png" width="200" alt="A logged ticket stub"> | <img src="docs/screenshots/android-floodlights.png" width="200" alt="The dark floodlights theme"> |
 
-**Signing in** (Android): your phone number, a 6-digit code, your fan card, then your people.
+**Signing in** (Android): the welcome screen plays the app as five animated tickets (a call locked in, a rating filling up, a stub stamped LOGGED, the Bragging Board, the Vault), then your phone number, a 6-digit code, your fan card and your people.
 
 | Welcome | The code | Fan card | Find friends |
 | --- | --- | --- | --- |
-| <img src="docs/screenshots/android-welcome.png" width="200" alt="Welcome screen with a season ticket"> | <img src="docs/screenshots/android-signin-code.png" width="200" alt="Entering the 6-digit code"> | <img src="docs/screenshots/android-fancard.png" width="200" alt="Setting up a fan card with a username"> | <img src="docs/screenshots/android-find-friends.png" width="200" alt="Finding friends from contacts"> |
+| <img src="docs/screenshots/android-welcome.png" width="200" alt="Welcome screen telling the app as a story of tickets"> | <img src="docs/screenshots/android-signin-code.png" width="200" alt="Entering the 6-digit code"> | <img src="docs/screenshots/android-fancard.png" width="200" alt="Setting up a fan card with a username"> | <img src="docs/screenshots/android-find-friends.png" width="200" alt="Finding friends from contacts"> |
 
 **On iPhone** (iPhone 17 Pro simulator):
 

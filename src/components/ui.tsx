@@ -20,6 +20,7 @@ export function Button({
   disabled,
   loading,
   style,
+  maxFontSizeMultiplier,
 }: {
   label: string;
   onPress?: () => void;
@@ -29,6 +30,8 @@ export function Button({
   disabled?: boolean;
   loading?: boolean;
   style?: ViewStyle;
+  /** Caps how far the label grows with the system text size, for a screen that has to fit without scrolling. */
+  maxFontSizeMultiplier?: number;
 }) {
   const t = useTheme();
   const bg = kind === 'primary' ? t.ink : kind === 'success' ? t.green : 'transparent';
@@ -51,7 +54,9 @@ export function Button({
         style,
       ]}>
       {loading ? <ActivityIndicator size="small" color={fg} /> : icon}
-      <Txt style={{ fontFamily: fonts.heading, color: fg, fontSize: size === 'lg' ? 16 : size === 'sm' ? 13 : 15, marginLeft: icon || loading ? 7 : 0 }}>
+      <Txt
+        maxFontSizeMultiplier={maxFontSizeMultiplier}
+        style={{ fontFamily: fonts.heading, color: fg, fontSize: size === 'lg' ? 16 : size === 'sm' ? 13 : 15, marginLeft: icon || loading ? 7 : 0 }}>
         {label}
       </Txt>
     </Pressable>

@@ -22,6 +22,7 @@ import { Button, ErrorState, Loading, Paper } from '@/components';
 import { loadSession, queryClient, signOut, useAccount, useBootstrap, useSession } from '@/data';
 import { usePrefsHydrated } from '@/data/store';
 import { useQaDriver } from '@/lib/qaDriver';
+import { markSplashHidden } from '@/lib/splash';
 import { ThemeProvider, useTheme } from '@/theme';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -49,7 +50,9 @@ export default function RootLayout() {
 
   // The splash stays up until the fonts, the prefs and the stored session have all been read.
   useEffect(() => {
-    if (fontsLoaded && hydrated && sessionKnown) SplashScreen.hideAsync().catch(() => {});
+    if (!fontsLoaded || !hydrated || !sessionKnown) return;
+    SplashScreen.hideAsync().catch(() => {});
+    markSplashHidden();
   }, [fontsLoaded, hydrated, sessionKnown]);
 
   if (!fontsLoaded || !hydrated || !sessionKnown) return null;

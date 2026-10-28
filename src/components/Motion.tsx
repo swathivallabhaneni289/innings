@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { useEffect, type ReactNode } from 'react';
+import { StyleSheet, View, type ViewStyle } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -30,6 +30,19 @@ export function SpinningBall({ spinKey, size = 28 }: { spinKey: unknown; size?: 
 }
 
 /**
+ * Fades its children in and lifts them into place once, `delay` ms after mounting, so a screen's lines can
+ * arrive in turn. With Reduce Motion on, Reanimated skips straight to the end.
+ */
+export function Rise({ delay = 0, children, style }: { delay?: number; children: ReactNode; style?: ViewStyle }) {
+  const p = useSharedValue(0);
+  useEffect(() => {
+    p.value = withDelay(delay, withTiming(1, { duration: 380, easing: Easing.out(Easing.cubic) }));
+  }, [delay, p]);
+  const anim = useAnimatedStyle(() => ({ opacity: p.value, transform: [{ translateY: (1 - p.value) * 14 }] }));
+  return <Animated.View style={[style, anim]}>{children}</Animated.View>;
+}
+
+/**
  * The rubber "LOGGED" stamp: slams down from above, overshoots, settles at an angle.
  * Render it over a ticket stub; it animates when `visible` turns true.
  */
@@ -52,7 +65,10 @@ export function Stamp({ visible, text = 'LOGGED', size = 'md', delay = 0 }: { vi
   return (
     <Animated.View pointerEvents="none" style={[styles.stamp, { borderColor: t.red }, anim]}>
       <View style={[styles.inner, { borderColor: t.red }]}>
-        <Animated.Text style={{ fontFamily: fonts.display, fontSize, letterSpacing: fontSize / 6, color: t.red }}>{text}</Animated.Text>
+        {/* A stamp is a graphic: it keeps its size whatever the system text size, so it never grows over the ticket's lines. */}
+        <Animated.Text allowFontScaling={false} style={{ fontFamily: fonts.display, fontSize, letterSpacing: fontSize / 6, color: t.red }}>
+          {text}
+        </Animated.Text>
       </View>
     </Animated.View>
   );
