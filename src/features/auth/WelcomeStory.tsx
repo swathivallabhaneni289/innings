@@ -3,11 +3,13 @@ import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { AccessibilityInfo, Pressable, StyleSheet, useWindowDimensions, View, type StyleProp, type ViewStyle } from 'react-native';
 import Animated, {
   Easing,
+  Extrapolation,
   interpolate,
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
   withDelay,
+  withSpring,
   withTiming,
 } from 'react-native-reanimated';
 
@@ -120,8 +122,8 @@ export function WelcomeStory({ lead = 0, style }: { lead?: number; style?: ViewS
 
       <View style={[styles.caption, { height: Math.ceil(CAPTION_HEIGHT * Math.min(Math.max(fontScale, 1), CAPTION_SCALE)) }]}>
         {slots.map((s) => (
-          <Slot key={s.n} first={false} hold={holdFor(s.n) + 160} leaving={s.leaving} leaveMs={150} style={StyleSheet.absoluteFill}>
-            <Caption scene={SCENES[s.i]} />
+          <Slot key={s.n} first={false} hold={holdFor(s.n) + 60} leaving={s.leaving} leaveMs={180} distance={0} style={StyleSheet.absoluteFill}>
+            <Caption scene={SCENES[s.i]} delay={holdFor(s.n) + 80} />
           </Slot>
         ))}
       </View>
@@ -145,31 +147,40 @@ export function WelcomeStory({ lead = 0, style }: { lead?: number; style?: ViewS
   );
 }
 
-function Caption({ scene }: { scene: (typeof SCENES)[number] }) {
+/** A scene's caption: the tag, the title and the line fade up one after another. */
+function Caption({ scene, delay }: { scene: (typeof SCENES)[number]; delay: number }) {
   return (
     <>
-      <Txt variant="label" tone="soft" maxFontSizeMultiplier={CAPTION_SCALE}>
-        {scene.tag}
-      </Txt>
-      <Txt variant="h1" numberOfLines={2} adjustsFontSizeToFit maxFontSizeMultiplier={CAPTION_SCALE} style={{ marginTop: 4 }}>
-        {scene.title}
-      </Txt>
-      <Txt variant="body" tone="soft" numberOfLines={3} adjustsFontSizeToFit maxFontSizeMultiplier={CAPTION_SCALE} style={{ marginTop: 4 }}>
-        {scene.line}
-      </Txt>
+      <Rise delay={delay}>
+        <Txt variant="label" tone="soft" maxFontSizeMultiplier={CAPTION_SCALE}>
+          {scene.tag}
+        </Txt>
+      </Rise>
+      <Rise delay={delay + 70}>
+        <Txt variant="h1" numberOfLines={2} adjustsFontSizeToFit maxFontSizeMultiplier={CAPTION_SCALE} style={{ marginTop: 4 }}>
+          {scene.title}
+        </Txt>
+      </Rise>
+      <Rise delay={delay + 140}>
+        <Txt variant="body" tone="soft" numberOfLines={3} adjustsFontSizeToFit maxFontSizeMultiplier={CAPTION_SCALE} style={{ marginTop: 4 }}>
+          {scene.line}
+        </Txt>
+      </Rise>
     </>
   );
 }
 
 /**
- * One scene on the stage. It arrives (dealt up onto the table the first time, slid in from the right after that)
- * and, once `leaving`, slides off to the left while the next one comes in.
+ * One scene on the stage. It rises into place on a soft spring (from a little lower the first time) while the one
+ * before it, once `leaving`, eases up and fades out, so the two overlap and the stage is never empty. No sideways
+ * slide and no tilt. `distance` is how far it travels; the caption block uses 0 and lets its lines rise instead.
  */
 function Slot({
   first,
   hold,
   leaving,
-  leaveMs = 320,
+  leaveMs = 300,
+  distance = 18,
   style,
   children,
 }: {
@@ -177,31 +188,26 @@ function Slot({
   hold: number;
   leaving: boolean;
   leaveMs?: number;
+  distance?: number;
   style?: ViewStyle;
   children: ReactNode;
 }) {
   const arrive = useSharedValue(0);
   const leave = useSharedValue(0);
   useEffect(() => {
-    arrive.value = withDelay(
-      hold,
-      withTiming(1, { duration: first ? 560 : 440, easing: first ? Easing.out(Easing.back(1.2)) : Easing.out(Easing.cubic) }),
-    );
+    arrive.set(withDelay(hold, withSpring(1, { damping: 20, stiffness: first ? 120 : 150, mass: 1 })));
   }, [first, hold, arrive]);
   useEffect(() => {
-    if (leaving) leave.value = withTiming(1, { duration: leaveMs, easing: Easing.in(Easing.cubic) });
+    if (leaving) leave.set(withTiming(1, { duration: leaveMs, easing: Easing.out(Easing.quad) }));
   }, [leaving, leaveMs, leave]);
-  const anim = useAnimatedStyle(() => {
-    const rest = 1 - arrive.value;
-    return {
-      opacity: interpolate(arrive.value, [0, 0.35, 1], [0, 1, 1]) * (1 - leave.value),
-      transform: [
-        { translateX: (first ? 0 : rest * 24) - leave.value * 24 },
-        { translateY: first ? rest * 44 : 0 },
-        { rotate: `${rest * (first ? 3 : 2) - leave.value * 2}deg` },
-      ],
-    };
-  });
+  const rise = first ? distance * 1.7 : distance;
+  const anim = useAnimatedStyle(() => ({
+    opacity: interpolate(arrive.value, [0, 0.55], [0, 1], Extrapolation.CLAMP) * (1 - leave.value),
+    transform: [
+      { translateY: (1 - arrive.value) * rise - leave.value * distance * 0.6 },
+      { scale: 0.97 + 0.03 * Math.min(1, arrive.value) - 0.03 * leave.value },
+    ],
+  }));
   return (
     <Animated.View pointerEvents={leaving ? 'none' : 'auto'} style={[style, anim]}>
       {children}
