@@ -78,7 +78,7 @@ status: complete
 - The Twilio Verify client is tested only against a mock built from Twilio's documented API, never the real service.
 - Whether Twilio Verify handles India's DLT rules is unconfirmed. Sending to Indian numbers may need the developer's own registration (SMS-01).
 - Sign in with Apple and Google were not built (ACCT-09).
-- The iOS build was not re-run in this phase. The developer was using the iOS Simulator, so all the visual checks were on Android. The new native modules need a fresh `npx expo run:ios`.
+- The iOS build was not re-run in this phase; it was walked afterwards, on 2026-10-28 (see `07-VALIDATION.md`). That walk found two keyboard bugs on iPhone, on the fan card and in the log's last step, and both were fixed. At the time of this phase: the developer was using the iOS Simulator, so all the visual checks were on Android. The new native modules need a fresh `npx expo run:ios`.
 
 ## Issues Encountered
 

@@ -71,8 +71,9 @@ export function ProfileStep({ me, account }: { me: User; account: Account | unde
   };
 
   return (
-    <KeyboardAware>
+    <KeyboardAware scrollInsets>
       <ScrollView
+        automaticallyAdjustKeyboardInsets
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
         showsVerticalScrollIndicator={false}

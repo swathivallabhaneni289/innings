@@ -35,7 +35,7 @@ created: 2026-10-25
 | 07-01 | ACCT-05 | Contacts matched by hash; Indian and UK numbers normalised from every common format | integration + unit | `go test ./internal/httpapi -run TestContactsMatch`, `npx jest phone` | green |
 | 07-01 | ACCT-06 | Logout ends one session; delete removes everything and other fans' screens still load | integration | `go test ./internal/httpapi -run 'TestLogoutEndsOnlyThisSession|TestDeleteAccount'`, `go test ./internal/store -run TestDeleteUser` | green |
 | 07-01 | ACCT-07 | Sessions stored hashed; unknown or missing token is 401; old guest database migrates | integration | `go test ./internal/store -run 'TestSessions|TestMigrateGuestDB'`, `go test ./internal/httpapi -run 'TestBootstrapResumes|TestUnauthorized'` | green |
-| 07-01 | ACCT-08 | Every screen on an empty account | manual (emulator) | see below | green |
+| 07-01 | ACCT-08 | Every screen on an empty account | manual (emulator, simulator) | see below | green |
 | 07-01 | all | The whole API flow end to end on a fresh database | end to end | `python3 scripts/smoke.py` against a fresh `INNINGS_DEV_OTP=1` server: 70 of 70 checks | green |
 
 *Status: pending · green · red · flaky*
@@ -58,6 +58,8 @@ $ npx jest                       Tests: 39 passed, 39 total
 $ python3 scripts/smoke.py http://localhost:8096
 PASSED 70 checks; FAILED 0
 ```
+
+The same checks were run again on 2026-10-28 after the keyboard fixes, with the same results. `npx expo lint` reports 13 errors and 1 warning, all in code from earlier phases (React's rules about refs and setting state during render or in effects). None are in the lines changed for the fixes.
 
 Migration 0002 was run on a copy of an existing `innings.db`. Its 3 old guests were kept, hidden and not onboarded, and their 15 logs and 15 follows were intact. An old guest token gets 401.
 
@@ -89,14 +91,52 @@ Each step was checked with a screenshot:
 
 ---
 
+## iPhone walk and two-phone checks (2026-10-28)
+
+The iPhone was walked on a separate simulator ("Innings QA", iPhone 17, iOS 26.5) with a new development build, so the developer's own simulator wasn't disturbed. The app was driven by a small XCUITest command loop that taps, types and takes screenshots. Maestro was the first choice, but installing it was blocked as outside code. The Android emulator ran alongside it against the same throwaway server, so the two phones could find each other in their contacts.
+
+On the iPhone:
+
+1. The build has the contacts permission text, and Welcome loads, so the new native modules start.
+2. The number formats as it's typed, a wrong code gives "4 tries left" with the keyboard still up, and the dev code opens the fan card.
+3. Killing the app mid-sign-up and launching it again comes back to the fan card. Signed in, it comes back to Home.
+4. Contacts denied gives "Open Settings" and no "Ask again", since iOS asks only once.
+5. iOS 18's limited access works: sharing one contact found that fan.
+6. A reply posts with the keyboard up, and a full log with a typed review prints stub No. 0001.
+7. Sign out goes to Welcome. The same number signs straight back in to Home.
+8. Delete account returns 204 and leaves no user, logs, replies or sessions for that number.
+9. With the database reset while the phone still held a session, the app got a 401 at launch and went back to Welcome.
+
+Across the two phones:
+
+1. The iPhone found an Android fan from a contact saved as "098450 11111".
+2. Android found the iPhone fan from a contact saved as "98450 22222".
+3. The same number signed in on both phones opened one account, with two sessions.
+4. Deleting the account on Android signed the iPhone out on its next request, and the other fan's follow of it was removed.
+
+Two bugs were found on the iPhone and fixed:
+
+- On the fan card, the keyboard covered the Name and Username boxes. iOS doesn't scroll a focused field into view the way Android does. The ScrollView now sets `automaticallyAdjustKeyboardInsets` (with `KeyboardAware scrollInsets`), and Settings got the same treatment.
+- In the log, the keyboard hid Back and "Save & print" while a review was typed. KeyboardAvoidingView measures itself against its parent, so below the step header it lifted too little. `KeyboardAware` now wraps the whole screen, as the reply screen already did.
+
+Both fixes were checked again on the iPhone and on Android.
+
+Things that are not bugs, noted so they aren't chased again:
+
+- "Open Settings" opened the top of the Settings app on the simulator, not Innings' own page. This is unverified on a real iPhone.
+- React Native's dev-only warning toast, "Open debugger to view warnings", can sit over a screen's bottom button until it's closed.
+- The driver types faster than a person. Typing while a screen was still sliding in lost digits, and a tap during the slide was missed. With a short pause, both worked every time.
+
+---
+
 ## Manual-Only Verifications
 
 | Behavior | Requirement | Why Manual | Test Instructions |
 |----------|-------------|------------|-------------------|
 | A real text arrives | ACCT-03 | Needs a Twilio account (and India DLT for +91) | Set the three `TWILIO_*` settings, sign in with your own number |
 | One-time-code autofill from a real SMS | ACCT-01 | Needs a real text | As above, on iPhone and Android |
-| The iPhone build with the new native modules | ACCT-07 | The iOS Simulator was in use by the developer | `npx expo run:ios`, then walk sign-up |
-| Contacts that do match | ACCT-05 | Simulated fans have no phone numbers | Two real accounts whose numbers are in each other's contacts |
+| Sign-in on real phones | ACCT-01, ACCT-05 | Only simulators and an emulator have been used | `npx expo run:ios --device` and `npx expo run:android --device`, then walk sign-up |
+| "Open Settings" lands on Innings' page | ACCT-05 | The simulator opened the top of Settings | Deny contacts on a real iPhone, tap Open Settings |
 
 ---
 
@@ -104,6 +144,6 @@ Each step was checked with a screenshot:
 
 - [x] Every requirement has an automated check or a recorded emulator walk
 - [x] No watch-mode flags
-- [ ] `nyquist_compliant: true`: not set; the screens have no component tests and the four manual checks above need accounts or devices
+- [ ] `nyquist_compliant: true`: not set; the screens have no component tests and the four manual checks above need accounts or real phones
 
-**Approval:** automated gates and the Android walk passed 2026-10-25
+**Approval:** automated gates and the Android walk passed 2026-10-25; the iPhone walk and the two-phone checks passed 2026-10-28

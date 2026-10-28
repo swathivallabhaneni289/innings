@@ -229,17 +229,17 @@ export function LogFlow({ presetMatchId }: { presetMatchId?: string }) {
   };
 
   return (
-    <Screen
-      scroll={false}
-      header={
-        <LogHeader
-          steps={steps}
-          current={draft.matchId || step === 'printed' ? step : 'match'}
-          onClose={close}
-          onJump={go}
-        />
-      }>
-      <KeyboardAware>
+    <KeyboardAware>
+      <Screen
+        scroll={false}
+        header={
+          <LogHeader
+            steps={steps}
+            current={draft.matchId || step === 'printed' ? step : 'match'}
+            onClose={close}
+            onJump={go}
+          />
+        }>
         <ScrollView
           ref={scroll}
           style={{ flex: 1 }}
@@ -269,16 +269,16 @@ export function LogFlow({ presetMatchId }: { presetMatchId?: string }) {
             </View>
           </View>
         ) : null}
-      </KeyboardAware>
-      {saved ? (
-        // The 9:16 story card, mounted off-screen (outside the scroll view) so it's laid out and stamped before Share.
-        <View pointerEvents="none" style={styles.offscreen}>
-          <ForceTheme mode="paper">
-            <StoryCard ref={story.ref} match={saved.item.match} log={saved.item.log} />
-          </ForceTheme>
-        </View>
-      ) : null}
-    </Screen>
+        {saved ? (
+          // The 9:16 story card, mounted off-screen (outside the scroll view) so it's laid out and stamped before Share.
+          <View pointerEvents="none" style={styles.offscreen}>
+            <ForceTheme mode="paper">
+              <StoryCard ref={story.ref} match={saved.item.match} log={saved.item.log} />
+            </ForceTheme>
+          </View>
+        ) : null}
+      </Screen>
+    </KeyboardAware>
   );
 }
 
