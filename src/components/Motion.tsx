@@ -43,10 +43,22 @@ export function Rise({ delay = 0, children, style }: { delay?: number; children:
 }
 
 /**
- * The rubber "LOGGED" stamp: slams down from above, overshoots, settles at an angle.
+ * The rubber "LOGGED" stamp: slams down from above, overshoots, settles at `angle` degrees.
  * Render it over a ticket stub; it animates when `visible` turns true.
  */
-export function Stamp({ visible, text = 'LOGGED', size = 'md', delay = 0 }: { visible: boolean; text?: string; size?: 'sm' | 'md' | 'lg'; delay?: number }) {
+export function Stamp({
+  visible,
+  text = 'LOGGED',
+  size = 'md',
+  delay = 0,
+  angle = -11,
+}: {
+  visible: boolean;
+  text?: string;
+  size?: 'sm' | 'md' | 'lg';
+  delay?: number;
+  angle?: number;
+}) {
   const t = useTheme();
   const scale = useSharedValue(visible ? 1 : 2.4);
   const opacity = useSharedValue(visible ? 0.92 : 0);
@@ -60,7 +72,7 @@ export function Stamp({ visible, text = 'LOGGED', size = 'md', delay = 0 }: { vi
       opacity.value = withTiming(0, { duration: 120 });
     }
   }, [visible, delay, scale, opacity]);
-  const anim = useAnimatedStyle(() => ({ opacity: opacity.value, transform: [{ rotate: '-11deg' }, { scale: scale.value }] }));
+  const anim = useAnimatedStyle(() => ({ opacity: opacity.value, transform: [{ rotate: `${angle}deg` }, { scale: scale.value }] }));
   const fontSize = { sm: 14, md: 24, lg: 34 }[size];
   return (
     <Animated.View pointerEvents="none" style={[styles.stamp, { borderColor: t.red }, anim]}>

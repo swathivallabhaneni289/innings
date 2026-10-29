@@ -261,7 +261,8 @@ function Thump({ at, children }: { at: number; children: ReactNode }) {
 
 // ---------- the five tickets ----------
 
-// A stamp takes this long from its delay to hit the card (see Stamp in components/Motion).
+// A stamp takes this long from its delay to hit the card (see Stamp in components/Motion). Here they land
+// straight, like everything else on this screen.
 const STAMP_LANDS = 170;
 
 function CallTicket({ start }: { start: number }) {
@@ -274,7 +275,7 @@ function CallTicket({ start }: { start: number }) {
         height={H}
         overlay={
           <Late at={stamp} style={styles.stampAt}>
-            <Stamp visible delay={stamp} text="LOCKED" size="sm" />
+            <Stamp visible delay={stamp} text="LOCKED" size="sm" angle={0} />
           </Late>
         }
         main={
@@ -328,7 +329,7 @@ function StubTicket({ start }: { start: number }) {
         height={H}
         overlay={
           <Late at={stamp} style={styles.stampAt}>
-            <Stamp visible delay={stamp} size="sm" />
+            <Stamp visible delay={stamp} size="sm" angle={0} />
           </Late>
         }
         main={
@@ -381,13 +382,13 @@ function BoardTicket({ start }: { start: number }) {
   );
 }
 
-/** One place on the board. It springs to its new place when its rank changes, the climber on top of the rest. */
+/** One place on the board. It glides to its new place when its rank changes, the climber on top of the rest. */
 function BoardRow({ row, rank }: { row: (typeof BOARD)[number]; rank: number }) {
   const t = useTheme();
   const y = useSharedValue(rank * ROW);
   const share = useSharedValue(row.points / 100);
   useEffect(() => {
-    y.set(withSpring(rank * ROW, { damping: 17, stiffness: 170 }));
+    y.set(withTiming(rank * ROW, { duration: 460, easing: Easing.out(Easing.back(1.2)) }));
   }, [rank, y]);
   useEffect(() => {
     share.set(withTiming(row.points / 100, { duration: 160 }));
