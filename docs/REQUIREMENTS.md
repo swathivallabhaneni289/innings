@@ -21,8 +21,8 @@ The requirement IDs match the build checklist in [`.planning/REQUIREMENTS.md`](.
 | Platform | 8 / 8 | 1, 2, 6 |
 | Accounts (v1.1) | 8 / 8 | 7 |
 | Real matches (v1.2) | 1 / 1 | 8 |
-| During the match (v1.2) | 2 / 2 | 9 |
-| **Total** | **75 / 75** | |
+| During the match (v1.2) | 3 / 3 | 9 |
+| **Total** | **76 / 76** | |
 
 "Built" means the code does it and passes the check in its row. Real fans haven't used the app yet, and it hasn't been run on a physical phone. Both are the next step; see [Open items](#open-items).
 
@@ -190,6 +190,7 @@ Added 2026-10-29, when the developer said the app is mainly about talking a matc
 | --- | --- | --- | --- |
 | CHAT-01 | Give every real match a chat room, open from a day before the first ball until a day after the match, with the score shown above it and new messages arriving within a few seconds | Rooms per match, oldest first, `after` reads, one message a second, 1–500 characters, closed rooms and classics refused, a deleted account's messages removed (`TestMatchChat`); walked on an iPhone simulator during South Africa v Australia, where a second fan's message appeared on its own | `app/(app)/match/chat/[id].tsx`, `features/match/ChatEntry.tsx`, `internal/httpapi/chat.go`, `internal/store/chat.go` |
 | LIVE-02 | Let fans call how the match goes while it's on: where the side batting first will finish, whether the chase succeeds, and whether a batter reaches 50 or 100, each locking at a set point and settling on its own, 5 points each on the Bragging Board | A T20 followed reading by reading opens, locks and settles every kind; a stale reading never reopens a call; a call first seen past its lock starts locked (`TestLiveCallsFollowTheMatch`, `TestCallsFirstSeenPastTheirLockStartLocked`); picks change while open, are refused once locked, and score on the profile and board (`TestLiveCalls`); the batting card is read from a real ESPN summary (`TestBattingCardFromRealSummary`); walked on an iPhone simulator during Afghanistan v Zimbabwe | `features/match/LiveCalls.tsx`, `internal/feed/calls.go`, `internal/httpapi/calls.go` |
+| LIVE-03 | Let a fan make their own call from the chat (a batter to make 30, 50 or 100, a team to reach a total, a team to win), refused once it's as good as decided, posted into the chat for everyone to answer, and settled like the app's calls | Refused for a batter within 10 of the target, a total past its lock, a winner deep into the chase or a finished match; one card per question; settled from the batting card and the result (`TestFanCallsAreFairAndSettle`); posted, joined and put in the chat once (`TestFanCalls`); walked on an iPhone simulator, calling Ryan Rickelton to make 50 during South Africa v Australia | `app/(app)/match/call/[id].tsx`, `internal/feed/calls.go`, `internal/httpapi/calls.go` |
 
 ### Design
 

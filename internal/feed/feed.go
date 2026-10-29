@@ -45,6 +45,8 @@ type record struct {
 	Final     bool              `json:"final"` // a finished match's summary is in, leaders and all
 	Tries     int               `json:"tries"` // summary fetches since it finished
 	Calls     []domain.LiveCall `json:"calls"` // predictions during the match (calls.go), oldest first
+
+	card *battingCard // the latest batting card, for checking a fan's call is still fair (not saved)
 }
 
 func (r *record) espnTeams() [2]string {
@@ -423,7 +425,8 @@ func (s *Source) fetchSummary(ctx context.Context, id string, now time.Time) {
 	if res := r.Match.Result; res != nil {
 		r.Final = res.OfficialPotmID != nil && len(res.TopRunScorerIDs) > 0
 	}
-	updateCalls(r, card(sum), s.playerName, now)
+	r.card = card(sum)
+	updateCalls(r, r.card, s.playerName, now)
 }
 
 // playerName is a player's display name ("" if unknown). Callers hold s.mu.

@@ -10,8 +10,8 @@ import (
 )
 
 func (s *Store) AddChatMessage(ctx context.Context, m domain.ChatMessage) error {
-	_, err := s.db.ExecContext(ctx, `INSERT INTO chat_messages (id, match_id, user_id, text, created_at) VALUES (?, ?, ?, ?, ?)`,
-		m.ID, m.MatchID, m.UserID, m.Text, m.CreatedAt)
+	_, err := s.db.ExecContext(ctx, `INSERT INTO chat_messages (id, match_id, user_id, text, call_id, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
+		m.ID, m.MatchID, m.UserID, m.Text, m.CallID, m.CreatedAt)
 	return err
 }
 
@@ -20,10 +20,10 @@ func (s *Store) AddChatMessage(ctx context.Context, m domain.ChatMessage) error 
 // they have by id). Messages in the same millisecond keep the order they arrived in (SQLite's rowid; on Postgres
 // this would be a serial column).
 func (s *Store) ChatMessages(ctx context.Context, matchID, after string, limit int) ([]domain.ChatMessage, error) {
-	q := `SELECT id, match_id, user_id, text, created_at FROM chat_messages WHERE match_id = ? ORDER BY created_at DESC, rowid DESC LIMIT ?`
+	q := `SELECT id, match_id, user_id, text, call_id, created_at FROM chat_messages WHERE match_id = ? ORDER BY created_at DESC, rowid DESC LIMIT ?`
 	args := []any{matchID, limit}
 	if after != "" {
-		q = `SELECT id, match_id, user_id, text, created_at FROM chat_messages WHERE match_id = ? AND created_at >= ? ORDER BY created_at, rowid LIMIT ?`
+		q = `SELECT id, match_id, user_id, text, call_id, created_at FROM chat_messages WHERE match_id = ? AND created_at >= ? ORDER BY created_at, rowid LIMIT ?`
 		args = []any{matchID, after, limit}
 	}
 	rows, err := s.db.QueryContext(ctx, q, args...)
@@ -34,7 +34,7 @@ func (s *Store) ChatMessages(ctx context.Context, matchID, after string, limit i
 	out := []domain.ChatMessage{}
 	for rows.Next() {
 		var m domain.ChatMessage
-		if err := rows.Scan(&m.ID, &m.MatchID, &m.UserID, &m.Text, &m.CreatedAt); err != nil {
+		if err := rows.Scan(&m.ID, &m.MatchID, &m.UserID, &m.Text, &m.CallID, &m.CreatedAt); err != nil {
 			return nil, err
 		}
 		out = append(out, m)
@@ -56,4 +56,11 @@ func (s *Store) LastChatAt(ctx context.Context, userID string) (string, error) {
 		return "", nil
 	}
 	return at, err
+}
+
+// ChatHasCall reports whether a call has already been posted into its match's chat.
+func (s *Store) ChatHasCall(ctx context.Context, callID string) (bool, error) {
+	var n int
+	err := s.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM chat_messages WHERE call_id = ?`, callID).Scan(&n)
+	return n > 0, err
 }

@@ -88,7 +88,7 @@ export function CallCard({ view, compact = false, asker, match }: { view: CallVi
     <View style={[styles.card, { backgroundColor: t.card, borderColor: t.rule }, compact && { paddingTop: 12, paddingBottom: 12 }]}>
       <View style={styles.head}>
         <Txt variant="label" tone="soft">
-          {asker ? 'Fan call' : (KIND[call.kind] ?? 'Call')}
+          {call.createdBy ? 'Fan call' : (KIND[call.kind] ?? 'Call')}
         </Txt>
         <StatePill state={call.state} />
       </View>

@@ -162,3 +162,76 @@ func TestPollMakesCallsForLiveMatches(t *testing.T) {
 		t.Fatal("a Test got a total or chase call")
 	}
 }
+
+// Fans' own calls: refused once they're as good as decided, one card per question, settled like the app's.
+func TestFanCallsAreFairAndSettle(t *testing.T) {
+	clock := now
+	s := testSource(t, &espnFake{calls: map[string]int{}}, openStore(t), &clock)
+	r := &record{
+		Match: domain.Match{ID: "es-7", Kind: "fixture", Format: domain.FormatT20, TeamIDs: [2]string{"afg", "zim"}, State: domain.Live,
+			XI:   map[string][]string{"afg": {"esp-1", "esp-2"}, "zim": {"esp-5"}},
+			Live: &domain.LiveScore{Innings: []domain.InningsScore{{TeamID: "afg", Runs: 44, Wickets: 1, Overs: "6.0"}}}},
+		Event: esEvent{Competitors: []esCompetitor{{ID: "40", DisplayName: "Afghanistan"}, {ID: "9", DisplayName: "Zimbabwe"}}},
+		card:  &battingCard{innings: "1", batters: []cardBatter{{id: "esp-1", runs: 42, hasBatted: true}, {id: "esp-2", runs: 12, hasBatted: true}}},
+	}
+	s.recs["es-7"] = r
+	s.players["esp-2"] = domain.Player{ID: "esp-2", Name: "Ibrahim Zadran"}
+	post := func(spec domain.CallSpec) (domain.LiveCall, error) {
+		spec.MatchID, spec.By = "es-7", "u-1"
+		return s.PostCall(spec, now)
+	}
+
+	if _, err := post(domain.CallSpec{Kind: "runs", PlayerID: "esp-1", Target: 50}); err != domain.ErrCallTooLate {
+		t.Fatalf("a batter on 42 for 50: %v", err)
+	}
+	c, err := post(domain.CallSpec{Kind: "runs", PlayerID: "esp-2", Target: 50})
+	if err != nil || c.Question != "Will Ibrahim Zadran make 50?" || c.State != domain.CallOpen || c.CreatedBy != "u-1" {
+		t.Fatalf("Zadran 50: %+v %v", c, err)
+	}
+	if again, _ := post(domain.CallSpec{Kind: "runs", PlayerID: "esp-2", Target: 50}); again.ID != c.ID || len(r.Calls) != 1 {
+		t.Fatal("the same call made twice")
+	}
+	for _, bad := range []domain.CallSpec{{Kind: "runs", PlayerID: "esp-9", Target: 50}, {Kind: "runs", PlayerID: "esp-2", Target: 45}, {Kind: "teamTotal", TeamID: "ind", Target: 180}, {Kind: "teamTotal", TeamID: "afg", Target: 20}, {Kind: "guess"}} {
+		if _, err := post(bad); err != domain.ErrCallKind {
+			t.Fatalf("%+v: %v", bad, err)
+		}
+	}
+	total, err := post(domain.CallSpec{Kind: "teamTotal", TeamID: "afg", Target: 180})
+	if err != nil || total.Question != "Will Afghanistan score 180 or more?" {
+		t.Fatalf("total: %+v %v", total, err)
+	}
+	win, err := post(domain.CallSpec{Kind: "win", TeamID: "zim"})
+	if err != nil || win.Question != "Will Zimbabwe win?" {
+		t.Fatalf("win: %+v %v", win, err)
+	}
+
+	// Ten overs in, a total is too late to call; Zadran gets to 50; Afghanistan finish on 172; Zimbabwe win.
+	r.Match.Live.Innings[0] = domain.InningsScore{TeamID: "afg", Runs: 80, Wickets: 1, Overs: "10.0"}
+	updateCalls(r, &battingCard{innings: "1", batters: []cardBatter{{id: "esp-2", runs: 51, hasBatted: true}}}, s.playerName, now)
+	if _, err := post(domain.CallSpec{Kind: "teamTotal", TeamID: "afg", Target: 200}); err != domain.ErrCallTooLate {
+		t.Fatalf("total at 10 overs: %v", err)
+	}
+	if c := r.call(c.ID); c.State != domain.CallSettled || *c.AnswerID != "yes" {
+		t.Fatalf("Zadran = %+v", c)
+	}
+	if c := r.call(total.ID); c.State != domain.CallLocked {
+		t.Fatalf("total at 10 overs = %+v", c)
+	}
+	r.Match.Live.Innings = []domain.InningsScore{{TeamID: "afg", Runs: 172, Wickets: 6, Overs: "20"}, {TeamID: "zim", Runs: 40, Wickets: 0, Overs: "5.0"}}
+	updateCalls(r, nil, s.playerName, now)
+	if c := r.call(total.ID); c.State != domain.CallSettled || *c.AnswerID != "no" || c.Result != "Afghanistan made 172" {
+		t.Fatalf("total settled = %+v", c)
+	}
+	if _, err := post(domain.CallSpec{Kind: "win", TeamID: "afg"}); err != domain.ErrCallTooLate {
+		t.Fatalf("a winner five overs into the chase: %v", err)
+	}
+	r.Match.State, r.Match.Live = domain.Completed, nil
+	r.Match.Result = &domain.MatchResult{WinnerID: domain.Ptr("zim"), Text: "Zimbabwe won by 4 wickets", Innings: []domain.InningsScore{{TeamID: "afg", Runs: 172, Wickets: 6, Overs: "20"}, {TeamID: "zim", Runs: 175, Wickets: 6, Overs: "19.3"}}}
+	updateCalls(r, nil, s.playerName, now)
+	if c := r.call(win.ID); c.State != domain.CallSettled || *c.AnswerID != "yes" {
+		t.Fatalf("win settled = %+v", c)
+	}
+	if _, err := post(domain.CallSpec{Kind: "win", TeamID: "zim"}); err != domain.ErrCallTooLate {
+		t.Fatalf("a finished match: %v", err)
+	}
+}

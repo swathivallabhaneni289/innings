@@ -1,11 +1,13 @@
 package httpapi
 
 import (
+	"errors"
 	"net/http"
 	"slices"
 	"time"
 
 	"github.com/swathivallabhaneni289/innings/internal/domain"
+	"github.com/swathivallabhaneni289/innings/internal/store"
 )
 
 // Live calls (predictions during a match) come from the World, which opens, locks and settles them from the live
@@ -99,4 +101,64 @@ func (s *Server) handleCallPick(v *view, w http.ResponseWriter, r *http.Request)
 	check(s.Store.SaveCallPick(v.ctx, domain.CallPick{UserID: v.me.ID, CallID: c.ID, MatchID: m.ID, OptionID: in.OptionID, CreatedAt: v.stamp()}))
 	v.callPickList = nil
 	writeJSON(w, http.StatusOK, v.callView(c))
+}
+
+const maxFanCalls = 5 // a fan's own calls per match
+
+// handleCallPost makes a fan's own call (POST /v1/matches/{id}/calls), takes their side on it, and posts it into
+// the match's chat. Asking what someone already asked joins their call instead of making another.
+func (s *Server) handleCallPost(v *view, w http.ResponseWriter, r *http.Request) {
+	m, ok := v.match(r.PathValue("id"))
+	if !ok {
+		writeErr(w, http.StatusNotFound, "not-found", "no such match")
+		return
+	}
+	var in struct {
+		Kind     string `json:"kind"`
+		PlayerID string `json:"playerId"`
+		TeamID   string `json:"teamId"`
+		Target   int    `json:"target"`
+		Side     string `json:"side"` // "yes" | "no": the asker's own call
+	}
+	if !decode(w, r, &in) {
+		return
+	}
+	if in.Side != "yes" && in.Side != "no" {
+		writeErr(w, http.StatusBadRequest, "bad-side", "side must be yes or no")
+		return
+	}
+	mine := 0
+	for _, c := range s.World.Calls(m.ID) {
+		if c.CreatedBy == v.me.ID {
+			mine++
+		}
+	}
+	if mine >= maxFanCalls {
+		writeErr(w, http.StatusTooManyRequests, "too-many-calls", "five calls a match each")
+		return
+	}
+	c, err := s.World.PostCall(domain.CallSpec{MatchID: m.ID, Kind: in.Kind, PlayerID: in.PlayerID, TeamID: in.TeamID, Target: in.Target, By: v.me.ID}, v.now)
+	switch {
+	case errors.Is(err, domain.ErrCallKind):
+		writeErr(w, http.StatusBadRequest, "bad-call", "that call can't be made: check the player, team and target")
+		return
+	case errors.Is(err, domain.ErrCallTooLate):
+		writeErr(w, http.StatusConflict, "call-too-late", "too late for that one: it's as good as decided")
+		return
+	case errors.Is(err, domain.ErrCallsOff):
+		writeErr(w, http.StatusConflict, "calls-off", "this match doesn't take calls")
+		return
+	case err != nil:
+		check(err)
+	}
+	if c.State != domain.CallOpen {
+		writeErr(w, http.StatusConflict, "locked", "that call has already locked")
+		return
+	}
+	check(s.Store.SaveCallPick(v.ctx, domain.CallPick{UserID: v.me.ID, CallID: c.ID, MatchID: m.ID, OptionID: in.Side, CreatedAt: v.stamp()}))
+	if open, _ := v.chatWindow(m); open && !must(s.Store.ChatHasCall(v.ctx, c.ID)) {
+		check(s.Store.AddChatMessage(v.ctx, domain.ChatMessage{ID: store.NewID("c-"), MatchID: m.ID, UserID: v.me.ID, Text: "Made a call: " + c.Question, CallID: c.ID, CreatedAt: v.now.UTC().Format(chatStamp)}))
+	}
+	v.callPickList = nil
+	writeJSON(w, http.StatusCreated, v.callView(c))
 }

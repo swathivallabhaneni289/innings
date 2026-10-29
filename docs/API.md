@@ -86,6 +86,7 @@ them, and it doesn't appear in search or friend lists until it is onboarded.
 | `POST /v1/logs/{id}/like` | – | `{liked: boolean, likes: number}` (toggle) |
 | `POST /v1/logs/{id}/there-too` | – | `{iWasThere: boolean, thereToo: number}` (toggle) |
 | `POST /v1/logs/{id}/replies` | `{text}` | `Reply` (201) |
+| `POST /v1/matches/{id}/calls` | `CallSpec`: `{kind: "runs", playerId, target: 30 \| 50 \| 100}`, `{kind: "teamTotal", teamId, target}` or `{kind: "win", teamId}`, plus `side: "yes" \| "no"` | `CallView` (201): a fan's own call, posted into the match's chat with the asker's side picked; the same call asked again joins it. **409 `call-too-late`** once it's as good as decided (a batter within 10 of the target or out, a total past 10 overs of the innings, a winner 5 overs into the chase), 400 `bad-call`, 429 `too-many-calls` (five a match each) |
 | `PUT /v1/matches/{id}/calls/{callId}` | `{optionId}` | `CallView`; change it as often as you like while the call is open; **409 `locked`** once it isn't; 400 for an option the call doesn't have |
 | `POST /v1/matches/{id}/chat` | `{text}` (1–500 characters) | `ChatMessage` (201); **409 `chat-closed`** outside the room's hours; **429 `slow-down`** (with `Retry-After`) for more than one message a second |
 | `POST /v1/users/{id}/follow` | – | `{following: boolean}` (toggle) |

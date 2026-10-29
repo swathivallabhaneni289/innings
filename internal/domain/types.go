@@ -3,7 +3,10 @@
 // omitempty; slices and maps must never be nil when encoded (use the New*/Ensure helpers or literal {}).
 package domain
 
-import "slices"
+import (
+	"errors"
+	"slices"
+)
 
 type Format string
 
@@ -223,6 +226,24 @@ type CallOption struct {
 	Label string `json:"label"`
 }
 
+// CallSpec is a fan's own call, made from the chat: a batter's score ("runs", PlayerID + Target 30/50/100), a
+// team's total ("teamTotal", TeamID + Target) or the result ("win", TeamID).
+type CallSpec struct {
+	MatchID  string `json:"matchId"`
+	Kind     string `json:"kind"`
+	PlayerID string `json:"playerId"`
+	TeamID   string `json:"teamId"`
+	Target   int    `json:"target"`
+	By       string `json:"by"` // who asked
+}
+
+// Why a fan's call can't be made (the API's 400 and 409 codes).
+var (
+	ErrCallKind    = errors.New("bad-call")      // unknown kind, player, team or target
+	ErrCallTooLate = errors.New("call-too-late") // the moment has passed: he's past it, the innings is too far on, the match is over
+	ErrCallsOff    = errors.New("calls-off")     // this match takes no fan calls (a classic, or the simulated world)
+)
+
 // CallPick is one fan's pick on a live call.
 type CallPick struct {
 	UserID    string `json:"userId"`
@@ -243,12 +264,14 @@ const (
 // PointsLiveCall is what a right call during a match is worth on the Bragging Board.
 const PointsLiveCall = 5
 
-// ChatMessage is one message in a match's chat. CreatedAt carries milliseconds.
+// ChatMessage is one message in a match's chat. CreatedAt carries milliseconds. CallID is set when the message is a
+// fan posting their own call ("" for a plain message); the app draws the call's card in its place.
 type ChatMessage struct {
 	ID        string `json:"id"`
 	MatchID   string `json:"matchId"`
 	UserID    string `json:"userId"`
 	Text      string `json:"text"`
+	CallID    string `json:"callId"`
 	CreatedAt string `json:"createdAt"`
 }
 

@@ -260,6 +260,7 @@ func updateCalls(r *record, bc *battingCard, name func(id string) string, now ti
 			}
 		}
 	}
+	updateFanCalls(r, bc, innings, done)
 	// A batter's call from an innings that has ended without an answer, or any left when the match is over: void.
 	for k := range r.Calls {
 		c := &r.Calls[k]
@@ -289,4 +290,178 @@ func callsOf(r *record) []domain.LiveCall {
 		out[len(r.Calls)-1-k] = c
 	}
 	return out
+}
+
+// ---- fans' own calls ----
+
+func liveInnings(m domain.Match) []domain.InningsScore {
+	switch {
+	case m.Live != nil:
+		return m.Live.Innings
+	case m.Result != nil:
+		return m.Result.Innings
+	}
+	return nil
+}
+
+func inningsOf(innings []domain.InningsScore, team string) int {
+	return slices.IndexFunc(innings, func(i domain.InningsScore) bool { return i.TeamID == team })
+}
+
+func inXI(m domain.Match, playerID string) bool {
+	for _, ids := range m.XI {
+		if slices.Contains(ids, playerID) {
+			return true
+		}
+	}
+	return false
+}
+
+// PostCall makes a fan's own call on a real match, or says why it can't be made: the same calls the app makes, on
+// the fan's choice of batter, team and target, and only while it's still a real question (not for a batter
+// already within 10 of it, a total once the innings is past its lock, a winner once the chase is under way). The
+// same call asked twice is one card, so fans pile onto it.
+func (s *Source) PostCall(spec domain.CallSpec, now time.Time) (domain.LiveCall, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	r := s.recs[spec.MatchID]
+	if r == nil || len(r.Event.Competitors) < 2 {
+		return domain.LiveCall{}, domain.ErrCallsOff
+	}
+	m := r.Match
+	if m.State == domain.Completed {
+		return domain.LiveCall{}, domain.ErrCallTooLate
+	}
+	innings := liveInnings(m)
+	totalLock, chaseLock := lockBalls(m.Format)
+	limited := m.Format != domain.FormatTest
+	team := func(id string) string { return teamName(id, r) }
+	isTeam := spec.TeamID == m.TeamIDs[0] || spec.TeamID == m.TeamIDs[1]
+
+	c := domain.LiveCall{Kind: spec.Kind, Options: yesNo(), CreatedBy: spec.By, PlayerID: spec.PlayerID, TeamID: spec.TeamID, Target: spec.Target}
+	switch spec.Kind {
+	case "runs":
+		if (spec.Target != 30 && spec.Target != 50 && spec.Target != 100) || !inXI(m, spec.PlayerID) {
+			return domain.LiveCall{}, domain.ErrCallKind
+		}
+		if r.card != nil {
+			for _, b := range r.card.batters {
+				if b.id == spec.PlayerID && b.hasBatted && (b.out || b.runs >= spec.Target-10) {
+					return domain.LiveCall{}, domain.ErrCallTooLate
+				}
+			}
+		}
+		c.ID = fmt.Sprintf("%s:fan:runs:%s:%d", m.ID, strings.TrimPrefix(spec.PlayerID, playerPrefix), spec.Target)
+		c.Question = fmt.Sprintf("Will %s make %d?", cmpOr(s.players[spec.PlayerID].Name, "he"), spec.Target)
+		c.LocksAt = fmt.Sprintf("at %d runs", spec.Target-10)
+	case "teamTotal":
+		if !limited || !isTeam || spec.Target < 50 || spec.Target > 500 {
+			return domain.LiveCall{}, domain.ErrCallKind
+		}
+		if k := inningsOf(innings, spec.TeamID); k >= 0 && (k < len(innings)-1 || balls(innings[k].Overs) >= totalLock) {
+			return domain.LiveCall{}, domain.ErrCallTooLate
+		}
+		c.ID = fmt.Sprintf("%s:fan:total:%s:%d", m.ID, spec.TeamID, spec.Target)
+		c.Question = fmt.Sprintf("Will %s score %d or more?", team(spec.TeamID), spec.Target)
+		c.LocksAt = fmt.Sprintf("at %s overs of their innings", overs(float64(totalLock/6)))
+	case "win":
+		if !isTeam {
+			return domain.LiveCall{}, domain.ErrCallKind
+		}
+		if (limited && len(innings) >= 2 && balls(innings[1].Overs) >= chaseLock) || (!limited && len(innings) >= 3) {
+			return domain.LiveCall{}, domain.ErrCallTooLate
+		}
+		c.ID = fmt.Sprintf("%s:fan:win:%s", m.ID, spec.TeamID)
+		c.Question = fmt.Sprintf("Will %s win?", team(spec.TeamID))
+		c.LocksAt = fmt.Sprintf("%s overs into the chase", overs(float64(chaseLock/6)))
+		if !limited {
+			c.LocksAt = "when the third innings starts"
+		}
+	default:
+		return domain.LiveCall{}, domain.ErrCallKind
+	}
+	if old := r.call(c.ID); old != nil {
+		out := *old
+		out.Options = slices.Clone(old.Options)
+		return out, nil
+	}
+	made := r.open(c, false, now)
+	s.dirty[m.ID] = true
+	out := *made
+	out.Options = slices.Clone(made.Options)
+	return out, nil
+}
+
+// updateFanCalls moves fans' own calls on, the same way as the app's: a batter's score from the batting card (it
+// counts in the first innings they bat in after it was made), a team's total when that innings ends, the winner
+// from the result.
+func updateFanCalls(r *record, bc *battingCard, innings []domain.InningsScore, done bool) {
+	m := r.Match
+	totalLock, chaseLock := lockBalls(m.Format)
+	limited := m.Format != domain.FormatTest
+	for k := range r.Calls {
+		c := &r.Calls[k]
+		if c.CreatedBy == "" || (c.State != domain.CallOpen && c.State != domain.CallLocked) {
+			continue
+		}
+		switch c.Kind {
+		case "runs":
+			if bc != nil {
+				for _, b := range bc.batters {
+					if b.id != c.PlayerID || !b.hasBatted {
+						continue
+					}
+					if c.Innings == "" {
+						c.Innings = bc.innings
+					}
+					if c.Innings != bc.innings {
+						continue
+					}
+					switch {
+					case b.runs >= c.Target:
+						settle(c, "yes", fmt.Sprintf("He got to %d", c.Target))
+					case b.out:
+						settle(c, "no", fmt.Sprintf("Out for %d", b.runs))
+					case b.runs >= c.Target-10:
+						lock(c)
+					}
+				}
+				if c.Innings != "" && c.Innings != bc.innings {
+					void(c, "The innings ended before it was settled")
+				}
+			}
+			if done {
+				void(c, "The match ended before it was settled")
+			}
+		case "teamTotal":
+			if i := inningsOf(innings, c.TeamID); i >= 0 {
+				if balls(innings[i].Overs) >= totalLock {
+					lock(c)
+				}
+				if i < len(innings)-1 || done {
+					answer := "no"
+					if innings[i].Runs >= c.Target {
+						answer = "yes"
+					}
+					settle(c, answer, fmt.Sprintf("%s made %d", teamName(c.TeamID, r), innings[i].Runs))
+				}
+			} else if done {
+				void(c, "They didn't bat")
+			}
+		case "win":
+			if (limited && len(innings) >= 2 && balls(innings[1].Overs) >= chaseLock) || (!limited && len(innings) >= 3) {
+				lock(c)
+			}
+			if done && m.Result != nil {
+				switch w := m.Result.WinnerID; {
+				case w == nil:
+					void(c, cmpOr(m.Result.Text, "No result"))
+				case *w == c.TeamID:
+					settle(c, "yes", m.Result.Text)
+				default:
+					settle(c, "no", m.Result.Text)
+				}
+			}
+		}
+	}
 }

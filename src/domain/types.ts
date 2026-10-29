@@ -205,13 +205,24 @@ export interface CallOption {
   label: string;
 }
 
-/** One message in a match's chat. createdAt carries milliseconds. */
+/** One message in a match's chat. createdAt carries milliseconds. callId is set when the message is a fan posting
+ * their own call ('' for a plain message): the app draws the call's card in its place. */
 export interface ChatMessage {
   id: string;
   matchId: string;
   userId: string;
   text: string;
+  callId: string;
   createdAt: string;
+}
+
+/** A fan's own call, made from the chat. */
+export interface CallSpec {
+  kind: 'runs' | 'teamTotal' | 'win';
+  playerId?: string; // runs
+  teamId?: string; // teamTotal, win
+  target?: number; // runs: 30 | 50 | 100; teamTotal: the total
+  side: 'yes' | 'no'; // the asker's own call
 }
 
 export type ThemePreference = 'auto' | 'paper' | 'floodlights';

@@ -12,6 +12,7 @@ export default function AppLayout() {
     <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: t.paper } }}>
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="log/index" options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom' }} />
+      <Stack.Screen name="match/call/[id]" options={{ presentation: 'modal' }} />
     </Stack>
   );
 }

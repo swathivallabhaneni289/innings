@@ -1,11 +1,12 @@
+import { Feather } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { FlatList, Keyboard, Platform, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Avatar, Button, KeyboardAware, LiveTag, QueryState, Screen, Txt } from '@/components';
 import { ApiError, getTeam, matchTitle, useActions, useMatchChat, useMatchPage, useMe, useNow } from '@/data';
-import type { ChatResponse } from '@/domain/api';
+import type { CallView, ChatResponse } from '@/domain/api';
 import type { ChatMessage, Match, User } from '@/domain/types';
 import { CallCard } from '@/features/match/LiveCalls';
 import { inningsLine, relative } from '@/lib/format';
@@ -17,9 +18,9 @@ export default function MatchChatScreen() {
   const page = useMatchPage(id);
   const q = useMatchChat(id);
   const match = page.data?.match;
-  // At most one call here, the newest still open; the rest are on the match page. (A page cached from before calls
-  // existed has none.)
-  const openCall = page.data?.calls?.find((c) => c.call.state === 'open');
+  // At most one of the app's own calls here, the newest still open (fans' calls sit in the conversation where they
+  // were made; the rest are on the match page). A page cached from before calls existed has none.
+  const openCall = page.data?.calls?.find((c) => c.call.state === 'open' && !c.call.createdBy);
   return (
     <KeyboardAware>
       <Screen back kicker="Match chat" title={match ? matchTitle(match) : 'Match chat'} scroll={false}>
@@ -30,7 +31,7 @@ export default function MatchChatScreen() {
           </View>
         ) : null}
         <QueryState q={q} loadingLabel="Finding a seat…">
-          {(d) => <Room matchId={id} data={d} />}
+          {(d) => <Room matchId={id} data={d} calls={page.data?.calls ?? []} match={match} />}
         </QueryState>
       </Screen>
     </KeyboardAware>
@@ -62,7 +63,7 @@ function ScoreLine({ match }: { match: Match }) {
   );
 }
 
-function Room({ matchId, data }: { matchId: string; data: ChatResponse }) {
+function Room({ matchId, data, calls, match }: { matchId: string; data: ChatResponse; calls: CallView[]; match?: Match }) {
   const t = useTheme();
   const insets = useSafeAreaInsets();
   const keyboard = useKeyboardShown();
@@ -103,16 +104,21 @@ function Room({ matchId, data }: { matchId: string; data: ChatResponse }) {
         keyExtractor={(m) => m.id}
         contentContainerStyle={styles.list}
         keyboardShouldPersistTaps="handled"
-        renderItem={({ item, index }) => (
-          <Message
-            message={item}
-            user={author(item)}
-            mine={item.userId === me.data?.id}
-            // The list is inverted: the message above this one on screen is the next one in the array.
-            sameAuthorAbove={rows[index + 1]?.userId === item.userId}
-            now={now}
-          />
-        )}
+        renderItem={({ item, index }) => {
+          // A fan's own call is drawn as its card, under who asked it.
+          const call = item.callId ? calls.find((c) => c.call.id === item.callId) : undefined;
+          return (
+            <Message
+              message={item}
+              user={author(item)}
+              mine={item.userId === me.data?.id}
+              // The list is inverted: the message above this one on screen is the next one in the array.
+              sameAuthorAbove={!call && !rows[index + 1]?.callId && rows[index + 1]?.userId === item.userId}
+              now={now}
+              call={call ? <CallCard view={call} match={match} compact /> : undefined}
+            />
+          );
+        }}
         ListEmptyComponent={
           <View style={styles.empty}>
             <Txt variant="review" tone="soft" align="center">
@@ -130,6 +136,17 @@ function Room({ matchId, data }: { matchId: string; data: ChatResponse }) {
         ) : null}
         {data.open ? (
           <View style={styles.composerRow}>
+            <Pressable
+              onPress={() => router.push(`/match/call/${matchId}`)}
+              accessibilityRole="button"
+              accessibilityLabel="Make a call"
+              hitSlop={6}
+              style={({ pressed }) => [styles.callBtn, { borderColor: t.red, backgroundColor: pressed ? t.redSoft : 'transparent' }]}>
+              <Feather name="target" size={16} color={t.red} />
+              <Txt variant="label" tone="red" style={{ fontSize: 8.5, marginTop: 2 }}>
+                Call
+              </Txt>
+            </Pressable>
             <TextInput
               ref={inputRef}
               value={text}
@@ -175,7 +192,21 @@ function useKeyboardShown() {
   return shown;
 }
 
-function Message({ message, user, mine, sameAuthorAbove, now }: { message: ChatMessage; user?: User; mine: boolean; sameAuthorAbove: boolean; now: number }) {
+function Message({
+  message,
+  user,
+  mine,
+  sameAuthorAbove,
+  now,
+  call,
+}: {
+  message: ChatMessage;
+  user?: User;
+  mine: boolean;
+  sameAuthorAbove: boolean;
+  now: number;
+  call?: ReactNode;
+}) {
   const t = useTheme();
   return (
     <View style={[styles.message, { marginTop: sameAuthorAbove ? 2 : 12 }]}>
@@ -197,9 +228,13 @@ function Message({ message, user, mine, sameAuthorAbove, now }: { message: ChatM
             </Txt>
           </View>
         )}
-        <Txt variant="body" style={{ marginTop: sameAuthorAbove ? 0 : 1 }}>
-          {message.text}
-        </Txt>
+        {call ? (
+          <View style={{ marginTop: 6 }}>{call}</View>
+        ) : (
+          <Txt variant="body" style={{ marginTop: sameAuthorAbove ? 0 : 1 }}>
+            {message.text}
+          </Txt>
+        )}
       </View>
     </View>
   );
@@ -214,5 +249,6 @@ const styles = StyleSheet.create({
   head: { flexDirection: 'row', alignItems: 'baseline' },
   composer: { borderTopWidth: StyleSheet.hairlineWidth, paddingHorizontal: 20, paddingTop: 10 },
   composerRow: { flexDirection: 'row', alignItems: 'flex-end' },
+  callBtn: { width: 44, height: 40, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center', marginRight: 8 },
   input: { flex: 1, minHeight: 40, maxHeight: 110, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 12, paddingTop: 9, paddingBottom: 9, fontFamily: fonts.serif, fontSize: 15 },
 });

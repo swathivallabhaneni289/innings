@@ -24,7 +24,7 @@ import type {
   UserResponse,
   VaultResponse,
 } from '@/domain/api';
-import type { Account, ChatMessage, Format, Match, MatchLog, Player, Prediction, Reply, Team, User, WatchPlace } from '@/domain/types';
+import type { Account, CallSpec, ChatMessage, Format, Match, MatchLog, Player, Prediction, Reply, Team, User, WatchPlace } from '@/domain/types';
 import { api, ApiError, catalog } from './client';
 import { queryClient } from './queryClient';
 import { endSession, markReady, onSessionEnd, saveToken, useSession } from './session';
@@ -339,6 +339,11 @@ export function useActions() {
     toggleThereToo: (logId: string) =>
       exec(() => api<{ iWasThere: boolean; thereToo: number }>(`/v1/logs/${logId}/there-too`, { method: 'POST' })),
     addReply: (logId: string, text: string) => exec(() => api<Reply>(`/v1/logs/${logId}/replies`, { method: 'POST', body: { text } })),
+    /**
+     * Makes a fan's own call and posts it into the match's chat. Rejects with ApiError 409 "call-too-late" when it's
+     * as good as decided, 400 "bad-call", or 429 "too-many-calls" (five a match).
+     */
+    makeCall: (matchId: string, spec: CallSpec) => exec(() => api<CallView>(`/v1/matches/${matchId}/calls`, { method: 'POST', body: spec })),
     /** Picks (or changes) an option on a live call. Rejects with ApiError 409 "locked" once it has locked. */
     pickCall: (matchId: string, callId: string, optionId: string) =>
       exec(() => api<CallView>(`/v1/matches/${matchId}/calls/${encodeURIComponent(callId)}`, { method: 'PUT', body: { optionId } })),

@@ -112,6 +112,10 @@ func (w *World) Calls(matchID string) []domain.LiveCall { return []domain.LiveCa
 
 func (w *World) Call(id string) (domain.LiveCall, bool) { return domain.LiveCall{}, false }
 
+func (w *World) PostCall(domain.CallSpec, time.Time) (domain.LiveCall, error) {
+	return domain.LiveCall{}, domain.ErrCallsOff
+}
+
 // FriendsWatching returns ids of simulated friends watching a live (or about-to-start) match.
 func (w *World) FriendsWatching(matchID string, now time.Time) []string {
 	return w.friendsWatching(matchID, now)

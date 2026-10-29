@@ -125,6 +125,24 @@ func (w *fakeWorld) Call(id string) (domain.LiveCall, bool) {
 	return domain.LiveCall{}, false
 }
 
+// PostCall: the fake world takes "Will ind-p0 make 50?" on the live match and refuses everything else.
+func (w *fakeWorld) PostCall(spec domain.CallSpec, now time.Time) (domain.LiveCall, error) {
+	if spec.MatchID != "live" {
+		return domain.LiveCall{}, domain.ErrCallsOff
+	}
+	if spec.Kind != "runs" || spec.PlayerID != "ind-p0" || spec.Target != 50 {
+		return domain.LiveCall{}, domain.ErrCallKind
+	}
+	id := "live:fan:runs:ind-p0:50"
+	if c, ok := w.Call(id); ok {
+		return c, nil
+	}
+	c := domain.LiveCall{ID: id, MatchID: "live", Kind: "runs", Question: "Will ind-p0 make 50?", State: domain.CallOpen, LocksAt: "at 40 runs",
+		Options: []domain.CallOption{{ID: "yes", Label: "Yes"}, {ID: "no", Label: "No"}}, CreatedBy: spec.By, PlayerID: spec.PlayerID, Target: 50}
+	w.calls = append(w.calls, c)
+	return c, nil
+}
+
 func (w *fakeWorld) BaseLikes(id string) int {
 	if id == "sl-1" {
 		return 12

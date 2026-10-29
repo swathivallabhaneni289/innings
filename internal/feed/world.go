@@ -79,5 +79,12 @@ func (w *World) Calls(matchID string) []domain.LiveCall { return w.src.Calls(mat
 
 func (w *World) Call(id string) (domain.LiveCall, bool) { return w.src.Call(id) }
 
+func (w *World) PostCall(spec domain.CallSpec, now time.Time) (domain.LiveCall, error) {
+	if w.classic[spec.MatchID] {
+		return domain.LiveCall{}, domain.ErrCallsOff
+	}
+	return w.src.PostCall(spec, now)
+}
+
 // FriendsWatching: simulated fans don't watch real matches.
 func (w *World) FriendsWatching(string, time.Time) []string { return []string{} }
