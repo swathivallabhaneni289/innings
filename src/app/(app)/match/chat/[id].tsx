@@ -26,7 +26,7 @@ export default function MatchChatScreen() {
         {match ? <ScoreLine match={match} /> : null}
         {openCall ? (
           <View style={{ paddingHorizontal: 20, paddingTop: 10 }}>
-            <CallCard view={openCall} compact />
+            <CallCard view={openCall} match={match} compact />
           </View>
         ) : null}
         <QueryState q={q} loadingLabel="Finding a seat…">

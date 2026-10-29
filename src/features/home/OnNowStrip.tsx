@@ -1,3 +1,4 @@
+import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 
@@ -149,6 +150,17 @@ function OnNowTicket({ match: m, width }: { match: Match; width: number }) {
             <View style={styles.predictWrap} accessibilityLabel="Make your call">
               <Txt style={[styles.predict, { color: t.red }]}>PREDICT</Txt>
             </View>
+          ) : live ? (
+            // A live match's stub tears off straight into its chat.
+            <Pressable
+              onPress={() => router.push('/match/chat/' + m.id)}
+              accessibilityRole="button"
+              accessibilityLabel="Join the match chat"
+              hitSlop={6}
+              style={({ pressed }) => [styles.predictWrap, { opacity: pressed ? 0.6 : 1 }]}>
+              <Txt style={[styles.predict, { color: t.red }]}>CHAT</Txt>
+              <Feather name="message-circle" size={16} color={t.red} style={{ position: 'absolute', bottom: 2 }} />
+            </Pressable>
           ) : (
             <View style={styles.stub}>
               <View style={{ alignItems: 'center' }}>

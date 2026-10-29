@@ -193,6 +193,11 @@ export interface LiveCall {
   locksAt: string; // when it locks, in words: "at 10 overs"
   result: string; // once settled or void: "Afghanistan made 172"
   openedAt: string;
+  createdBy: string; // a fan's own call: who asked ('' for the app's calls)
+  playerId: string;
+  teamId: string;
+  target: number;
+  innings: string;
 }
 
 export interface CallOption {

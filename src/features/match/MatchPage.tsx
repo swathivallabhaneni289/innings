@@ -53,7 +53,7 @@ function Live({ data }: { data: MatchPageResponse }) {
       {data.calls?.length ? (
         <>
           <SectionHeader title="Call it" />
-          <LiveCalls calls={data.calls} />
+          <LiveCalls calls={data.calls} match={data.match} />
         </>
       ) : null}
       <ChatEntry match={data.match} />
@@ -82,7 +82,7 @@ function After({ data }: { data: MatchPageResponse }) {
       {data.calls?.length ? (
         <>
           <SectionHeader title="Calls during the match" />
-          <LiveCalls calls={data.calls} />
+          <LiveCalls calls={data.calls} match={data.match} />
         </>
       ) : null}
 

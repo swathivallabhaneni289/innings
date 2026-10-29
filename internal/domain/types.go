@@ -210,6 +210,12 @@ type LiveCall struct {
 	LocksAt  string       `json:"locksAt"`  // when it locks, in words: "at 10 overs"
 	Result   string       `json:"result"`   // once settled or void: "Afghanistan made 172"
 	OpenedAt string       `json:"openedAt"`
+	// A fan's own call (made from the chat) carries who asked and what it's about; the app's calls leave these empty.
+	CreatedBy string `json:"createdBy"`
+	PlayerID  string `json:"playerId"`
+	TeamID    string `json:"teamId"`
+	Target    int    `json:"target"`
+	Innings   string `json:"innings"` // the batting card's innings number a player call counts in, once known
 }
 
 type CallOption struct {
