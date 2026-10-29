@@ -2,6 +2,7 @@
 import type {
   Account,
   BadgeDef,
+  ChatMessage,
   Collection,
   Match,
   MatchLog,
@@ -204,4 +205,12 @@ export interface LogSuggestionsResponse {
 /** GET /v1/notifications */
 export interface NotificationsResponse {
   items: { id: string; text: string; matchId: string | null; logId: string | null; createdAt: string }[];
+}
+
+/** GET /v1/matches/{id}/chat — the room's messages and who wrote them. */
+export interface ChatResponse {
+  messages: ChatMessage[]; // oldest first; with ?after=, only those from then on
+  users: Record<string, User>; // every author in messages
+  open: boolean; // fans can post now
+  opensAt: string; // when a closed room opens ('' once it has closed, and for classics)
 }

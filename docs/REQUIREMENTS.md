@@ -21,7 +21,8 @@ The requirement IDs match the build checklist in [`.planning/REQUIREMENTS.md`](.
 | Platform | 8 / 8 | 1, 2, 6 |
 | Accounts (v1.1) | 8 / 8 | 7 |
 | Real matches (v1.2) | 1 / 1 | 8 |
-| **Total** | **73 / 73** | |
+| Match chat (v1.2) | 1 / 1 | 9 |
+| **Total** | **74 / 74** | |
 
 "Built" means the code does it and passes the check in its row. Real fans haven't used the app yet, and it hasn't been run on a physical phone. Both are the next step; see [Open items](#open-items).
 
@@ -180,6 +181,14 @@ Added 2026-10-29. The developer's plan asked for a cricket data API in week 1, a
 | ID | The app must… | Check | Built in |
 | --- | --- | --- | --- |
 | DATA-01 | Show today's real matches with live scores, the week's fixtures with their announced squads, the playing XIs once the toss is done, and results with the top scorers, top wicket-takers and player of the match; no account or key needed | Tests on saved ESPN responses from 29 October 2026 (`TestScoreboardMapping`, `TestPollFetchesSummariesSavesAndReloads`, `TestSquadsAndTossAreCheckedOftenEnough`, `TestAPIServesRealMatches`); walked on an iPhone simulator, where Home and Matches showed South Africa v Australia, Bangladesh v West Indies and England v Sri Lanka live | `internal/feed/`, `cmd/api/main.go` |
+
+### Match chat (v1.2)
+
+Added 2026-10-29, when the developer said the app is mainly about talking a match through and predicting how it goes.
+
+| ID | The app must… | Check | Built in |
+| --- | --- | --- | --- |
+| CHAT-01 | Give every real match a chat room, open from a day before the first ball until a day after the match, with the score shown above it and new messages arriving within a few seconds | Rooms per match, oldest first, `after` reads, one message a second, 1–500 characters, closed rooms and classics refused, a deleted account's messages removed (`TestMatchChat`); walked on an iPhone simulator during South Africa v Australia, where a second fan's message appeared on its own | `app/(app)/match/chat/[id].tsx`, `features/match/ChatEntry.tsx`, `internal/httpapi/chat.go`, `internal/store/chat.go` |
 
 ### Design
 

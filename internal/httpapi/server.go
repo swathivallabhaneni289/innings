@@ -96,6 +96,8 @@ func (s *Server) Handler() http.Handler {
 	authed("DELETE /v1/logs/{id}", s.handleDeleteLog)
 	authed("PUT /v1/matches/{id}/prediction", s.handlePrediction)
 	authed("PUT /v1/matches/{id}/watching", s.handleWatching)
+	authed("GET /v1/matches/{id}/chat", s.handleChat)
+	authed("POST /v1/matches/{id}/chat", s.handleChatPost)
 	authed("POST /v1/logs/{id}/like", s.handleLike)
 	authed("POST /v1/logs/{id}/there-too", s.handleThereToo)
 	authed("POST /v1/logs/{id}/replies", s.handleReply)

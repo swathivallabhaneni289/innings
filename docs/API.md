@@ -73,6 +73,7 @@ them, and it doesn't appear in search or friend lists until it is onboarded.
 | `GET /v1/search?q=` | `SearchResponse` | teams, venue, city, stage, competition, year |
 | `GET /v1/log/suggestions` | `LogSuggestionsResponse` | |
 | `GET /v1/notifications` | `NotificationsResponse` | |
+| `GET /v1/matches/{id}/chat?after=` | `ChatResponse` | the latest 200 messages, oldest first; `after` = a message's `createdAt` returns from then on (inclusive, so drop the ones you have by id). Open from 24 hours before the first ball until a day after the match's usual end; classics have no chat |
 
 ## Writes
 
@@ -85,6 +86,7 @@ them, and it doesn't appear in search or friend lists until it is onboarded.
 | `POST /v1/logs/{id}/like` | – | `{liked: boolean, likes: number}` (toggle) |
 | `POST /v1/logs/{id}/there-too` | – | `{iWasThere: boolean, thereToo: number}` (toggle) |
 | `POST /v1/logs/{id}/replies` | `{text}` | `Reply` (201) |
+| `POST /v1/matches/{id}/chat` | `{text}` (1–500 characters) | `ChatMessage` (201); **409 `chat-closed`** outside the room's hours; **429 `slow-down`** (with `Retry-After`) for more than one message a second |
 | `POST /v1/users/{id}/follow` | – | `{following: boolean}` (toggle) |
 | `PUT /v1/me` | any of `{name, handle, bio, favouriteTeamId, avatarColour, photoUri}` | `User`; 400 `bad-handle` or 409 `handle-taken` for a handle that fails the rules above |
 | `PUT /v1/me/top5` | `{matchIds: string[]}` (max 5, in order) | `{top5: Match[]}` |

@@ -2,6 +2,7 @@ import { View } from 'react-native';
 
 import { SectionHeader } from '@/components';
 import { useMe, type MatchPageResponse } from '@/data';
+import { ChatEntry } from './ChatEntry';
 import { FanRating } from './FanRating';
 import { Header } from './Header';
 import { FriendsWatching, LiveScoreboard, ResultCard } from './LiveScoreboard';
@@ -31,6 +32,7 @@ function Before({ data }: { data: MatchPageResponse }) {
   return (
     <View>
       <PredictionSection data={data} />
+      <ChatEntry match={data.match} />
       <SectionHeader title="Where you're watching" />
       <WatchingButton matchId={data.match.id} watching={data.mine.watching} />
       {data.friendsWatching.length > 0 ? (
@@ -47,6 +49,7 @@ function Live({ data }: { data: MatchPageResponse }) {
   return (
     <View>
       <LiveScoreboard match={data.match} />
+      <ChatEntry match={data.match} />
       <SectionHeader title="Friends watching now" />
       <FriendsWatching users={data.friendsWatching} emptyText="None of your friends are watching this one. Yet." />
       <View style={{ marginTop: 12 }}>
@@ -68,6 +71,7 @@ function After({ data }: { data: MatchPageResponse }) {
       <View style={{ marginTop: 12 }}>
         <LogAction match={match} log={mine.log} />
       </View>
+      <ChatEntry match={match} />
 
       {fans ? (
         <>

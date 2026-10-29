@@ -8,6 +8,7 @@ import type {
   AuthStartResponse,
   AuthVerifyResponse,
   BootstrapResponse,
+  ChatResponse,
   ContactsMatchResponse,
   FeedItem,
   FriendsResponse,
@@ -22,7 +23,7 @@ import type {
   UserResponse,
   VaultResponse,
 } from '@/domain/api';
-import type { Account, Format, Match, MatchLog, Player, Prediction, Reply, Team, User, WatchPlace } from '@/domain/types';
+import type { Account, ChatMessage, Format, Match, MatchLog, Player, Prediction, Reply, Team, User, WatchPlace } from '@/domain/types';
 import { api, ApiError, catalog } from './client';
 import { queryClient } from './queryClient';
 import { endSession, markReady, onSessionEnd, saveToken, useSession } from './session';
@@ -264,6 +265,31 @@ export const useFriends = () => useQuery({ queryKey: ['friends'], queryFn: () =>
 export const useLogItem = (id: string | undefined) =>
   useQuery({ queryKey: ['log', id], queryFn: () => api<FeedItem>(`/v1/logs/${id}`), enabled: !!id });
 
+/**
+ * A match's chat room. While a screen shows it, it checks for new messages every 3 s, fetching only what came
+ * after the last one it has.
+ */
+export function useMatchChat(id: string | undefined) {
+  return useQuery({
+    queryKey: ['chat', id],
+    queryFn: async () => {
+      const prev = queryClient.getQueryData<ChatResponse>(['chat', id]);
+      const last = prev?.messages[prev.messages.length - 1]?.createdAt;
+      const res = await api<ChatResponse>(`/v1/matches/${id}/chat${last ? `?after=${encodeURIComponent(last)}` : ''}`);
+      return prev && last ? mergeChat(prev, res) : res;
+    },
+    enabled: !!id,
+    refetchInterval: 3_000,
+  });
+}
+
+/** next's messages added after prev's, skipping any prev already has (an `after` read repeats the last one). */
+function mergeChat(prev: ChatResponse, next: ChatResponse): ChatResponse {
+  const seen = new Set(prev.messages.map((m) => m.id));
+  const fresh = next.messages.filter((m) => !seen.has(m.id));
+  return { ...next, messages: fresh.length ? [...prev.messages, ...fresh] : prev.messages, users: { ...prev.users, ...next.users } };
+}
+
 export const useSearch = (q: string) =>
   useQuery({
     queryKey: ['search', q.trim()],
@@ -312,6 +338,15 @@ export function useActions() {
     toggleThereToo: (logId: string) =>
       exec(() => api<{ iWasThere: boolean; thereToo: number }>(`/v1/logs/${logId}/there-too`, { method: 'POST' })),
     addReply: (logId: string, text: string) => exec(() => api<Reply>(`/v1/logs/${logId}/replies`, { method: 'POST', body: { text } })),
+    /**
+     * Posts to a match's chat and shows it straight away (no refetch of other screens: chats are busy).
+     * Rejects with ApiError 429 "slow-down" (one a second) or 409 "chat-closed".
+     */
+    sendChat: async (matchId: string, text: string) => {
+      const msg = await api<ChatMessage>(`/v1/matches/${matchId}/chat`, { method: 'POST', body: { text } });
+      qc.setQueryData<ChatResponse>(['chat', matchId], (prev) => (prev ? mergeChat(prev, { ...prev, messages: [msg] }) : prev));
+      return msg;
+    },
     toggleFollow: (userId: string) => exec(() => api<{ following: boolean }>(`/v1/users/${userId}/follow`, { method: 'POST' })),
     /** Follows each fan once. The endpoint toggles, so pass only fans not followed yet. */
     followAll: (userIds: string[]) =>

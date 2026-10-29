@@ -196,6 +196,15 @@ type Reply struct {
 	CreatedAt string `json:"createdAt"`
 }
 
+// ChatMessage is one message in a match's chat. CreatedAt carries milliseconds.
+type ChatMessage struct {
+	ID        string `json:"id"`
+	MatchID   string `json:"matchId"`
+	UserID    string `json:"userId"`
+	Text      string `json:"text"`
+	CreatedAt string `json:"createdAt"`
+}
+
 // BadgeDef IDs: called-the-upset, five-match-streak, sharpshooter, first-call, stadium-regular.
 type BadgeDef struct {
 	ID          string `json:"id"`

@@ -123,16 +123,7 @@ func startOf(m domain.Match) time.Time { return parseTime(m.StartTime) }
 // endOf estimates when a match finished (Match has no end time): start + typical duration for the format, capped
 // at now for completed matches.
 func (v *view) endOf(m domain.Match) time.Time {
-	d := 3*time.Hour + 30*time.Minute
-	switch m.Format {
-	case domain.FormatHundred:
-		d = 2*time.Hour + 45*time.Minute
-	case domain.FormatODI:
-		d = 8 * time.Hour
-	case domain.FormatTest:
-		d = 5 * 24 * time.Hour
-	}
-	end := startOf(m).Add(d)
+	end := typicalEnd(m)
 	if m.State == domain.Completed && end.After(v.now) {
 		end = v.now
 	}

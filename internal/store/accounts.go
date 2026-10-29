@@ -290,6 +290,7 @@ func (s *Store) DeleteUser(ctx context.Context, userID string) error {
 		{`DELETE FROM likes WHERE log_id IN ` + myLogs + ` OR user_id = ?`, []any{userID, userID}},
 		{`DELETE FROM there_too WHERE log_id IN ` + myLogs + ` OR user_id = ?`, []any{userID, userID}},
 		{`DELETE FROM replies WHERE log_id IN ` + myLogs + ` OR user_id = ?`, []any{userID, userID}},
+		{`DELETE FROM chat_messages WHERE user_id = ?`, []any{userID}},
 		{`DELETE FROM follows WHERE user_id = ? OR target_id = ?`, []any{userID, userID}},
 		{`DELETE FROM logs WHERE user_id = ?`, []any{userID}},
 		{`DELETE FROM predictions WHERE user_id = ?`, []any{userID}},

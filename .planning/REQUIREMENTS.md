@@ -115,6 +115,7 @@ Added 2026-10-25 when the developer asked for "a proper sign in like how Beli ha
 
 Added 2026-10-29: the plan asked for a cricket data API in week 1; nothing paid, no sign-ups.
 
+- [x] **CHAT-01**: A chat room for every real match, open from a day before the first ball until a day after it, with the score above and new messages within seconds
 - [x] **DATA-01**: Today's real matches with live scores, the week's fixtures with announced squads, playing XIs at the toss, and results with top scorers, top wicket-takers and player of the match, from ESPN's public scores feed (no key)
 
 ## v2 Requirements
@@ -166,6 +167,7 @@ From the plan's "Later" list, plus items deferred by build decisions on 2026-10-
 | PLAT-06, PLAT-07, PLAT-08 | Phase 6 | Complete |
 | ACCT-01, ACCT-02, ACCT-03, ACCT-04, ACCT-05, ACCT-06, ACCT-07, ACCT-08 | Phase 7 | Complete |
 | DATA-01 | Phase 8 | Complete |
+| CHAT-01 | Phase 9 | Complete |
 
 **Coverage:**
 

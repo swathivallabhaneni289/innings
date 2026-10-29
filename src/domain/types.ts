@@ -178,6 +178,15 @@ export interface Reply {
   createdAt: string;
 }
 
+/** One message in a match's chat. createdAt carries milliseconds. */
+export interface ChatMessage {
+  id: string;
+  matchId: string;
+  userId: string;
+  text: string;
+  createdAt: string;
+}
+
 export type ThemePreference = 'auto' | 'paper' | 'floodlights';
 
 export interface BadgeDef {

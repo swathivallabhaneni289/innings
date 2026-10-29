@@ -227,3 +227,11 @@ type Notification struct {
 type NotificationsResponse struct {
 	Items []Notification `json:"items"`
 }
+
+// ChatResponse is GET /v1/matches/{id}/chat: the room's messages and who wrote them.
+type ChatResponse struct {
+	Messages []ChatMessage   `json:"messages"` // oldest first; with ?after=, only those from then on
+	Users    map[string]User `json:"users"`    // every author in Messages
+	Open     bool            `json:"open"`     // fans can post now
+	OpensAt  string          `json:"opensAt"`  // when a closed room opens ("" once it has closed, and for classics)
+}

@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Real matches
-current_phase: 08
-current_phase_name: real-matches
-status: complete
-stopped_at: v1.2 real matches done; building the match chat
+current_phase: 09
+current_phase_name: during-the-match
+status: in-progress
+stopped_at: match chat done; building predictions during a match
 last_updated: "2026-10-29T15:20:00.000Z"
 last_activity: 2026-10-29
-last_activity_desc: Real matches from ESPN's scores feed (v1.2, DATA-01); next the match chat and predictions during a match
+last_activity_desc: Match chat (CHAT-01) on real matches; next predictions during a match
 progress:
-  total_phases: 8
+  total_phases: 9
   completed_phases: 8
   total_plans: 9
   completed_plans: 9
