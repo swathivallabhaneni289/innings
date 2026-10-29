@@ -1,0 +1,47 @@
+{
+ "sports": [
+  {
+   "leagues": [
+    {
+     "id": "24469",
+     "name": "India tour of New Zealand 2026/27",
+     "events": [
+      {
+       "id": "1539436",
+       "date": "2026-11-01T07:00:00Z",
+       "title": "5th T20I (D/N)",
+       "location": "Bay Oval, Mount Maunganui",
+       "status": "pre",
+       "class": {
+        "generalClassCard": "T20I"
+       },
+       "fullStatus": {
+        "longSummary": "Match scheduled to begin at 20:00 local time (07:00 GMT)",
+        "summary": "Starts at 20:00 local time"
+       },
+       "notes": [],
+       "competitors": [
+        {
+         "id": "5",
+         "displayName": "New Zealand",
+         "abbreviation": "NZ",
+         "color": "#b7c0c8",
+         "winner": false,
+         "score": ""
+        },
+        {
+         "id": "6",
+         "displayName": "India",
+         "abbreviation": "IND",
+         "color": "#050ceb",
+         "winner": false,
+         "score": ""
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -31,7 +31,6 @@ See REQUIREMENTS.md for the full checkable list (64 v1 and 8 v1.1 requirements a
 ### Out of Scope
 
 - Supabase: replaced by the Go API and SQLite (see Key Decisions)
-- Live cricket data from a paid API: the simulation stands in until a CricketData.org or SportMonks key exists
 - Sign in with Apple, Google or email: phone sign-in only for now (ACCT-09)
 - Real text messages: need an SMS provider account; dev mode shows the code on screen (SMS-01)
 - App Store and Play Store builds: need the developer's Apple and Google accounts
@@ -67,7 +66,8 @@ See REQUIREMENTS.md for the full checkable list (64 v1 and 8 v1.1 requirements a
 | Go API plus SQLite replaces Supabase from the plan | Zero-setup local runs; embedded migrations; SQL stays portable to Postgres for production | Built 2026-10-22 (`internal/store`) |
 | Guest accounts via `POST /v1/bootstrap` token | Fastest path to a usable loop; token stored on the device | Built in v1.0; replaced by phone sign-in in v1.1 |
 | Phone and text-code sign-in, like Beli | Developer asked for "a proper sign in like how Beli has" (2026-10-25): no passwords, one flow for new and returning fans, contacts for finding friends | Built 2026-10-25 (Phase 7); Twilio Verify wired in, dev mode shows the code |
-| Simulated world instead of a cricket API | No API key available; deterministic, so tests can pin exact numbers | Built (`internal/sim`); real API swap is v2 |
+| Simulated world instead of a cricket API | No API key available; deterministic, so tests can pin exact numbers | Built (`internal/sim`); replaced for matches by the real feed in v1.2 |
+| Real matches from ESPN's public scores feed | The plan asked for real data in week 1; the developer wants nothing paid and no sign-ups. CricketData.org needs an account, SportMonks costs from €29 a month, scraping Google or bcci.tv breaks their terms | Built 2026-10-29 (`internal/feed`); unofficial, so it may change without notice |
 | Streak multiplier x1 / x1.5 / x2 | Plan said "streaks multiply" without numbers: 1 to 2 correct winners x1, 3 to 4 x1.5, 5 or more x2 | Built (`internal/domain/scoring.go`) |
 | Upset measured at lock time | The split must be frozen at the first ball or late picks could move it | Built |
 | Tied top scorers all count | A fan who named either of two tied players called it right | Built |

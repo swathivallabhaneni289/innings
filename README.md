@@ -51,7 +51,7 @@ Getting in works the way Beli does it. You type your phone number and we text yo
 | Backend | A Go API (standard library `net/http`) with SQLite, instead of the Supabase the plan suggested | Go is what I build backends in. SQLite with embedded migrations means `make api` runs with no setup; the SQL stays Postgres-ready. | No managed storage yet: photos stay on the phone. |
 | Accounts | Phone number and a texted code, like Beli, with a unique @username | No passwords to forget, one flow for new and returning fans, and contacts make finding friends easy. | Real texts need an SMS provider (Twilio Verify is wired in) and cost a few cents per sign-in. Until then the server runs in dev mode and shows the code on screen. |
 | Phones | One Expo / React Native app for iPhone and Android | One codebase, native on both. Phone screens can't be built well in Go, so Go does the server and the app does the screens. | Two languages in one repo. |
-| Match data | A deterministic simulated cricket world, built around server start | No paid cricket API key is needed to try it, and there's always something live, about to start and just finished. Real current XIs and real grounds. | Scores aren't real. A CricketData.org or SportMonks client can replace the simulation behind the same interface. |
+| Match data | Real fixtures, live scores, squads, playing XIs and results from ESPN's public scores feed, the same data as ESPNcricinfo. `INNINGS_MATCHES=sim` runs a simulated world instead | Predicting and logging only mean something on real matches, and the feed needs no account or key and costs nothing. One poller on the server serves every fan from its own copy, so the app never calls ESPN, and matches are kept after they finish so logs and predictions always find them. It looks a week ahead, so squads appear as soon as they're announced, and checks every five minutes before the toss for the playing XIs. | It isn't an official API, so ESPN can change it without notice. The code reads it defensively, and its tests run on saved real responses. It's fine for a personal app, not a commercial one. Simulated fans don't predict, rate or watch real matches, so those start empty until real fans arrive. |
 | The Vault | Real matches only, each fact-checked | Fans know these games by heart; one wrong date ruins the trust. All 58 were checked against public scorecards; sources are in [`docs/VAULT_SOURCES.md`](docs/VAULT_SOURCES.md). | Slower to grow by hand. |
 | Ratings | Five cricket balls with half-balls, everywhere | The plan's signature detail. One scale for logging, averages and rankings. | |
 | Predictions | Lock at the first ball; an upset is measured on the fans' split at lock time | Nobody can call it after seeing the toss, and an upset means the same thing for everyone. | |
@@ -75,13 +75,14 @@ flowchart LR
   end
   Data -- "JSON over HTTP" --> API["Go API · cmd/api, internal/httpapi"]
   API --> Store[("SQLite · internal/store")]
-  API --> Sim["Simulated cricket world · internal/sim"]
+  API --> Feed["Real matches · internal/feed"] --> Provider["ESPN scores feed"]
+  API --> Sim["Simulated fans, Vault · internal/sim"]
   API --> Rules["Scoring and aggregates · internal/domain"]
 ```
 
 - **App:** Expo SDK 57, Expo Router, React Query, react-native-svg and Reanimated. The design system lives in `src/theme` and `src/components`: the ticket stub, ball ratings, the LOGGED stamp.
 - **API:** Go 1.26, standard library HTTP, `modernc.org/sqlite`. The JSON contract is `src/domain/types.ts` and `src/domain/api.ts`, mirrored in `internal/domain`. Endpoints are listed in [`docs/API.md`](docs/API.md).
-- **Tests:** table tests for scoring and aggregates, `httptest` checks for every endpoint (including that no list ever comes back as `null`), and tests that the simulated world is deterministic.
+- **Tests:** table tests for scoring and aggregates, `httptest` checks for every endpoint (including that no list ever comes back as `null`), tests that the simulated world is deterministic, and tests of the real-match feed against saved ESPN responses.
 
 ## Run it
 
@@ -92,6 +93,8 @@ make api          # Go API on http://localhost:8088, sign-in codes in dev mode (
 npm install
 make app          # Expo dev server; press i for iOS, a for Android
 ```
+
+Matches are real by default. When it starts, `make api` fetches today's matches and the week ahead from ESPN's public scores feed. After that it checks every minute while a match is on and every five minutes otherwise, and keeps everything in the database. To run the simulated world instead, for example offline, start it with `INNINGS_MATCHES=sim make api`.
 
 On a real phone, connect it by cable and run `npx expo run:android --device` or `npx expo run:ios --device`. Keep the phone on the same Wi-Fi as your computer: the app finds the API there automatically. Set `EXPO_PUBLIC_API_URL` to point it somewhere else.
 
@@ -109,6 +112,7 @@ make reset-db     # start again with an empty database
 cmd/api            Go server entry point
 internal/httpapi   routes and handlers
 internal/store     SQLite storage and migrations
+internal/feed      real matches from ESPN's scores feed: polling, mapping, saving
 internal/sim       simulated fixtures, friends, crowd and the Vault
 internal/domain    JSON types, scoring, aggregates
 src/app            Expo Router screens (tabs, match, log, vault, profile)

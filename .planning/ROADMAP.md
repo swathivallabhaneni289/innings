@@ -6,7 +6,7 @@ Innings delivers a cricket fan's diary in six phases. Phase 1 fixes the shared J
 
 All six phases were planned and built on 2026-10-22 in one evening, by a lead agent directing parallel sub-agents with strict file ownership. Milestone v1.0 is complete: 8 of 8 plans, 64 of 64 v1 requirements.
 
-Milestone v1.1 (Accounts) added Phase 7 on 2026-10-25 at the developer's request: phone sign-in and a Beli-style onboarding, replacing the guest accounts. It is complete. The Phase 1 contract (`src/domain/types.ts`, `src/domain/api.ts`, `docs/API.md`) was the fixed interface every workstream built against.
+Milestone v1.1 (Accounts) added Phase 7 on 2026-10-25 at the developer's request: phone sign-in and a Beli-style onboarding, replacing the guest accounts. It is complete. Milestone v1.2 (Real matches) added Phase 8 on 2026-10-29: the app had shipped on simulated matches, and the plan asked for real data in week 1. The Phase 1 contract (`src/domain/types.ts`, `src/domain/api.ts`, `docs/API.md`) was the fixed interface every workstream built against.
 
 ## Phases
 
@@ -25,6 +25,10 @@ Milestone v1.1 (Accounts) added Phase 7 on 2026-10-25 at the developer's request
 **Milestone v1.1: Accounts**
 
 - [x] **Phase 7: Phone sign-in & onboarding** - Phone number and text code, fan card with @username, find friends, sign out, delete account (completed 2026-10-25)
+
+**Milestone v1.2: Real matches**
+
+- [x] **Phase 8: Real matches** - Today's matches, the week's fixtures, squads, playing XIs and results from ESPN's public scores feed (completed 2026-10-29)
 
 ## Phase Details
 
@@ -177,10 +181,29 @@ Plans:
 
 **UI hint**: yes
 
+### Phase 8: Real matches
+
+**Goal**: The app shows the real cricket being played, so fans predict and log real matches
+**Depends on**: Phase 7
+**Requirements**: DATA-01
+**Success Criteria** (what must be TRUE):
+
+  1. Today's live matches show their real scores and status, refreshed within a minute or two
+  2. The week's fixtures appear with their announced squads, so fans can predict days ahead
+  3. The playing XIs replace the squads once the toss is done
+  4. Finished matches settle predictions with the real winner, top scorers and top wicket-takers, and show the official player of the match
+  5. No account, key or payment is needed, and the app never calls the feed itself
+
+*Outcome:* all five met against ESPN's live feed on 29 October 2026 (England v Sri Lanka, South Africa v Australia and Bangladesh v West Indies live; UAE v Oman and a WBBL game settled; New Zealand v India with both squads). The feed is unofficial, so it may change without notice.
+
+**Plans**: no separate plan file; built directly in `internal/feed`
+
+**UI hint**: no (the app picks up new teams and players by reloading its catalog)
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 (2's two plans ran in parallel, as did 5's; 7's server and app ran in parallel against one contract)
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 (2's two plans ran in parallel, as did 5's; 7's server and app ran in parallel against one contract)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -191,3 +214,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 (2's two 
 | 5. Vault & Profile | 2/2 | Complete | 2026-10-22 |
 | 6. Design pass & release prep | 1/1 | Complete | 2026-10-22 |
 | 7. Phone sign-in & onboarding | 1/1 | Complete | 2026-10-25 |
+| 8. Real matches | n/a | Complete | 2026-10-29 |

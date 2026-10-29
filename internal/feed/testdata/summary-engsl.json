@@ -1,0 +1,755 @@
+{
+ "squads": [
+  {
+   "team": {
+    "id": "1",
+    "displayName": "England"
+   },
+   "athletes": [
+    {
+     "id": "911707",
+     "displayName": "Harry Brook",
+     "keeper": false,
+     "position": {
+      "name": "Middle-order batter"
+     }
+    },
+    {
+     "id": "1039481",
+     "displayName": "Gus Atkinson",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    },
+    {
+     "id": "1191192",
+     "displayName": "Sonny Baker",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    },
+    {
+     "id": "877051",
+     "displayName": "Tom Banton",
+     "keeper": false,
+     "position": {
+      "name": "Wicketkeeper batter"
+     }
+    },
+    {
+     "id": "1231590",
+     "displayName": "James Coles",
+     "keeper": false,
+     "position": {
+      "name": "Allrounder"
+     }
+    },
+    {
+     "id": "1112537",
+     "displayName": "Jordan Cox",
+     "keeper": true,
+     "position": {
+      "name": "Wicketkeeper batter"
+     }
+    },
+    {
+     "id": "660889",
+     "displayName": "Mason Crane",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    },
+    {
+     "id": "1143809",
+     "displayName": "Henry Crocombe",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    },
+    {
+     "id": "662973",
+     "displayName": "Sam Curran",
+     "keeper": false,
+     "position": {
+      "name": "Allrounder"
+     }
+    },
+    {
+     "id": "211855",
+     "displayName": "Liam Dawson",
+     "keeper": false,
+     "position": {
+      "name": "Allrounder"
+     }
+    },
+    {
+     "id": "521637",
+     "displayName": "Ben Duckett",
+     "keeper": false,
+     "position": {
+      "name": "Top-order batter"
+     }
+    },
+    {
+     "id": "897549",
+     "displayName": "Will Jacks",
+     "keeper": false,
+     "position": {
+      "name": "Batting allrounder"
+     }
+    },
+    {
+     "id": "510530",
+     "displayName": "Jamie Overton",
+     "keeper": false,
+     "position": {
+      "name": "Bowling allrounder"
+     }
+    },
+    {
+     "id": "244497",
+     "displayName": "Adil Rashid",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    },
+    {
+     "id": "303669",
+     "displayName": "Joe Root",
+     "keeper": false,
+     "position": {
+      "name": "Top-order batter"
+     }
+    },
+    {
+     "id": "857975",
+     "displayName": "Josh Tongue",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    }
+   ]
+  },
+  {
+   "team": {
+    "id": "8",
+    "displayName": "Sri Lanka"
+   },
+   "athletes": [
+    {
+     "id": "629074",
+     "displayName": "Kusal Mendis",
+     "keeper": false,
+     "position": {
+      "name": "Wicketkeeper batter"
+     }
+    },
+    {
+     "id": "693975",
+     "displayName": "Sahan Arachchige",
+     "keeper": false,
+     "position": {
+      "name": "Batting allrounder"
+     }
+    },
+    {
+     "id": "552152",
+     "displayName": "Dushmantha Chameera",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    },
+    {
+     "id": "1175296",
+     "displayName": "Sachindu Colombage",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    },
+    {
+     "id": "786925",
+     "displayName": "Asitha Fernando",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    },
+    {
+     "id": "784369",
+     "displayName": "Avishka Fernando",
+     "keeper": false,
+     "position": {
+      "name": "Opening batter"
+     }
+    },
+    {
+     "id": "704693",
+     "displayName": "Lahiru Udara",
+     "keeper": false,
+     "position": {
+      "name": "Wicketkeeper batter"
+     }
+    },
+    {
+     "id": "681681",
+     "displayName": "Janith Liyanage",
+     "keeper": false,
+     "position": {
+      "name": "Batting allrounder"
+     }
+    },
+    {
+     "id": "793007",
+     "displayName": "Dilshan Madushanka",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    },
+    {
+     "id": "1306214",
+     "displayName": "Eshan Malinga",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    },
+    {
+     "id": "784373",
+     "displayName": "Kamindu Mendis",
+     "keeper": false,
+     "position": {
+      "name": "Allrounder"
+     }
+    },
+    {
+     "id": "1075863",
+     "displayName": "Kamil Mishara",
+     "keeper": true,
+     "position": {
+      "name": "Opening batter"
+     }
+    },
+    {
+     "id": "1171180",
+     "displayName": "Pavan Rathnayake",
+     "keeper": false,
+     "position": {
+      "name": "Top-order batter"
+     }
+    },
+    {
+     "id": "437316",
+     "displayName": "Dasun Shanaka",
+     "keeper": false,
+     "position": {
+      "name": "Allrounder"
+     }
+    },
+    {
+     "id": "1138316",
+     "displayName": "Maheesh Theekshana",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    },
+    {
+     "id": "1152427",
+     "displayName": "Dunith Wellalage",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    }
+   ]
+  }
+ ],
+ "rosters": [
+  {
+   "team": {
+    "id": "1",
+    "displayName": "England"
+   },
+   "roster": [
+    {
+     "starter": true,
+     "athlete": {
+      "id": "877051",
+      "displayName": "Tom Banton",
+      "position": {
+       "name": "Wicketkeeper batter"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "521637",
+      "displayName": "Ben Duckett",
+      "position": {
+       "name": "Top-order batter"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "911707",
+      "displayName": "Harry Brook",
+      "position": {
+       "name": "Middle-order batter"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "897549",
+      "displayName": "Will Jacks",
+      "position": {
+       "name": "Batting allrounder"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "1112537",
+      "displayName": "Jordan Cox",
+      "position": {
+       "name": "Wicketkeeper batter"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "662973",
+      "displayName": "Sam Curran",
+      "position": {
+       "name": "Allrounder"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "303669",
+      "displayName": "Joe Root",
+      "position": {
+       "name": "Top-order batter"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "211855",
+      "displayName": "Liam Dawson",
+      "position": {
+       "name": "Allrounder"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "1039481",
+      "displayName": "Gus Atkinson",
+      "position": {
+       "name": "Bowler"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "1191192",
+      "displayName": "Sonny Baker",
+      "position": {
+       "name": "Bowler"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "1143809",
+      "displayName": "Henry Crocombe",
+      "position": {
+       "name": "Bowler"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "team": {
+    "id": "8",
+    "displayName": "Sri Lanka"
+   },
+   "roster": [
+    {
+     "starter": true,
+     "athlete": {
+      "id": "784373",
+      "displayName": "Kamindu Mendis",
+      "position": {
+       "name": "Allrounder"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "784369",
+      "displayName": "Avishka Fernando",
+      "position": {
+       "name": "Opening batter"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "629074",
+      "displayName": "Kusal Mendis",
+      "position": {
+       "name": "Wicketkeeper batter"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "1171180",
+      "displayName": "Pavan Rathnayake",
+      "position": {
+       "name": "Top-order batter"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "693975",
+      "displayName": "Sahan Arachchige",
+      "position": {
+       "name": "Batting allrounder"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "681681",
+      "displayName": "Janith Liyanage",
+      "position": {
+       "name": "Batting allrounder"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "437316",
+      "displayName": "Dasun Shanaka",
+      "position": {
+       "name": "Allrounder"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "1152427",
+      "displayName": "Dunith Wellalage",
+      "position": {
+       "name": "Bowler"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "1306214",
+      "displayName": "Eshan Malinga",
+      "position": {
+       "name": "Bowler"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "786925",
+      "displayName": "Asitha Fernando",
+      "position": {
+       "name": "Bowler"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "793007",
+      "displayName": "Dilshan Madushanka",
+      "position": {
+       "name": "Bowler"
+      }
+     }
+    }
+   ]
+  }
+ ],
+ "leaders": [
+  {
+   "team": {
+    "id": "1",
+    "displayName": "England"
+   },
+   "linescores": [
+    {
+     "isBatting": true,
+     "leaders": [
+      {
+       "name": "runs",
+       "leaders": [
+        {
+         "value": "167",
+         "athlete": {
+          "id": "521637",
+          "displayName": "Ben Duckett",
+          "position": {
+           "name": "Top-order batter"
+          }
+         }
+        },
+        {
+         "value": "74",
+         "athlete": {
+          "id": "877051",
+          "displayName": "Tom Banton",
+          "position": {
+           "name": "Wicketkeeper batter"
+          }
+         }
+        },
+        {
+         "value": "44",
+         "athlete": {
+          "id": "911707",
+          "displayName": "Harry Brook",
+          "position": {
+           "name": "Middle-order batter"
+          }
+         }
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "isBatting": false,
+     "leaders": [
+      {
+       "name": "wickets",
+       "leaders": [
+        {
+         "value": "1",
+         "athlete": {
+          "id": "211855",
+          "displayName": "Liam Dawson",
+          "position": {
+           "name": "Allrounder"
+          }
+         }
+        },
+        {
+         "value": "1",
+         "athlete": {
+          "id": "1191192",
+          "displayName": "Sonny Baker",
+          "position": {
+           "name": "Bowler"
+          }
+         }
+        },
+        {
+         "value": "0",
+         "athlete": {
+          "id": "1039481",
+          "displayName": "Gus Atkinson",
+          "position": {
+           "name": "Bowler"
+          }
+         }
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "team": {
+    "id": "8",
+    "displayName": "Sri Lanka"
+   },
+   "linescores": [
+    {
+     "isBatting": false,
+     "leaders": [
+      {
+       "name": "wickets",
+       "leaders": [
+        {
+         "value": "2",
+         "athlete": {
+          "id": "786925",
+          "displayName": "Asitha Fernando",
+          "position": {
+           "name": "Bowler"
+          }
+         }
+        },
+        {
+         "value": "1",
+         "athlete": {
+          "id": "437316",
+          "displayName": "Dasun Shanaka",
+          "position": {
+           "name": "Allrounder"
+          }
+         }
+        },
+        {
+         "value": "1",
+         "athlete": {
+          "id": "793007",
+          "displayName": "Dilshan Madushanka",
+          "position": {
+           "name": "Bowler"
+          }
+         }
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "isBatting": true,
+     "leaders": [
+      {
+       "name": "runs",
+       "leaders": [
+        {
+         "value": "64",
+         "athlete": {
+          "id": "629074",
+          "displayName": "Kusal Mendis",
+          "position": {
+           "name": "Wicketkeeper batter"
+          }
+         }
+        },
+        {
+         "value": "48",
+         "athlete": {
+          "id": "784369",
+          "displayName": "Avishka Fernando",
+          "position": {
+           "name": "Opening batter"
+          }
+         }
+        },
+        {
+         "value": "4",
+         "athlete": {
+          "id": "784373",
+          "displayName": "Kamindu Mendis",
+          "position": {
+           "name": "Allrounder"
+          }
+         }
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "gameInfo": {
+  "venue": {
+   "fullName": "Gaddafi Stadium, Lahore",
+   "address": {
+    "city": "Lahore",
+    "country": "Pakistan"
+   }
+  }
+ },
+ "header": {
+  "competitions": [
+   {
+    "status": {
+     "type": {
+      "state": "in"
+     },
+     "featuredAthletes": []
+    },
+    "competitors": [
+     {
+      "id": "1",
+      "winner": false,
+      "linescores": [
+       {
+        "period": 1,
+        "runs": 386,
+        "wickets": 5,
+        "overs": 50.0,
+        "isBatting": true
+       },
+       {
+        "period": 2,
+        "runs": 0,
+        "wickets": 0,
+        "overs": 21.0,
+        "isBatting": false
+       }
+      ]
+     },
+     {
+      "id": "8",
+      "winner": false,
+      "linescores": [
+       {
+        "period": 1,
+        "runs": 0,
+        "wickets": 0,
+        "overs": 50.0,
+        "isBatting": false
+       },
+       {
+        "period": 2,
+        "runs": 123,
+        "wickets": 2,
+        "overs": 21.0,
+        "isBatting": true
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ }
+}

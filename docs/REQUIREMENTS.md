@@ -20,7 +20,8 @@ The requirement IDs match the build checklist in [`.planning/REQUIREMENTS.md`](.
 | Design | 7 / 7 | 1, 3, 6 |
 | Platform | 8 / 8 | 1, 2, 6 |
 | Accounts (v1.1) | 8 / 8 | 7 |
-| **Total** | **72 / 72** | |
+| Real matches (v1.2) | 1 / 1 | 8 |
+| **Total** | **73 / 73** | |
 
 "Built" means the code does it and passes the check in its row. Real fans haven't used the app yet, and it hasn't been run on a physical phone. Both are the next step; see [Open items](#open-items).
 
@@ -172,6 +173,14 @@ Added when the developer asked for "a proper sign in like how Beli has". Sign-in
 | ACCT-07 | Keep the session token in the phone's secure storage and only its hash on the server; send a fan with a signed-out or unknown token back to sign-in | `TestSessions`, `TestBootstrapResumes`, `TestUnauthorized`; walked: after the database was reset, the iPhone app went back to Welcome at launch | `src/data/session.ts`, `internal/auth/auth.go` |
 | ACCT-08 | Look right on a brand-new account with no history | Walked on the Android emulator and an iPhone simulator: Home, Profile, the Bragging Board and Predictor Rank all have empty states, with "–" for averages | `features/home/BraggingBoard.tsx`, `features/profile/PredictorRank.tsx` |
 
+### Real matches (v1.2)
+
+Added 2026-10-29. The developer's plan asked for a cricket data API in week 1, and the app had shipped on simulated matches; the developer wants nothing paid and no sign-ups.
+
+| ID | The app must… | Check | Built in |
+| --- | --- | --- | --- |
+| DATA-01 | Show today's real matches with live scores, the week's fixtures with their announced squads, the playing XIs once the toss is done, and results with the top scorers, top wicket-takers and player of the match; no account or key needed | Tests on saved ESPN responses from 29 October 2026 (`TestScoreboardMapping`, `TestPollFetchesSummariesSavesAndReloads`, `TestSquadsAndTossAreCheckedOftenEnough`, `TestAPIServesRealMatches`); walked on an iPhone simulator, where Home and Matches showed South Africa v Australia, Bangladesh v West Indies and England v Sri Lanka live | `internal/feed/`, `cmd/api/main.go` |
+
 ### Design
 
 | ID | The app must… | Check | Built in |
@@ -258,7 +267,7 @@ For example, the fifth correct winner in a row, calling an upset and the top sco
 
 ### Data
 
-- **Matches:** every live match, fixture, fan and crowd number is simulated. The simulation is deterministic: `INNINGS_ANCHOR` pins the clock, so tests can assert exact numbers.
+- **Matches:** real, from ESPN's public scores feed, polled by the server and saved in the database. Simulated fans don't predict, rate or watch real matches. `INNINGS_MATCHES=sim` runs the deterministic simulation instead, where `INNINGS_ANCHOR` pins the clock so tests can assert exact numbers.
 - **The Vault:** real matches only. An entry that can't be verified against a public scorecard is dropped.
 - **The contract:** lists and maps are never `null` in the JSON; nullable fields are explicit. `src/domain/types.ts` and `src/domain/api.ts` define it, and `internal/domain` mirrors it.
 
@@ -331,7 +340,6 @@ The look is called **Matchday Ticket**: every match is printed as a ticket on ca
 
 | ID | Requirement |
 | --- | --- |
-| DATA-01 | Fixtures, squads and live scores from CricketData.org or SportMonks, behind the same `World` methods as the simulation |
 | SMS-01 | Real text messages: an SMS provider account, a sender ID and, for Indian numbers, DLT registration |
 | ACCT-09 | Sign in with Apple and Google |
 | MEDIA-01 | Upload log and profile photos so friends can see them |

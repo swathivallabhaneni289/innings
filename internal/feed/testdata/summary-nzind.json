@@ -1,0 +1,325 @@
+{
+ "squads": [
+  {
+   "team": {
+    "id": "5",
+    "displayName": "New Zealand"
+   },
+   "athletes": [
+    {
+     "id": "502714",
+     "displayName": "Mitchell Santner",
+     "keeper": false,
+     "position": {
+      "name": "Bowling allrounder"
+     }
+    },
+    {
+     "id": "959759",
+     "displayName": "Finn Allen",
+     "keeper": false,
+     "position": {
+      "name": "Top-order batter"
+     }
+    },
+    {
+     "id": "326968",
+     "displayName": "Michael Bracewell",
+     "keeper": false,
+     "position": {
+      "name": "Batting allrounder"
+     }
+    },
+    {
+     "id": "928015",
+     "displayName": "Josh Clarkson",
+     "keeper": false,
+     "position": {
+      "name": "Batting allrounder"
+     }
+    },
+    {
+     "id": "379140",
+     "displayName": "Devon Conway",
+     "keeper": false,
+     "position": {
+      "name": "Wicketkeeper batter"
+     }
+    },
+    {
+     "id": "547766",
+     "displayName": "Jacob Duffy",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    },
+    {
+     "id": "1129635",
+     "displayName": "Matthew Fisher",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    },
+    {
+     "id": "1410577",
+     "displayName": "Bevon Jacobs",
+     "keeper": false,
+     "position": {
+      "name": "Middle-order batter"
+     }
+    },
+    {
+     "id": "450860",
+     "displayName": "Adam Milne",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    },
+    {
+     "id": "381743",
+     "displayName": "Daryl Mitchell",
+     "keeper": false,
+     "position": {
+      "name": "Batting allrounder"
+     }
+    },
+    {
+     "id": "823509",
+     "displayName": "Glenn Phillips",
+     "keeper": false,
+     "position": {
+      "name": "Allrounder"
+     }
+    },
+    {
+     "id": "625964",
+     "displayName": "Tim Seifert",
+     "keeper": false,
+     "position": {
+      "name": "Wicketkeeper batter"
+     }
+    },
+    {
+     "id": "959771",
+     "displayName": "Nathan Smith",
+     "keeper": false,
+     "position": {
+      "name": "Bowling allrounder"
+     }
+    },
+    {
+     "id": "854909",
+     "displayName": "Blair Tickner",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    }
+   ]
+  },
+  {
+   "team": {
+    "id": "6",
+    "displayName": "India"
+   },
+   "athletes": [
+    {
+     "id": "642519",
+     "displayName": "Shreyas Iyer",
+     "keeper": false,
+     "position": {
+      "name": "Top-order batter"
+     }
+    },
+    {
+     "id": "1170265",
+     "displayName": "Tilak Varma",
+     "keeper": false,
+     "position": {
+      "name": "Batting allrounder"
+     }
+    },
+    {
+     "id": "1070183",
+     "displayName": "Abhishek Sharma",
+     "keeper": false,
+     "position": {
+      "name": "Batting allrounder"
+     }
+    },
+    {
+     "id": "1125976",
+     "displayName": "Arshdeep Singh",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    },
+    {
+     "id": "714451",
+     "displayName": "Shivam Dube",
+     "keeper": false,
+     "position": {
+      "name": "Allrounder"
+     }
+    },
+    {
+     "id": "720471",
+     "displayName": "Ishan Kishan",
+     "keeper": true,
+     "position": {
+      "name": "Wicketkeeper batter"
+     }
+    },
+    {
+     "id": "559235",
+     "displayName": "Kuldeep Yadav",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    },
+    {
+     "id": "326016",
+     "displayName": "Bhuvneshwar Kumar",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    },
+    {
+     "id": "1287032",
+     "displayName": "Naman Dhir",
+     "keeper": false,
+     "position": {
+      "name": "Middle-order batter"
+     }
+    },
+    {
+     "id": "1175496",
+     "displayName": "Nitish Kumar Reddy",
+     "keeper": false,
+     "position": {
+      "name": "Batting allrounder"
+     }
+    },
+    {
+     "id": "554691",
+     "displayName": "Axar Patel",
+     "keeper": false,
+     "position": {
+      "name": "Allrounder"
+     }
+    },
+    {
+     "id": "1350768",
+     "displayName": "Prince Yadav",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    },
+    {
+     "id": "425943",
+     "displayName": "Sanju Samson",
+     "keeper": true,
+     "position": {
+      "name": "Wicketkeeper batter"
+     }
+    },
+    {
+     "id": "1408688",
+     "displayName": "Vaibhav Sooryavanshi",
+     "keeper": false,
+     "position": {
+      "name": "Top-order batter"
+     }
+    },
+    {
+     "id": "1108375",
+     "displayName": "Varun Chakravarthy",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    },
+    {
+     "id": "1292563",
+     "displayName": "Mayank Yadav",
+     "keeper": false,
+     "position": {
+      "name": "Bowler"
+     }
+    }
+   ]
+  }
+ ],
+ "rosters": [
+  {
+   "team": {
+    "id": "5",
+    "displayName": "New Zealand"
+   },
+   "roster": []
+  },
+  {
+   "team": {
+    "id": "6",
+    "displayName": "India"
+   },
+   "roster": []
+  }
+ ],
+ "leaders": [
+  {
+   "team": {
+    "id": "5",
+    "displayName": "New Zealand"
+   },
+   "linescores": []
+  },
+  {
+   "team": {
+    "id": "6",
+    "displayName": "India"
+   },
+   "linescores": []
+  }
+ ],
+ "gameInfo": {
+  "venue": {
+   "fullName": "Eden Park, Auckland",
+   "address": {
+    "city": "Auckland",
+    "country": "New Zealand"
+   }
+  }
+ },
+ "header": {
+  "competitions": [
+   {
+    "status": {
+     "type": {
+      "state": "pre"
+     },
+     "featuredAthletes": []
+    },
+    "competitors": [
+     {
+      "id": "5",
+      "winner": false,
+      "linescores": []
+     },
+     {
+      "id": "6",
+      "winner": false,
+      "linescores": []
+     }
+    ]
+   }
+  ]
+ }
+}

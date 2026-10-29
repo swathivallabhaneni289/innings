@@ -111,6 +111,12 @@ Added 2026-10-25 when the developer asked for "a proper sign in like how Beli ha
 - [x] **ACCT-07**: The session token lives in the phone's secure storage and only its hash on the server; a signed-out or unknown token sends the fan back to sign-in
 - [x] **ACCT-08**: A brand-new account with no history looks right on every screen
 
+## v1.2 Requirements: Real matches
+
+Added 2026-10-29: the plan asked for a cricket data API in week 1; nothing paid, no sign-ups.
+
+- [x] **DATA-01**: Today's real matches with live scores, the week's fixtures with announced squads, playing XIs at the toss, and results with top scorers, top wicket-takers and player of the match, from ESPN's public scores feed (no key)
+
 ## v2 Requirements
 
 From the plan's "Later" list, plus items deferred by build decisions on 2026-10-22.
@@ -124,7 +130,6 @@ From the plan's "Later" list, plus items deferred by build decisions on 2026-10-
 
 ### Deferred by decision
 
-- **DATA-01**: Fixtures, squads and live scores from CricketData.org or SportMonks behind the same `World` methods
 - **SMS-01**: Real text messages: an SMS provider account, a sender ID and, for Indian numbers, DLT registration
 - **ACCT-09**: Sign in with Apple and Google
 - **MEDIA-01**: Upload log and profile photos to server storage (today they are device-local file URIs)
@@ -160,6 +165,7 @@ From the plan's "Later" list, plus items deferred by build decisions on 2026-10-
 | DESIGN-06, DESIGN-07 | Phase 6 | Complete |
 | PLAT-06, PLAT-07, PLAT-08 | Phase 6 | Complete |
 | ACCT-01, ACCT-02, ACCT-03, ACCT-04, ACCT-05, ACCT-06, ACCT-07, ACCT-08 | Phase 7 | Complete |
+| DATA-01 | Phase 8 | Complete |
 
 **Coverage:**
 

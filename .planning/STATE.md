@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: Accounts
-current_phase: 07
-current_phase_name: accounts
+milestone: v1.2
+milestone_name: Real matches
+current_phase: 08
+current_phase_name: real-matches
 status: complete
-stopped_at: v1.1 complete; waiting on the developer's phone testing
-last_updated: "2026-10-29T14:10:00.000Z"
+stopped_at: v1.2 real matches done; building the match chat
+last_updated: "2026-10-29T15:20:00.000Z"
 last_activity: 2026-10-29
-last_activity_desc: Welcome redesigned as one full-screen match ticket; before that, sign-in walked on iPhone and across two phones
+last_activity_desc: Real matches from ESPN's scores feed (v1.2, DATA-01); next the match chat and predictions during a match
 progress:
-  total_phases: 7
-  completed_phases: 7
+  total_phases: 8
+  completed_phases: 8
   total_plans: 9
   completed_plans: 9
   percent: 100
@@ -19,14 +19,14 @@ progress:
 
 # Project State
 
-> **CURRENT STATUS (2026-10-25).** v1.0 and v1.1 are complete: 7 phases, 9 plans, 72 requirements. Fans sign in with a phone number and a 6-digit code, set up a fan card with a unique @username, and find friends from their contacts; Settings has sign out and delete account. The app was walked end to end on a new Android development build (Pixel 8 emulator, Android 16) and, on 2026-10-28, on an iPhone simulator, including two phones finding each other in their contacts. That walk found and fixed two keyboard bugs on iPhone. `go test ./...`, `go vet`, `npx tsc --noEmit` and 39 Jest tests pass, and a 70-check end-to-end run against a fresh server passed. Codes show on screen in dev mode; real texts need an SMS provider account. The code is on the private GitHub repo `swathivallabhaneni289/innings`, branch `main`. Next: the developer tests on their own phones.
+> **CURRENT STATUS (2026-10-29).** v1.0, v1.1 and v1.2 are complete: 8 phases, 73 requirements. Matches are now real, from ESPN's public scores feed (no key): live scores, the week's fixtures with announced squads, playing XIs at the toss, and results with top scorers and player of the match. Next: the match chat and predictions during a match. Before that, Fans sign in with a phone number and a 6-digit code, set up a fan card with a unique @username, and find friends from their contacts; Settings has sign out and delete account. The app was walked end to end on a new Android development build (Pixel 8 emulator, Android 16) and, on 2026-10-28, on an iPhone simulator, including two phones finding each other in their contacts. That walk found and fixed two keyboard bugs on iPhone. `go test ./...`, `go vet`, `npx tsc --noEmit` and 39 Jest tests pass, and a 70-check end-to-end run against a fresh server passed. Codes show on screen in dev mode; real texts need an SMS provider account. The code is on the private GitHub repo `swathivallabhaneni289/innings`, branch `main`. Next: the developer tests on their own phones.
 
 ## Project Reference
 
 See: .planning/PROJECT.md (updated 2026-10-25)
 
 **Core value:** Capture how fans felt about a match: the prediction, the rating, the memory of where they watched.
-**Current focus:** Developer testing on real phones, then choosing what comes next (an SMS provider, store builds, real cricket data)
+**Current focus:** The match chat and predictions during a match, on real matches
 **Requirements document:** `docs/REQUIREMENTS.md` (the product requirements with acceptance checks); the build checklist is `.planning/REQUIREMENTS.md`
 
 ## Current Position
@@ -92,7 +92,7 @@ Recent decisions:
 
 ### Blockers/Concerns
 
-- No real cricket API key: every fixture, score and fan is simulated. Swapping in CricketData.org or SportMonks means a client behind the same `World` methods
+- Real matches come from ESPN's unofficial scores feed, which can change without notice; the feed's tests run on saved responses and need refreshing when it does
 - Real text messages need an SMS provider account; the Twilio client is tested only against a mock
 - Store builds (EAS, App Store, Play Store) need the developer's Apple and Google accounts
 - Log and profile photos are device-local file URIs stored as strings; they don't upload, so other devices can't see them

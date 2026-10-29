@@ -1,0 +1,353 @@
+{
+ "sports": [
+  {
+   "leagues": [
+    {
+     "id": "8050",
+     "name": "Ranji Trophy",
+     "events": [
+      {
+       "id": "1546570",
+       "date": "2026-10-26T03:30:00Z",
+       "title": "Elite, Group C",
+       "location": "JSCA International Stadium Complex, Ranchi",
+       "status": "post",
+       "class": {
+        "generalClassCard": "First-class"
+       },
+       "fullStatus": {
+        "longSummary": "Match drawn",
+        "summary": "Match drawn"
+       },
+       "notes": [
+        {
+         "text": "Delhi , elected to bat first",
+         "type": "toss"
+        }
+       ],
+       "competitors": [
+        {
+         "id": "1156778",
+         "displayName": "Jharkhand",
+         "abbreviation": "JHK",
+         "color": "",
+         "winner": false,
+         "score": "131/4 (47 ov)"
+        },
+        {
+         "id": "1668",
+         "displayName": "Delhi",
+         "abbreviation": "DELHI",
+         "color": "",
+         "winner": false,
+         "score": "515/5d"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "1550706",
+     "name": "Pakistan ODI Tri-Series",
+     "events": [
+      {
+       "id": "1550718",
+       "date": "2026-10-29T08:00:00Z",
+       "title": "6th Match (D/N)",
+       "location": "Gaddafi Stadium, Lahore",
+       "status": "in",
+       "class": {
+        "generalClassCard": "ODI"
+       },
+       "fullStatus": {
+        "longSummary": "Sri Lanka require another 257 runs with 8 wickets and 28.4 overs remaining",
+        "summary": "Sri Lanka require 257 runs",
+        "battingTeamId": 8
+       },
+       "notes": [
+        {
+         "text": "Sri Lanka , elected to field first",
+         "type": "toss"
+        }
+       ],
+       "competitors": [
+        {
+         "id": "1",
+         "displayName": "England",
+         "abbreviation": "ENG",
+         "color": "#0673c1",
+         "winner": false,
+         "score": "386/5"
+        },
+        {
+         "id": "8",
+         "displayName": "Sri Lanka",
+         "abbreviation": "SL",
+         "color": "#203d89",
+         "winner": false,
+         "score": "130/2 (21.2/50 ov, target 387)"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "24203",
+     "name": "Australia tour of South Africa 2026/27",
+     "events": [
+      {
+       "id": "1525661",
+       "date": "2026-10-27T08:30:00Z",
+       "title": "3rd Test",
+       "location": "Newlands, Cape Town",
+       "status": "in",
+       "class": {
+        "generalClassCard": "Test"
+       },
+       "fullStatus": {
+        "longSummary": "South Africa trail by 37 runs with 8 wickets remaining",
+        "summary": "South Africa trail by 37 runs",
+        "battingTeamId": 3
+       },
+       "notes": [
+        {
+         "text": "Australia , elected to field first",
+         "type": "toss"
+        }
+       ],
+       "competitors": [
+        {
+         "id": "3",
+         "displayName": "South Africa",
+         "abbreviation": "SA",
+         "color": "#ace411",
+         "winner": false,
+         "score": "329 & 63/2 (19.4 ov)"
+        },
+        {
+         "id": "2",
+         "displayName": "Australia",
+         "abbreviation": "AUS",
+         "color": "#f3f702",
+         "winner": false,
+         "score": "429"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "24799",
+     "name": "Zimbabwe tour of United Arab Emirates 2026/27",
+     "events": [
+      {
+       "id": "1555121",
+       "date": "2026-10-29T14:30:00Z",
+       "title": "2nd T20I (D/N)",
+       "location": "Sharjah Cricket Stadium",
+       "status": "pre",
+       "class": {
+        "generalClassCard": "T20I"
+       },
+       "fullStatus": {
+        "longSummary": "Match scheduled to begin at 18:30 local time (14:30 GMT)",
+        "summary": "Starts at 18:30 local time"
+       },
+       "notes": [],
+       "competitors": [
+        {
+         "id": "40",
+         "displayName": "Afghanistan",
+         "abbreviation": "AFG",
+         "color": "#3f8108",
+         "winner": false,
+         "score": ""
+        },
+        {
+         "id": "9",
+         "displayName": "Zimbabwe",
+         "abbreviation": "ZIM",
+         "color": "#d04037",
+         "winner": false,
+         "score": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "24469",
+     "name": "India tour of New Zealand 2026/27",
+     "events": [
+      {
+       "id": "1539435",
+       "date": "2026-10-30T07:00:00Z",
+       "title": "4th T20I (D/N)",
+       "location": "Eden Park, Auckland",
+       "status": "pre",
+       "class": {
+        "generalClassCard": "T20I"
+       },
+       "fullStatus": {
+        "longSummary": "Match scheduled to begin at 20:00 local time (07:00 GMT)",
+        "summary": "Starts at 20:00 local time"
+       },
+       "notes": [],
+       "competitors": [
+        {
+         "id": "5",
+         "displayName": "New Zealand",
+         "abbreviation": "NZ",
+         "color": "#b7c0c8",
+         "winner": false,
+         "score": ""
+        },
+        {
+         "id": "6",
+         "displayName": "India",
+         "abbreviation": "IND",
+         "color": "#050ceb",
+         "winner": false,
+         "score": ""
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "19439",
+     "name": "ICC Men's Cricket World Cup League 2",
+     "events": [
+      {
+       "id": "1559565",
+       "date": "2026-10-29T05:30:00Z",
+       "title": "141st Match",
+       "location": "ICC Academy, Dubai",
+       "status": "post",
+       "class": {
+        "generalClassCard": "ODI"
+       },
+       "fullStatus": {
+        "longSummary": "U.A.E. won by 4 wickets (with 15 balls remaining)",
+        "summary": "U.A.E. won by 4 wkts (15b rem)"
+       },
+       "notes": [
+        {
+         "text": "United Arab Emirates , elected to field first",
+         "type": "toss"
+        }
+       ],
+       "competitors": [
+        {
+         "id": "27",
+         "displayName": "United Arab Emirates",
+         "abbreviation": "UAE",
+         "color": "",
+         "winner": true,
+         "score": "199/6 (47.3/50 ov, target 197)"
+        },
+        {
+         "id": "37",
+         "displayName": "Oman",
+         "abbreviation": "OMA",
+         "color": "",
+         "winner": false,
+         "score": "196"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "23081",
+     "name": "Nepal Premier League",
+     "events": [
+      {
+       "id": "1558587",
+       "date": "2026-10-29T10:45:00Z",
+       "title": "6th Match (D/N)",
+       "location": "Tribhuvan University International Cricket Ground, Kirtipur",
+       "status": "in",
+       "class": {
+        "generalClassCard": "Twenty20"
+       },
+       "fullStatus": {
+        "longSummary": "Karnali Yaks (NPL) require another 101 runs with 5 wickets and 60 balls remaining",
+        "summary": "Karnali require 101 runs",
+        "battingTeamId": 1462635
+       },
+       "notes": [
+        {
+         "text": "Karnali Yaks (NPL) , elected to field first",
+         "type": "toss"
+        }
+       ],
+       "competitors": [
+        {
+         "id": "1462631",
+         "displayName": "Biratnagar Kings (NPL)",
+         "abbreviation": "BIK",
+         "color": "",
+         "winner": false,
+         "score": "186/7"
+        },
+        {
+         "id": "1462635",
+         "displayName": "Karnali Yaks (NPL)",
+         "abbreviation": "KAY",
+         "color": "",
+         "winner": false,
+         "score": "86/5 (10/20 ov, target 187)"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "21284",
+     "name": "Women's Big Bash League",
+     "events": [
+      {
+       "id": "1543945",
+       "date": "2026-10-29T08:10:00Z",
+       "title": "2nd Match (D/N)",
+       "location": "Junction Oval, Melbourne",
+       "status": "post",
+       "class": {
+        "generalClassCard": "Women's T20"
+       },
+       "fullStatus": {
+        "longSummary": "Stars won by 18 runs",
+        "summary": "Stars won by 18 runs"
+       },
+       "notes": [
+        {
+         "text": "Hobart Hurricanes Women , elected to field first",
+         "type": "toss"
+        }
+       ],
+       "competitors": [
+        {
+         "id": "896399",
+         "displayName": "Melbourne Stars Women",
+         "abbreviation": "MS-W",
+         "color": "#1f9707",
+         "winner": true,
+         "score": "192/4"
+        },
+        {
+         "id": "896433",
+         "displayName": "Hobart Hurricanes Women",
+         "abbreviation": "HH-W",
+         "color": "#8509d7",
+         "winner": false,
+         "score": "174/8 (20 ov, target 193)"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -4,6 +4,11 @@
 //	DB_PATH         SQLite file (default ./innings.db)
 //	INNINGS_ANCHOR  optional RFC 3339 time to pin the simulated clock (default: process start)
 //
+// Matches (internal/feed):
+//
+//	INNINGS_MATCHES real (default): fixtures, live scores, squads and results from ESPN's public scores feed, on
+//	                the real clock (INNINGS_ANCHOR is ignored). sim: the simulated cricket world instead.
+//
 // Sign-in codes (docs/API.md → Auth, "SMS providers"):
 //
 //	TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_VERIFY_SERVICE_SID
@@ -24,6 +29,7 @@ import (
 	"time"
 
 	"github.com/swathivallabhaneni289/innings/internal/auth"
+	"github.com/swathivallabhaneni289/innings/internal/feed"
 	"github.com/swathivallabhaneni289/innings/internal/httpapi"
 	"github.com/swathivallabhaneni289/innings/internal/sim"
 	"github.com/swathivallabhaneni289/innings/internal/store"
@@ -64,7 +70,21 @@ func run(logger *slog.Logger) error {
 	}
 	defer st.Close()
 
-	api := httpapi.New(st, sim.NewWorld(anchor), now, logger)
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	simWorld := sim.NewWorld(anchor)
+	var world httpapi.World = simWorld
+	matches := "simulated (INNINGS_MATCHES=sim)"
+	if src := feed.FromEnv(os.Getenv, st, simWorld.Teams(), logger); src != nil {
+		if err := src.Load(ctx); err != nil {
+			return err
+		}
+		go src.Run(ctx)
+		world, matches, now = feed.NewWorld(simWorld, src), "real (ESPN scores feed)", time.Now
+	}
+
+	api := httpapi.New(st, world, now, logger)
 	api.Auth.Verifier = verifier
 	switch smsMode {
 	case "twilio":
@@ -80,12 +100,9 @@ func run(logger *slog.Logger) error {
 		Handler:           api.Handler(),
 		ReadHeaderTimeout: 10 * time.Second,
 	}
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-	defer stop()
-
 	errc := make(chan error, 1)
 	go func() {
-		logger.Info("innings api listening", "addr", "http://localhost:"+port, "db", dbPath, "anchor", anchor.UTC().Format(time.RFC3339))
+		logger.Info("innings api listening", "addr", "http://localhost:"+port, "db", dbPath, "matches", matches, "anchor", anchor.UTC().Format(time.RFC3339))
 		errc <- srv.ListenAndServe()
 	}()
 	select {

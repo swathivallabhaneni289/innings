@@ -1,6 +1,7 @@
 This is Innings: an Expo/React Native app (iPhone + Android, TypeScript, `src/`) backed by a Go API (`cmd/api`, `internal/`, SQLite). Prioritize mobile-first patterns, performance, and cross-platform compatibility.
 
 - Run the API with `make api` (port 8088) and the app with `make app` (Metro on port 8082). `make api` runs sign-in in dev mode: the 6-digit code is returned and shown on screen instead of texted. Twilio Verify takes over when `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` and `TWILIO_VERIFY_SERVICE_SID` are set.
+- Matches are real by default: `internal/feed` polls ESPN's public scores feed (no key) and saves what it learns in `feed_rows`. `INNINGS_MATCHES=sim` runs the simulation in `internal/sim` instead. Never call ESPN from a request handler. The feed's tests run on saved real responses in `internal/feed/testdata`; refresh them from the live feed when its format changes.
 - Signed-in screens live in `src/app/(app)/`; sign-in is `src/app/(auth)/` and sign-up is `src/app/onboarding/`, guarded in `src/app/_layout.tsx`.
 - The JSON contract is `src/domain/types.ts` + `src/domain/api.ts`; Go mirrors it in `internal/domain`. Never send `null` for a list.
 - Design system: "Matchday Ticket" (`src/theme/tokens.ts`, `src/components/`). Take colours from `useTheme()`; render text with `<Txt>`.

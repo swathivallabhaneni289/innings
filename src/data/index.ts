@@ -54,6 +54,34 @@ export function getPlayer(id: string | null | undefined): Player | undefined {
 
 export const playerName = (id: string | null | undefined) => getPlayer(id)?.name ?? '—';
 
+// Real matches bring teams and players the catalog didn't have at sign-in (a new side plays, a squad is announced,
+// a scorecard names a top scorer). When a response mentions one, reload the catalog (at most once a minute) and
+// refetch the screens that show matches, so the names appear without signing in again.
+let catalogLoadedAt = 0;
+let catalogLoading = false;
+
+function knows(m: Match): boolean {
+  const players = [...Object.values(m.xi ?? {}).flat(), ...(m.result?.topRunScorerIds ?? []), ...(m.result?.topWicketTakerIds ?? [])];
+  return m.teamIds.every((id) => catalog.teams[id]) && players.every((id) => catalog.players[id]);
+}
+
+function withCatalog<T>(res: T, matches: (Match | null | undefined)[]): T {
+  if (catalogLoading || Date.now() - catalogLoadedAt < 60_000 || matches.every((m) => !m || knows(m))) return res;
+  catalogLoading = true;
+  catalogLoadedAt = Date.now();
+  api<BootstrapResponse>('/v1/bootstrap', { method: 'POST' })
+    .then((b) => {
+      catalog.teams = b.teams;
+      catalog.players = b.players;
+      for (const key of ['home', 'matches', 'match']) queryClient.invalidateQueries({ queryKey: [key] });
+    })
+    .catch(() => {}) // the names fill in on the next try
+    .finally(() => {
+      catalogLoading = false;
+    });
+  return res;
+}
+
 /** "IND v AUS" */
 export const matchTitle = (m: Pick<Match, 'teamIds'>) => `${getTeam(m.teamIds[0]).short} v ${getTeam(m.teamIds[1]).short}`;
 
@@ -85,6 +113,7 @@ async function bootstrap(): Promise<BootstrapResponse> {
   const res = await api<BootstrapResponse>('/v1/bootstrap', { method: 'POST' });
   catalog.teams = res.teams;
   catalog.players = res.players;
+  catalogLoadedAt = Date.now();
   queryClient.setQueryData(['me'], res.me);
   queryClient.setQueryData(['account'], res.account);
   return res;
@@ -185,7 +214,13 @@ export async function finishOnboarding(): Promise<Account> {
 
 // ---------- reads ----------
 
-export const useHome = () => useQuery({ queryKey: ['home'], queryFn: () => api<HomeResponse>('/v1/home'), refetchInterval: 30_000 });
+export const useHome = () =>
+  useQuery({
+    queryKey: ['home'],
+    queryFn: () =>
+      api<HomeResponse>('/v1/home').then((r) => withCatalog(r, [...r.onNow, r.yourCall, ...r.feed.map((f) => f.match), ...r.justFinished.map((j) => j.match)])),
+    refetchInterval: 30_000,
+  });
 
 export interface MatchFilter {
   state?: 'live' | 'upcoming' | 'recent';
@@ -197,7 +232,7 @@ export function useMatches(f: MatchFilter = {}) {
   const qs = new URLSearchParams(Object.entries(f).filter(([, v]) => v) as [string, string][]).toString();
   return useQuery({
     queryKey: ['matches', qs],
-    queryFn: () => api<MatchesResponse>(`/v1/matches${qs ? `?${qs}` : ''}`),
+    queryFn: () => api<MatchesResponse>(`/v1/matches${qs ? `?${qs}` : ''}`).then((r) => withCatalog(r, r.matches)),
     refetchInterval: 30_000,
     placeholderData: keepPreviousData,
   });
@@ -205,7 +240,12 @@ export function useMatches(f: MatchFilter = {}) {
 
 /** Everything the Match Page needs. Refreshes every 20 s for live scores. */
 export const useMatchPage = (id: string | undefined) =>
-  useQuery({ queryKey: ['match', id], queryFn: () => api<MatchPageResponse>(`/v1/matches/${id}`), enabled: !!id, refetchInterval: 20_000 });
+  useQuery({
+    queryKey: ['match', id],
+    queryFn: () => api<MatchPageResponse>(`/v1/matches/${id}`).then((r) => withCatalog(r, [r.match])),
+    enabled: !!id,
+    refetchInterval: 20_000,
+  });
 
 export const useVault = () => useQuery({ queryKey: ['vault'], queryFn: () => api<VaultResponse>('/v1/vault') });
 

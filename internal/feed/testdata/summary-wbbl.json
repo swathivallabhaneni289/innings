@@ -1,0 +1,490 @@
+{
+ "squads": [],
+ "rosters": [
+  {
+   "team": {
+    "id": "896399",
+    "displayName": "Melbourne Stars Women"
+   },
+   "roster": [
+    {
+     "starter": true,
+     "athlete": {
+      "id": "1282067",
+      "displayName": "Rhys McKenna",
+      "position": {
+       "name": "Allrounder"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "329336",
+      "displayName": "Meg Lanning",
+      "position": {
+       "name": "Top-order batter"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "515874",
+      "displayName": "Amy Jones",
+      "position": {
+       "name": "Wicketkeeper batter"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "1071705",
+      "displayName": "Annabel Sutherland",
+      "position": {
+       "name": "Allrounder"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "886203",
+      "displayName": "Dani Gibson",
+      "position": {
+       "name": "Bowling allrounder"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "418423",
+      "displayName": "Kim Garth",
+      "position": {
+       "name": "Allrounder"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "592588",
+      "displayName": "Naomi Stalenberg",
+      "position": {
+       "name": "Allrounder"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "1039421",
+      "displayName": "Charlie Dean",
+      "position": {
+       "name": "Bowling allrounder"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "1071702",
+      "displayName": "Carly Leeson",
+      "position": {
+       "name": "Allrounder"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "947807",
+      "displayName": "Maisy Gibson",
+      "position": {
+       "name": "Bowler"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "1184973",
+      "displayName": "Sophie Day",
+      "position": {
+       "name": "Allrounder"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "team": {
+    "id": "896433",
+    "displayName": "Hobart Hurricanes Women"
+   },
+   "roster": [
+    {
+     "starter": true,
+     "athlete": {
+      "id": "483484",
+      "displayName": "Lizelle Lee",
+      "position": {
+       "name": "Opening batter"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "318853",
+      "displayName": "Chamari Athapaththu",
+      "position": {
+       "name": "Batting allrounder"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "1065982",
+      "displayName": "Rachel Trenaman",
+      "position": {
+       "name": "Allrounder"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "381217",
+      "displayName": "Nicola Carey",
+      "position": {
+       "name": "Bowler"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "546629",
+      "displayName": "Heather Graham",
+      "position": {
+       "name": "Allrounder"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "438265",
+      "displayName": "Maddy Green",
+      "position": {
+       "name": "Middle-order batter"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "474190",
+      "displayName": "Chinelle Henry",
+      "position": {
+       "name": "Allrounder"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "1282061",
+      "displayName": "Ruth Johnston",
+      "position": {
+       "name": "Allrounder"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "788623",
+      "displayName": "Lauren Smith",
+      "position": {
+       "name": "Bowler"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "382231",
+      "displayName": "Molly Strano",
+      "position": {
+       "name": "Bowler"
+      }
+     }
+    },
+    {
+     "starter": true,
+     "athlete": {
+      "id": "1503496",
+      "displayName": "Ira Aery",
+      "position": {
+       "name": "Unknown"
+      }
+     }
+    }
+   ]
+  }
+ ],
+ "leaders": [
+  {
+   "team": {
+    "id": "896399",
+    "displayName": "Melbourne Stars Women"
+   },
+   "linescores": [
+    {
+     "isBatting": true,
+     "leaders": [
+      {
+       "name": "runs",
+       "leaders": [
+        {
+         "value": "71",
+         "athlete": {
+          "id": "329336",
+          "displayName": "Meg Lanning",
+          "position": {
+           "name": "Top-order batter"
+          }
+         }
+        },
+        {
+         "value": "57",
+         "athlete": {
+          "id": "1071705",
+          "displayName": "Annabel Sutherland",
+          "position": {
+           "name": "Allrounder"
+          }
+         }
+        },
+        {
+         "value": "22",
+         "athlete": {
+          "id": "886203",
+          "displayName": "Dani Gibson",
+          "position": {
+           "name": "Bowling allrounder"
+          }
+         }
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "isBatting": false,
+     "leaders": [
+      {
+       "name": "wickets",
+       "leaders": [
+        {
+         "value": "3",
+         "athlete": {
+          "id": "1071705",
+          "displayName": "Annabel Sutherland",
+          "position": {
+           "name": "Allrounder"
+          }
+         }
+        },
+        {
+         "value": "2",
+         "athlete": {
+          "id": "418423",
+          "displayName": "Kim Garth",
+          "position": {
+           "name": "Allrounder"
+          }
+         }
+        },
+        {
+         "value": "1",
+         "athlete": {
+          "id": "1039421",
+          "displayName": "Charlie Dean",
+          "position": {
+           "name": "Bowling allrounder"
+          }
+         }
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "team": {
+    "id": "896433",
+    "displayName": "Hobart Hurricanes Women"
+   },
+   "linescores": [
+    {
+     "isBatting": false,
+     "leaders": [
+      {
+       "name": "wickets",
+       "leaders": [
+        {
+         "value": "2",
+         "athlete": {
+          "id": "546629",
+          "displayName": "Heather Graham",
+          "position": {
+           "name": "Allrounder"
+          }
+         }
+        },
+        {
+         "value": "1",
+         "athlete": {
+          "id": "474190",
+          "displayName": "Chinelle Henry",
+          "position": {
+           "name": "Allrounder"
+          }
+         }
+        },
+        {
+         "value": "1",
+         "athlete": {
+          "id": "788623",
+          "displayName": "Lauren Smith",
+          "position": {
+           "name": "Bowler"
+          }
+         }
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "isBatting": true,
+     "leaders": [
+      {
+       "name": "runs",
+       "leaders": [
+        {
+         "value": "57",
+         "athlete": {
+          "id": "483484",
+          "displayName": "Lizelle Lee",
+          "position": {
+           "name": "Opening batter"
+          }
+         }
+        },
+        {
+         "value": "32",
+         "athlete": {
+          "id": "381217",
+          "displayName": "Nicola Carey",
+          "position": {
+           "name": "Bowler"
+          }
+         }
+        },
+        {
+         "value": "24",
+         "athlete": {
+          "id": "1065982",
+          "displayName": "Rachel Trenaman",
+          "position": {
+           "name": "Allrounder"
+          }
+         }
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "gameInfo": {
+  "venue": {
+   "fullName": "Junction Oval, Melbourne",
+   "address": {
+    "city": "Melbourne",
+    "country": "Australia"
+   }
+  }
+ },
+ "header": {
+  "competitions": [
+   {
+    "status": {
+     "type": {
+      "state": "post"
+     },
+     "featuredAthletes": [
+      {
+       "name": "playerOfTheMatch",
+       "athlete": {
+        "id": "1071705",
+        "displayName": "Annabel Sutherland"
+       }
+      }
+     ]
+    },
+    "competitors": [
+     {
+      "id": "896399",
+      "winner": "true",
+      "linescores": [
+       {
+        "period": 1,
+        "runs": 192,
+        "wickets": 4,
+        "overs": 20.0,
+        "isBatting": true
+       },
+       {
+        "period": 2,
+        "runs": 0,
+        "wickets": 0,
+        "overs": 20.0,
+        "isBatting": false
+       }
+      ]
+     },
+     {
+      "id": "896433",
+      "winner": "false",
+      "linescores": [
+       {
+        "period": 1,
+        "runs": 0,
+        "wickets": 0,
+        "overs": 20.0,
+        "isBatting": false
+       },
+       {
+        "period": 2,
+        "runs": 174,
+        "wickets": 8,
+        "overs": 20.0,
+        "isBatting": true
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ }
+}
