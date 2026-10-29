@@ -90,6 +90,23 @@ type esEvent struct {
 	League   string `json:"league"`
 }
 
+// flexString reads a JSON string or number as text: ESPN sends ids and runs either way.
+type flexString string
+
+func (s *flexString) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		*s = ""
+		return nil
+	}
+	var str string
+	if err := json.Unmarshal(data, &str); err == nil {
+		*s = flexString(str)
+		return nil
+	}
+	*s = flexString(strings.TrimSpace(string(data)))
+	return nil
+}
+
 // flexBool reads true, false, "true" or "false": the scoreboard sends a winner as a JSON bool, a summary as a string.
 type flexBool bool
 
@@ -153,6 +170,17 @@ type esTeamRef struct {
 }
 
 type esSummary struct {
+	// The batting and bowling cards for the innings in progress ("Batting" / "Bowling" / "Partnerships").
+	Matchcards []struct {
+		Headline      string     `json:"headline"`
+		InningsNumber flexString `json:"inningsNumber"`
+		PlayerDetails []struct {
+			PlayerID   flexString `json:"playerID"`
+			PlayerName string     `json:"playerName"`
+			Runs       flexString `json:"runs"`      // "" for a batter who hasn't batted
+			Dismissal  string     `json:"dismissal"` // "not out" at the crease, "" not batted yet
+		} `json:"playerDetails"`
+	} `json:"matchcards"`
 	Squads []struct {
 		Team     esTeamRef   `json:"team"`
 		Athletes []esAthlete `json:"athletes"`

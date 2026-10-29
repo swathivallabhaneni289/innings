@@ -38,12 +38,13 @@ const (
 
 // record is one real match and what's been fetched for it.
 type record struct {
-	Match     domain.Match `json:"match"`
-	Event     esEvent      `json:"event"` // the scoreboard's last word on it: the feed's team and league ids
-	SeenAt    time.Time    `json:"seenAt"`
-	SummaryAt time.Time    `json:"summaryAt"`
-	Final     bool         `json:"final"` // a finished match's summary is in, leaders and all
-	Tries     int          `json:"tries"` // summary fetches since it finished
+	Match     domain.Match      `json:"match"`
+	Event     esEvent           `json:"event"` // the scoreboard's last word on it: the feed's team and league ids
+	SeenAt    time.Time         `json:"seenAt"`
+	SummaryAt time.Time         `json:"summaryAt"`
+	Final     bool              `json:"final"` // a finished match's summary is in, leaders and all
+	Tries     int               `json:"tries"` // summary fetches since it finished
+	Calls     []domain.LiveCall `json:"calls"` // predictions during the match (calls.go), oldest first
 }
 
 func (r *record) espnTeams() [2]string {
@@ -285,6 +286,7 @@ func (s *Source) merge(events []esEvent, now time.Time) {
 		}
 		keep(&m, r.Match)
 		r.Match, r.Event, r.SeenAt = m, e, now
+		updateCalls(r, nil, s.playerName, now)
 		s.dirty[m.ID] = true
 	}
 }
@@ -421,6 +423,35 @@ func (s *Source) fetchSummary(ctx context.Context, id string, now time.Time) {
 	if res := r.Match.Result; res != nil {
 		r.Final = res.OfficialPotmID != nil && len(res.TopRunScorerIDs) > 0
 	}
+	updateCalls(r, card(sum), s.playerName, now)
+}
+
+// playerName is a player's display name ("" if unknown). Callers hold s.mu.
+func (s *Source) playerName(id string) string { return s.players[id].Name }
+
+// Calls returns a match's live calls, newest first.
+func (s *Source) Calls(matchID string) []domain.LiveCall {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	if r := s.recs[matchID]; r != nil {
+		return callsOf(r)
+	}
+	return []domain.LiveCall{}
+}
+
+// Call finds one live call by id (a call's id starts with its match's).
+func (s *Source) Call(id string) (domain.LiveCall, bool) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	matchID, _, _ := strings.Cut(id, ":")
+	if r := s.recs[matchID]; r != nil {
+		if c := r.call(id); c != nil {
+			out := *c
+			out.Options = slices.Clone(c.Options)
+			return out, true
+		}
+	}
+	return domain.LiveCall{}, false
 }
 
 // save writes what changed since the last save.

@@ -20,6 +20,7 @@ type fakeWorld struct {
 	public   []domain.User
 	logs     []domain.MatchLog
 	preds    []domain.Prediction
+	calls    []domain.LiveCall
 }
 
 func xi(team string) []string {
@@ -75,6 +76,13 @@ func newFakeWorld(now time.Time) *fakeWorld {
 		{ID: "f-kabir", Name: "Kabir", Handle: "kabir", AvatarColour: "#456", FavouriteTeamID: "mi"},
 	}
 	w.public = []domain.User{{ID: "p-critic", Name: "The Critic", Handle: "critic", AvatarColour: "#789", FavouriteTeamID: "aus"}}
+	yesNo := []domain.CallOption{{ID: "yes", Label: "Yes"}, {ID: "no", Label: "No"}}
+	w.calls = []domain.LiveCall{
+		{ID: "live:total", MatchID: "live", Kind: "total", Question: "Where will India finish?", State: domain.CallOpen, LocksAt: "at 10 overs",
+			Options: []domain.CallOption{{ID: "lt150", Label: "Under 150"}, {ID: "150", Label: "150–169"}, {ID: "170", Label: "170–189"}, {ID: "190plus", Label: "190 or more"}}},
+		{ID: "live:ms:1:ind-p0:50", MatchID: "live", Kind: "milestone", Question: "Will ind-p0 make 50?", State: domain.CallLocked, LocksAt: "at 40 runs", Options: yesNo},
+		{ID: "done:chase", MatchID: "done", Kind: "chase", Question: "Will mi chase 180?", State: domain.CallSettled, AnswerID: domain.Ptr("no"), Result: "csk won", Options: yesNo},
+	}
 	at := func(d time.Duration) string { return now.Add(d).UTC().Format(time.RFC3339) }
 	w.logs = []domain.MatchLog{
 		{ID: "sl-1", UserID: "f-aditi", MatchID: "done", Rating: 4.5, PlayerRatings: map[string]int{"csk-p0": 9, "mi-p1": 6}, WatchedAt: domain.WatchStadium, Review: "Unreal finish", CreatedAt: at(-time.Hour), StubNo: 3},
@@ -98,6 +106,25 @@ func (w *fakeWorld) Friends() []domain.User                    { return w.friend
 func (w *fakeWorld) PublicFans() []domain.User                 { return w.public }
 func (w *fakeWorld) Logs(time.Time) []domain.MatchLog          { return w.logs }
 func (w *fakeWorld) Predictions(time.Time) []domain.Prediction { return w.preds }
+func (w *fakeWorld) Calls(matchID string) []domain.LiveCall {
+	out := []domain.LiveCall{}
+	for _, c := range w.calls {
+		if c.MatchID == matchID {
+			out = append(out, c)
+		}
+	}
+	return out
+}
+
+func (w *fakeWorld) Call(id string) (domain.LiveCall, bool) {
+	for _, c := range w.calls {
+		if c.ID == id {
+			return c, true
+		}
+	}
+	return domain.LiveCall{}, false
+}
+
 func (w *fakeWorld) BaseLikes(id string) int {
 	if id == "sl-1" {
 		return 12

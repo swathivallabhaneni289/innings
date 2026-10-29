@@ -751,5 +751,129 @@
     ]
    }
   ]
- }
+ },
+ "matchcards": [
+  {
+   "headline": "Batting",
+   "inningsNumber": "2",
+   "teamName": "Sri Lanka",
+   "playerDetails": [
+    {
+     "playerID": "784373",
+     "playerName": "PHKD Mendis",
+     "runs": "4",
+     "dismissal": "bowled"
+    },
+    {
+     "playerID": "784369",
+     "playerName": "WIA Fernando",
+     "runs": "48",
+     "dismissal": "caught"
+    },
+    {
+     "playerID": "629074",
+     "playerName": "BKG Mendis",
+     "runs": "89",
+     "dismissal": "caught wk"
+    },
+    {
+     "playerID": "1171180",
+     "playerName": "P Rathnayake",
+     "runs": "57",
+     "dismissal": "not out"
+    },
+    {
+     "playerID": "437316",
+     "playerName": "MD Shanaka",
+     "runs": "4",
+     "dismissal": "lbw"
+    },
+    {
+     "playerID": "681681",
+     "playerName": "J Liyanage",
+     "runs": "15",
+     "dismissal": "not out"
+    },
+    {
+     "playerID": "693975",
+     "playerName": "SSD Arachchige",
+     "runs": "",
+     "dismissal": ""
+    },
+    {
+     "playerID": "1152427",
+     "playerName": "DN Wellalage",
+     "runs": "",
+     "dismissal": ""
+    },
+    {
+     "playerID": "1306214",
+     "playerName": "E Malinga",
+     "runs": "",
+     "dismissal": ""
+    },
+    {
+     "playerID": "786925",
+     "playerName": "AM Fernando",
+     "runs": "",
+     "dismissal": ""
+    },
+    {
+     "playerID": "793007",
+     "playerName": "D Madushanka",
+     "runs": "",
+     "dismissal": ""
+    }
+   ]
+  },
+  {
+   "headline": "Bowling",
+   "inningsNumber": "2",
+   "teamName": "England",
+   "playerDetails": [
+    {
+     "playerID": "1039481",
+     "playerName": "AAP Atkinson",
+     "runs": null,
+     "dismissal": null
+    },
+    {
+     "playerID": "1191192",
+     "playerName": "S Baker",
+     "runs": null,
+     "dismissal": null
+    },
+    {
+     "playerID": "662973",
+     "playerName": "SM Curran",
+     "runs": null,
+     "dismissal": null
+    },
+    {
+     "playerID": "211855",
+     "playerName": "LA Dawson",
+     "runs": null,
+     "dismissal": null
+    },
+    {
+     "playerID": "1143809",
+     "playerName": "HT Crocombe",
+     "runs": null,
+     "dismissal": null
+    },
+    {
+     "playerID": "897549",
+     "playerName": "WG Jacks",
+     "runs": null,
+     "dismissal": null
+    },
+    {
+     "playerID": "303669",
+     "playerName": "JE Root",
+     "runs": null,
+     "dismissal": null
+    }
+   ]
+  }
+ ]
 }

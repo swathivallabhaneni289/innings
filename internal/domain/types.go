@@ -196,6 +196,47 @@ type Reply struct {
 	CreatedAt string `json:"createdAt"`
 }
 
+// LiveCall is a prediction made while a match is on ("Where will India finish?"). The server opens, locks and
+// settles calls from the live score; fans pick one option while a call is open. State only moves forward:
+// open → locked → settled or void.
+type LiveCall struct {
+	ID       string       `json:"id"`
+	MatchID  string       `json:"matchId"`
+	Kind     string       `json:"kind"` // "total" | "chase" | "milestone"
+	Question string       `json:"question"`
+	Options  []CallOption `json:"options"`
+	State    string       `json:"state"`    // "open" | "locked" | "settled" | "void"
+	AnswerID *string      `json:"answerId"` // the option that came true, once settled
+	LocksAt  string       `json:"locksAt"`  // when it locks, in words: "at 10 overs"
+	Result   string       `json:"result"`   // once settled or void: "Afghanistan made 172"
+	OpenedAt string       `json:"openedAt"`
+}
+
+type CallOption struct {
+	ID    string `json:"id"`
+	Label string `json:"label"`
+}
+
+// CallPick is one fan's pick on a live call.
+type CallPick struct {
+	UserID    string `json:"userId"`
+	CallID    string `json:"callId"`
+	MatchID   string `json:"matchId"`
+	OptionID  string `json:"optionId"`
+	CreatedAt string `json:"createdAt"`
+}
+
+// Live call states.
+const (
+	CallOpen    = "open"
+	CallLocked  = "locked"
+	CallSettled = "settled"
+	CallVoid    = "void"
+)
+
+// PointsLiveCall is what a right call during a match is worth on the Bragging Board.
+const PointsLiveCall = 5
+
 // ChatMessage is one message in a match's chat. CreatedAt carries milliseconds.
 type ChatMessage struct {
 	ID        string `json:"id"`

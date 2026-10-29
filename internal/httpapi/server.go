@@ -34,6 +34,8 @@ type World interface {
 	Replies(logID string, now time.Time) []domain.Reply
 	Crowd(matchID string) sim.Crowd
 	FriendsWatching(matchID string, now time.Time) []string
+	Calls(matchID string) []domain.LiveCall // newest first
+	Call(id string) (domain.LiveCall, bool)
 }
 
 var _ World = (*sim.World)(nil)
@@ -98,6 +100,7 @@ func (s *Server) Handler() http.Handler {
 	authed("PUT /v1/matches/{id}/watching", s.handleWatching)
 	authed("GET /v1/matches/{id}/chat", s.handleChat)
 	authed("POST /v1/matches/{id}/chat", s.handleChatPost)
+	authed("PUT /v1/matches/{id}/calls/{callId}", s.handleCallPick)
 	authed("POST /v1/logs/{id}/like", s.handleLike)
 	authed("POST /v1/logs/{id}/there-too", s.handleThereToo)
 	authed("POST /v1/logs/{id}/replies", s.handleReply)

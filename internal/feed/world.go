@@ -75,5 +75,9 @@ func (w *World) Crowd(matchID string) sim.Crowd {
 	return sim.Crowd{RatingBuckets: make([]int, 10), PlayerTallies: map[string]sim.Tally{}, Watch: map[domain.WatchPlace]int{}, Picks: map[string]int{}}
 }
 
+func (w *World) Calls(matchID string) []domain.LiveCall { return w.src.Calls(matchID) }
+
+func (w *World) Call(id string) (domain.LiveCall, bool) { return w.src.Call(id) }
+
 // FriendsWatching: simulated fans don't watch real matches.
 func (w *World) FriendsWatching(string, time.Time) []string { return []string{} }

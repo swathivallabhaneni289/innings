@@ -46,6 +46,7 @@ type view struct {
 
 	shareCache   map[string]shareInfo
 	outcomeCache map[string][]domain.PredictionOutcome
+	callPickList []domain.CallPick // every pick on a live call
 }
 
 type shareInfo struct {
@@ -471,9 +472,9 @@ func (v *view) ties(userID string) map[string]bool {
 	return out
 }
 
-// pointsSince sums settled points from matches that finished at or after since.
+// pointsSince sums settled points (predictions and live calls) from matches that finished at or after since.
 func (v *view) pointsSince(userID string, since time.Time) int {
-	n := 0
+	n := v.callPoints(userID, since)
 	for _, o := range v.outcomes(userID) {
 		if !o.Settled {
 			continue

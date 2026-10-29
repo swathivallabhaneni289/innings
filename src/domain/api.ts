@@ -4,6 +4,7 @@ import type {
   BadgeDef,
   ChatMessage,
   Collection,
+  LiveCall,
   Match,
   MatchLog,
   Player,
@@ -145,8 +146,17 @@ export interface MatchesResponse {
   fanRatings: Record<string, { avg: number; count: number }>; // completed matches only
 }
 
+/** A live call as one fan sees it. */
+export interface CallView {
+  call: LiveCall;
+  mine: string | null; // my option, if I picked one
+  counts: Record<string, number>; // option id → fans who picked it
+  points: number; // mine, once it's settled
+}
+
 /** GET /v1/matches/{id} — everything the Match Page needs, in every state. */
 export interface MatchPageResponse {
+  calls: CallView[]; // predictions during the match, newest first
   match: Match;
   locked: boolean;
   split: PredictionSplit;

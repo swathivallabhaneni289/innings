@@ -155,7 +155,16 @@ type MatchMine struct {
 	Watching   *WatchPlace        `json:"watching"`
 }
 
+// CallView is a live call as one fan sees it.
+type CallView struct {
+	Call   LiveCall       `json:"call"`
+	Mine   *string        `json:"mine"`   // my option, if I picked one
+	Counts map[string]int `json:"counts"` // option id → fans who picked it
+	Points int            `json:"points"` // mine, once it's settled
+}
+
 type MatchPageResponse struct {
+	Calls           []CallView            `json:"calls"` // predictions during the match, newest first
 	Match           Match                 `json:"match"`
 	Locked          bool                  `json:"locked"`
 	Split           PredictionSplit       `json:"split"`

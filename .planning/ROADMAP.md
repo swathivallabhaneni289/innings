@@ -29,7 +29,7 @@ Milestone v1.1 (Accounts) added Phase 7 on 2026-10-25 at the developer's request
 **Milestone v1.2: Real matches**
 
 - [x] **Phase 8: Real matches** - Today's matches, the week's fixtures, squads, playing XIs and results from ESPN's public scores feed (completed 2026-10-29)
-- [ ] **Phase 9: During the match** - A chat room per match (done), then predictions while it's on
+- [x] **Phase 9: During the match** - A chat room per match, and calls on how it goes while it's on (completed 2026-10-29)
 
 ## Phase Details
 
@@ -216,4 +216,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 (2'
 | 6. Design pass & release prep | 1/1 | Complete | 2026-10-22 |
 | 7. Phone sign-in & onboarding | 1/1 | Complete | 2026-10-25 |
 | 8. Real matches | n/a | Complete | 2026-10-29 |
-| 9. During the match | n/a | In progress | |
+| 9. During the match | n/a | Complete | 2026-10-29 |

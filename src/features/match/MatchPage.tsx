@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import { SectionHeader } from '@/components';
 import { useMe, type MatchPageResponse } from '@/data';
 import { ChatEntry } from './ChatEntry';
+import { LiveCalls } from './LiveCalls';
 import { FanRating } from './FanRating';
 import { Header } from './Header';
 import { FriendsWatching, LiveScoreboard, ResultCard } from './LiveScoreboard';
@@ -49,6 +50,12 @@ function Live({ data }: { data: MatchPageResponse }) {
   return (
     <View>
       <LiveScoreboard match={data.match} />
+      {data.calls?.length ? (
+        <>
+          <SectionHeader title="Call it" />
+          <LiveCalls calls={data.calls} />
+        </>
+      ) : null}
       <ChatEntry match={data.match} />
       <SectionHeader title="Friends watching now" />
       <FriendsWatching users={data.friendsWatching} emptyText="None of your friends are watching this one. Yet." />
@@ -72,6 +79,12 @@ function After({ data }: { data: MatchPageResponse }) {
         <LogAction match={match} log={mine.log} />
       </View>
       <ChatEntry match={match} />
+      {data.calls?.length ? (
+        <>
+          <SectionHeader title="Calls during the match" />
+          <LiveCalls calls={data.calls} />
+        </>
+      ) : null}
 
       {fans ? (
         <>

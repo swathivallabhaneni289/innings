@@ -7,6 +7,7 @@ import { Avatar, Button, KeyboardAware, LiveTag, QueryState, Screen, Txt } from 
 import { ApiError, getTeam, matchTitle, useActions, useMatchChat, useMatchPage, useMe, useNow } from '@/data';
 import type { ChatResponse } from '@/domain/api';
 import type { ChatMessage, Match, User } from '@/domain/types';
+import { CallCard } from '@/features/match/LiveCalls';
 import { inningsLine, relative } from '@/lib/format';
 import { fonts, useTheme } from '@/theme';
 
@@ -16,10 +17,18 @@ export default function MatchChatScreen() {
   const page = useMatchPage(id);
   const q = useMatchChat(id);
   const match = page.data?.match;
+  // At most one call here, the newest still open; the rest are on the match page. (A page cached from before calls
+  // existed has none.)
+  const openCall = page.data?.calls?.find((c) => c.call.state === 'open');
   return (
     <KeyboardAware>
       <Screen back kicker="Match chat" title={match ? matchTitle(match) : 'Match chat'} scroll={false}>
         {match ? <ScoreLine match={match} /> : null}
+        {openCall ? (
+          <View style={{ paddingHorizontal: 20, paddingTop: 10 }}>
+            <CallCard view={openCall} compact />
+          </View>
+        ) : null}
         <QueryState q={q} loadingLabel="Finding a seat…">
           {(d) => <Room matchId={id} data={d} />}
         </QueryState>

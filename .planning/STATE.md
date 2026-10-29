@@ -4,14 +4,14 @@ milestone: v1.2
 milestone_name: Real matches
 current_phase: 09
 current_phase_name: during-the-match
-status: in-progress
-stopped_at: match chat done; building predictions during a match
+status: complete
+stopped_at: v1.2 complete; waiting on the developer to try the chat and calls
 last_updated: "2026-10-29T15:20:00.000Z"
 last_activity: 2026-10-29
-last_activity_desc: Match chat (CHAT-01) on real matches; next predictions during a match
+last_activity_desc: Match chat (CHAT-01) and calls during a match (LIVE-02) on real matches
 progress:
   total_phases: 9
-  completed_phases: 8
+  completed_phases: 9
   total_plans: 9
   completed_plans: 9
   percent: 100

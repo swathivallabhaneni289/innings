@@ -178,6 +178,28 @@ export interface Reply {
   createdAt: string;
 }
 
+/**
+ * A prediction made while a match is on ("Where will India finish?"). The server opens, locks and settles calls
+ * from the live score; fans pick one option while a call is open. State only moves forward.
+ */
+export interface LiveCall {
+  id: string;
+  matchId: string;
+  kind: 'total' | 'chase' | 'milestone';
+  question: string;
+  options: CallOption[];
+  state: 'open' | 'locked' | 'settled' | 'void';
+  answerId: string | null; // the option that came true, once settled
+  locksAt: string; // when it locks, in words: "at 10 overs"
+  result: string; // once settled or void: "Afghanistan made 172"
+  openedAt: string;
+}
+
+export interface CallOption {
+  id: string;
+  label: string;
+}
+
 /** One message in a match's chat. createdAt carries milliseconds. */
 export interface ChatMessage {
   id: string;

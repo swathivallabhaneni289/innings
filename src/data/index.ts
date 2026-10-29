@@ -8,6 +8,7 @@ import type {
   AuthStartResponse,
   AuthVerifyResponse,
   BootstrapResponse,
+  CallView,
   ChatResponse,
   ContactsMatchResponse,
   FeedItem,
@@ -338,6 +339,9 @@ export function useActions() {
     toggleThereToo: (logId: string) =>
       exec(() => api<{ iWasThere: boolean; thereToo: number }>(`/v1/logs/${logId}/there-too`, { method: 'POST' })),
     addReply: (logId: string, text: string) => exec(() => api<Reply>(`/v1/logs/${logId}/replies`, { method: 'POST', body: { text } })),
+    /** Picks (or changes) an option on a live call. Rejects with ApiError 409 "locked" once it has locked. */
+    pickCall: (matchId: string, callId: string, optionId: string) =>
+      exec(() => api<CallView>(`/v1/matches/${matchId}/calls/${encodeURIComponent(callId)}`, { method: 'PUT', body: { optionId } })),
     /**
      * Posts to a match's chat and shows it straight away (no refetch of other screens: chats are busy).
      * Rejects with ApiError 429 "slow-down" (one a second) or 409 "chat-closed".

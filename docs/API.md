@@ -64,7 +64,7 @@ them, and it doesn't appear in search or friend lists until it is onboarded.
 | --- | --- | --- |
 | `GET /v1/home` | `HomeResponse` | |
 | `GET /v1/matches?state=&competition=&team=` | `MatchesResponse` | `state` = live, upcoming or recent; `team` = team id (the "India" chip sends `team=ind,ind-w`) |
-| `GET /v1/matches/{id}` | `MatchPageResponse` | fixtures and classics |
+| `GET /v1/matches/{id}` | `MatchPageResponse` | fixtures and classics; `calls` = predictions during the match (real matches only), newest first |
 | `GET /v1/vault` | `VaultResponse` | |
 | `GET /v1/vault/rankings?format=&era=` | `RankingsResponse` | Vault classics + completed fixtures, by average fan rating |
 | `GET /v1/users/{id}` | `UserResponse` | `me` is accepted as an id |
@@ -86,6 +86,7 @@ them, and it doesn't appear in search or friend lists until it is onboarded.
 | `POST /v1/logs/{id}/like` | – | `{liked: boolean, likes: number}` (toggle) |
 | `POST /v1/logs/{id}/there-too` | – | `{iWasThere: boolean, thereToo: number}` (toggle) |
 | `POST /v1/logs/{id}/replies` | `{text}` | `Reply` (201) |
+| `PUT /v1/matches/{id}/calls/{callId}` | `{optionId}` | `CallView`; change it as often as you like while the call is open; **409 `locked`** once it isn't; 400 for an option the call doesn't have |
 | `POST /v1/matches/{id}/chat` | `{text}` (1–500 characters) | `ChatMessage` (201); **409 `chat-closed`** outside the room's hours; **429 `slow-down`** (with `Retry-After`) for more than one message a second |
 | `POST /v1/users/{id}/follow` | – | `{following: boolean}` (toggle) |
 | `PUT /v1/me` | any of `{name, handle, bio, favouriteTeamId, avatarColour, photoUri}` | `User`; 400 `bad-handle` or 409 `handle-taken` for a handle that fails the rules above |
@@ -96,3 +97,5 @@ them, and it doesn't appear in search or friend lists until it is onboarded.
 
 Bragging points, streaks, upset bonus and badges follow `docs/PLAN.md` → "Build decisions"; implemented in
 `internal/domain/scoring.go`.
+
+Live calls (predictions during a match, `internal/feed/calls.go`) are worth 5 points each when right, added to the Bragging Board and the profile total. "Where will {team} finish?" opens with the first innings of a limited-overs match and locks at 10 overs (25 in an ODI); "Will {team} chase {target}?" opens with the second and locks 5 overs in (10 in an ODI); "Will {batter} make 50?" (or 100) opens when a batter on ESPN's batting card reaches 25 (75) and locks at 40 (90). A call first seen past its lock is created locked, and a call only ever moves forward: open, locked, then settled or void.

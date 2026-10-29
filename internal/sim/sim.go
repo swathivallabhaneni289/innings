@@ -107,6 +107,11 @@ func (w *World) Replies(logID string, now time.Time) []domain.Reply { return w.r
 // should only show the rating side once the match is completed.
 func (w *World) Crowd(matchID string) Crowd { return w.crowd(matchID) }
 
+// Calls: the simulated world has no predictions during a match (those come with real matches, internal/feed).
+func (w *World) Calls(matchID string) []domain.LiveCall { return []domain.LiveCall{} }
+
+func (w *World) Call(id string) (domain.LiveCall, bool) { return domain.LiveCall{}, false }
+
 // FriendsWatching returns ids of simulated friends watching a live (or about-to-start) match.
 func (w *World) FriendsWatching(matchID string, now time.Time) []string {
 	return w.friendsWatching(matchID, now)

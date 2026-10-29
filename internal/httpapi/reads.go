@@ -226,6 +226,7 @@ func (s *Server) handleMatch(v *view, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	resp := domain.MatchPageResponse{
+		Calls:           v.callViews(m),
 		Match:           m,
 		Locked:          domain.IsLocked(m, v.now),
 		Split:           v.split(m),
@@ -412,12 +413,12 @@ func (v *view) stats(userID string) domain.FanStats {
 	}
 	st.Watch = domain.WatchCounts(watch)
 	hs := domain.SummariseHistory(v.outcomes(userID), v.ties(userID))
-	st.Points, st.Streak, st.Accuracy = hs.Points, hs.Streak, hs.Accuracy
+	st.Points, st.Streak, st.Accuracy = hs.Points+v.callPoints(userID, time.Time{}), hs.Streak, hs.Accuracy
 	st.Badges = domain.Badges(hs, stadiumLogs)
 	circle := v.circle(userID)
 	st.Rank, st.RankOf = 1, len(circle)
 	for _, id := range circle {
-		if id != userID && domain.SummariseHistory(v.outcomes(id), nil).Points > st.Points {
+		if id != userID && domain.SummariseHistory(v.outcomes(id), nil).Points+v.callPoints(id, time.Time{}) > st.Points {
 			st.Rank++
 		}
 	}
