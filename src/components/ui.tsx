@@ -131,7 +131,10 @@ export function Avatar({ user, size = 32 }: { user: Pick<User, 'name' | 'avatarC
     return <Image source={{ uri: user.photoUri }} onError={() => setFailed(true)} style={{ width: size, height: size, borderRadius: size / 2 }} />;
   return (
     <View style={{ width: size, height: size, borderRadius: size / 2, backgroundColor: user.avatarColour, alignItems: 'center', justifyContent: 'center' }}>
-      <Txt style={{ fontFamily: fonts.uiBold, fontSize: size * 0.36, color: '#FFFFFF' }}>{initials}</Txt>
+      {/* The initials are sized to the circle, so they don't grow with the system text size. */}
+      <Txt allowFontScaling={false} style={{ fontFamily: fonts.uiBold, fontSize: size * 0.36, color: '#FFFFFF' }}>
+        {initials}
+      </Txt>
     </View>
   );
 }
