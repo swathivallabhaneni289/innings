@@ -14,7 +14,7 @@ I took this from a written plan to a working app for iPhone and Android by direc
 | **The Vault** | **Profile** | **A friend's stub** | **Floodlights** |
 | <img src="docs/screenshots/android-vault.png" width="200" alt="On This Day in the Vault"> | <img src="docs/screenshots/android-profile.png" width="200" alt="Profile with stats and stubs"> | <img src="docs/screenshots/android-stub.png" width="200" alt="A logged ticket stub"> | <img src="docs/screenshots/android-floodlights.png" width="200" alt="The dark floodlights theme"> |
 
-**Signing in** (Android): the welcome screen plays the app as five animated tickets (a call locked in, a rating filling up, a stub stamped LOGGED, the Bragging Board, the Vault), then your phone number, a 6-digit code, your fan card and your people.
+**Signing in** (Android): the welcome screen is one big match ticket that rolls through real matches like a scoreboard, with your rating filling in, a LOGGED stamp, where it was played and a fun fact on the stub. Then come your phone number, a 6-digit code, your fan card and your people.
 
 | Welcome | The code | Fan card | Find friends |
 | --- | --- | --- | --- |

@@ -8,7 +8,7 @@ status: complete
 stopped_at: v1.1 complete; waiting on the developer's phone testing
 last_updated: "2026-10-29T14:10:00.000Z"
 last_activity: 2026-10-29
-last_activity_desc: Welcome story made catchier and quieter (shorter copy, one moment per ticket); before that, sign-in walked on iPhone and across two phones
+last_activity_desc: Welcome redesigned as one full-screen match ticket; before that, sign-in walked on iPhone and across two phones
 progress:
   total_phases: 7
   completed_phases: 7
@@ -77,7 +77,8 @@ Recent decisions:
 - [Phase 07]: Phone and text-code sign-in like Beli, replacing guest accounts (developer, 2026-10-25). Twilio Verify when configured, dev mode (`make api`) otherwise, refused with neither. New accounts start empty
 - [Phase 07]: Android draws edge to edge, so text screens use `KeyboardAware` (keyboard-height padding on Android) instead of KeyboardAvoidingView alone
 - [2026-10-28]: The developer found the scrolling Welcome page too plain and too wordy, so it's one screen with nothing to scroll: a ticket plays the five parts of the app in turn (call, rate, stub, Bragging Board, Vault) with one line each and story-style progress bars. It waits for the launch splash, pauses for screen readers, follows Reduce Motion, and scrolls only when the system text is too large to fit (`src/features/auth/WelcomeStory.tsx`)
-- [2026-10-29]: The developer wanted the Welcome story catchier but not busy, so it was cut back rather than redesigned: a short headline that wipes up and one line under it (no tag), one moment per ticket (LOCKED and LOGGED stamps press the card, the balls fill, you climb past Aditi on the Bragging Board), and the Vault's stack sits straight with no tilt
+- [2026-10-29]: Polishing that story wasn't enough ("you kept the same design"), and real app screens in a phone frame weren't either, so the Welcome screen was redesigned: the whole screen is one match ticket on card stock, with giant team codes rolling like a scoreboard, your rating filling in with the app's word for it, LOGGED beside the codes, the venue, a fun fact on the stub and the buttons below the perforation (`src/features/auth/WelcomeTicket.tsx`, replacing `WelcomeStory.tsx`)
+- [2026-10-29, earlier]: The developer wanted the Welcome story catchier but not busy, so it was cut back rather than redesigned: a short headline that wipes up and one line under it (no tag), one moment per ticket (LOCKED and LOGGED stamps press the card, the balls fill, you climb past Aditi on the Bragging Board), and the Vault's stack sits straight with no tilt
 - [Phase 07, 2026-10-28]: `KeyboardAware` wraps the whole screen, because on iOS KeyboardAvoidingView measures itself against its parent. A screen that is one ScrollView of fields uses `automaticallyAdjustKeyboardInsets` with `KeyboardAware scrollInsets`, so iOS scrolls the focused field into view
 
 ### Pending Todos
@@ -114,7 +115,7 @@ Items acknowledged and carried forward:
 ## Session Continuity
 
 Last session: 2026-10-29
-Stopped at: catchier, quieter Welcome story pushed; the developer is trying it on their iPhone simulator
+Stopped at: full-screen ticket Welcome pushed; the developer is trying it on their iPhone simulator
 Resume file: none
 
 - Run locally: `make api` (port 8088, SQLite file `./innings.db`, sign-in codes in dev mode; `make reset-db` wipes it) and `make app` (Metro on 8082; press `i` for iOS or `a` for Android). To sign in, type any number and tap the dev code shown on the screen.
