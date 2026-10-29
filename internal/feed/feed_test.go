@@ -179,9 +179,11 @@ func TestPollFetchesSummariesSavesAndReloads(t *testing.T) {
 	}
 	ms := byID(s.Fixtures())
 
-	// Live: the playing XIs and the per-innings lines (with overs) from the summary.
+	// Live: the playing XIs and the finished innings' overs from the summary, but the score stays the scoreboard's
+	// (the summary was taken a few minutes earlier, at 123/2, and must not wind it back from 130/2).
 	engsl := ms["es-1550718"]
-	if len(engsl.XI["eng"]) != 11 || len(engsl.XI["sl"]) != 11 || engsl.Live.Innings[0].Overs != "50" || engsl.Venue.Country != "Pakistan" {
+	if len(engsl.XI["eng"]) != 11 || len(engsl.XI["sl"]) != 11 || engsl.Live.Innings[0].Overs != "50" || engsl.Venue.Country != "Pakistan" ||
+		engsl.Live.Innings[1].Runs != 130 || engsl.Live.Innings[1].Overs != "21.2" {
 		t.Fatalf("ENG v SL after summary: xi %d/%d innings %+v venue %+v", len(engsl.XI["eng"]), len(engsl.XI["sl"]), engsl.Live.Innings, engsl.Venue)
 	}
 	// Upcoming: the announced squads, with roles.
@@ -343,5 +345,26 @@ func TestSquadsAndTossAreCheckedOftenEnough(t *testing.T) {
 	got := strings.Join(s.wantSummary(now), ",")
 	if got != "es-toss,es-nosquad,es-stale" {
 		t.Fatalf("due = %s", got)
+	}
+}
+
+func TestLiveScoresNeverGoBackwards(t *testing.T) {
+	sb := []domain.InningsScore{{TeamID: "sa", Runs: 329, Wickets: 10}, {TeamID: "aus", Runs: 429, Wickets: 10}, {TeamID: "sa", Runs: 120, Wickets: 3, Overs: "40.3"}}
+	sum := []domain.InningsScore{{TeamID: "sa", Runs: 329, Wickets: 10, Overs: "82.3"}, {TeamID: "aus", Runs: 429, Wickets: 10, Overs: "125.1"}, {TeamID: "sa", Runs: 121, Wickets: 3, Overs: "41"}}
+	got := furthest(sb, sum)
+	if got[0].Overs != "82.3" || got[1].Overs != "125.1" || got[2].Runs != 121 || got[2].Overs != "41" {
+		t.Fatalf("summary ahead: %+v", got)
+	}
+	// The other way round: a scoreboard ahead of a stale summary keeps the scoreboard's live innings.
+	sum[2], sb[2] = domain.InningsScore{TeamID: "sa", Runs: 118, Wickets: 3, Overs: "39.5"}, domain.InningsScore{TeamID: "sa", Runs: 121, Wickets: 3, Overs: "41"}
+	if got := furthest(sb, sum); got[2].Runs != 121 || got[0].Overs != "82.3" {
+		t.Fatalf("scoreboard ahead: %+v", got)
+	}
+	// A new innings beats the old reading outright.
+	if got := furthest(sb[:2], sb); len(got) != 3 {
+		t.Fatalf("new innings: %+v", got)
+	}
+	if balls("19.4") != 118 || balls("20") != 120 || balls("") != -1 {
+		t.Fatal("balls")
 	}
 }

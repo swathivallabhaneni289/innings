@@ -304,6 +304,40 @@ func (c *catalog) toMatch(e esEvent) (out domain.Match, added []domain.Team, ok 
 	return out, added, true
 }
 
+// balls is how many legal balls an overs figure stands for ("19.4" → 118), or -1 when it isn't given.
+func balls(overs string) int {
+	whole, part, _ := strings.Cut(overs, ".")
+	o, err := strconv.Atoi(whole)
+	if err != nil {
+		return -1
+	}
+	b, _ := strconv.Atoi(part)
+	return o*6 + b
+}
+
+// furthest merges two readings of a live score, innings by innings, keeping whichever is further on. ESPN's
+// scoreboard and its match summaries come from different caches, and either can trail the other by a minute, so
+// taking one wholesale would sometimes wind the score back.
+func furthest(a, b []domain.InningsScore) []domain.InningsScore {
+	if len(a) != len(b) {
+		if len(b) > len(a) {
+			return b // a new innings has started
+		}
+		return a
+	}
+	out := slices.Clone(a)
+	for k := range out {
+		x, y := out[k], b[k]
+		if x.TeamID != y.TeamID {
+			continue
+		}
+		if bx, by := balls(x.Overs), balls(y.Overs); by > bx || by == bx && (y.Runs > x.Runs || y.Wickets > x.Wickets) {
+			out[k] = y
+		}
+	}
+	return out
+}
+
 func cmpOr(a, b string) string {
 	if a != "" {
 		return a
@@ -410,7 +444,7 @@ func applySummary(m *domain.Match, s esSummary, espnTeams [2]string) []domain.Pl
 		}
 		switch {
 		case m.Live != nil:
-			m.Live.Innings = innings
+			m.Live.Innings = furthest(m.Live.Innings, innings)
 		case m.Result != nil:
 			m.Result.Innings = innings
 		}

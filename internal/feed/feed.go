@@ -320,8 +320,8 @@ func keep(m *domain.Match, old domain.Match) {
 			}
 		}
 	}
-	if m.Live != nil {
-		fill(m.Live.Innings)
+	if m.Live != nil && old.Live != nil {
+		m.Live.Innings = furthest(m.Live.Innings, old.Live.Innings) // never wind a live score back
 	}
 	if m.Result != nil {
 		fill(m.Result.Innings)
