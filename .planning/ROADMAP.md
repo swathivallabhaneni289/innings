@@ -4,11 +4,11 @@
 
 Innings delivers a cricket fan's diary in six phases. Phase 1 fixes the shared JSON contract, the Expo scaffold, the first design system and the data layer. Phase 2 builds the Go API and the simulated cricket world it serves. Phase 3 builds the core loop (Matches tab, the Match Page in its three states, the Log flow and the ticket stub). Phase 4 adds the social layer and predictions on top. Phase 5 adds the Vault and the Profile. Phase 6 re-skins the app in the chosen Matchday Ticket direction and prepares the repo to be shown.
 
-All six phases were planned and built on 2026-10-22 in one evening, by a lead agent directing parallel sub-agents with strict file ownership. Milestone v1.0 is complete: 8 of 8 plans, 64 of 64 v1 requirements.
+The developer planned and built all six phases on 2026-10-22 in one evening by prompting Claude Code, which split the work across parallel sub-agents with strict file ownership. Milestone v1.0 is complete: 8 of 8 plans, 64 of 64 v1 requirements.
 
 Milestone v1.1 (Accounts) added Phase 7 on 2026-10-25 at the developer's request: phone sign-in and a Beli-style onboarding, replacing the guest accounts. It is complete. Milestone v1.2 (Real matches) added Phase 8 on 2026-10-29: the app had shipped on simulated matches, and the plan asked for real data in week 1. Milestone v1.3 (Email sign-in and close-out) added Phase 10 on 2026-10-30: sign-in moved from phone numbers to email and password, fans can back up to five teams, and the loose ends from earlier phases were closed. The Phase 1 contract (`src/domain/types.ts`, `src/domain/api.ts`, `docs/API.md`) was the fixed interface every workstream built against.
 
-After v1.3, two additions were built directly, without a phase. A quick task on 2026-11-13 added past matches (DATA-02): 2,948 games from every World Cup, Champions Trophy, Asia Cup and IPL season since 1973, in an archive Innings builds itself from Wikipedia's tournament pages. On 2026-11-16, at the developer's request, every finished match's page gained a tap-to-rate panel, "Pin to Top 5" for any match and a review box under Reviews, and the Top 5 gained an editor to reorder it or take games out (MATCH-10 and VAULT-05, reworded in place).
+After v1.3, two additions were built directly, without a phase. A quick task on 2026-11-13 added past matches (DATA-02): 2,948 games from every World Cup, Champions Trophy, Asia Cup and IPL season since 1973, in an archive Innings builds itself from Wikipedia's tournament pages. Later that day, at the developer's request, every finished match's page gained a tap-to-rate panel, "Pin to Top 5" for any match and a review box under Reviews, and the Top 5 gained an editor to reorder it or take games out (MATCH-10 and VAULT-05, reworded in place).
 
 ## Phases
 

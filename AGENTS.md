@@ -6,7 +6,7 @@ This is Innings: an Expo/React Native app (iPhone + Android, TypeScript, `src/`)
 - Signed-in screens live in `src/app/(app)/`; sign-up, sign-in and password reset are `src/app/(auth)/`, and the fan card and find-friends steps after sign-up are `src/app/onboarding/`, guarded in `src/app/_layout.tsx`.
 - The JSON contract is `src/domain/types.ts` + `src/domain/api.ts`; Go mirrors it in `internal/domain`. Never send `null` for a list.
 - Design system: "Matchday Ticket" (`src/theme/tokens.ts`, `src/components/`). Take colours from `useTheme()`; render text with `<Txt>`.
-- Planning record (GSD): `.planning/`. Product plan and decisions: `docs/PLAN.md`. Requirements with acceptance checks: `docs/REQUIREMENTS.md` (same IDs as `.planning/REQUIREMENTS.md`; keep both in step).
+- Planning record (GSD): `.planning/`. Product plan and decisions: `docs/PLAN.md`. Requirements with acceptance checks: `docs/REQUIREMENTS.md`, the only requirements list. The product requirements document is `docs/PRD.md`, and `docs/PROMPTS.md` records the developer's prompts that shaped the build.
 
 ## Expo has changed — do not trust your training data
 

@@ -1,6 +1,6 @@
 # Innings — The Fan's Cricket Diary
 
-_Source: "Innings — Cricket Fan App Plan" (claude.ai doc). Working name. Alternatives: Over & Out, Second Innings, Stumped._
+_This is the plan as I first wrote it, kept for the record. The app as built is described in the [PRD](PRD.md), and the decisions that filled the plan's gaps are in its Build decisions table. Innings was a working name; the alternatives were Over & Out, Second Innings and Stumped._
 
 Log every match you watch, predict before the first ball, rate the players, remember where you watched it, and build your all-time list of greatest games.
 

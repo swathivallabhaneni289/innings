@@ -1,10 +1,10 @@
 # Innings: Requirements
 
-**Version:** v1.3 · **Status:** 79 of 79 requirements built · **Updated:** 30 October 2026
+**Version:** v1.4 · **Status:** 80 of 80 requirements built · **Updated:** 16 November 2026
 
 This document covers what Innings has to do, how to check that it does it, and where each part is built. It comes from the product plan in [`PLAN.md`](PLAN.md). Where the plan left something open (how streaks multiply, when an upset counts), the decision is recorded here as a rule.
 
-The requirement IDs match the build checklist in [`.planning/REQUIREMENTS.md`](../.planning/REQUIREMENTS.md), which the GSD roadmap tracks phase by phase.
+This is the project's only requirements list. The problem Innings solves, who it's for, its goals and what's out of scope are in the [PRD](PRD.md). The [Progress](#progress) table shows which phase built each area, and the [roadmap](../.planning/ROADMAP.md) has the detail of each phase.
 
 ## Progress
 
@@ -25,48 +25,6 @@ The requirement IDs match the build checklist in [`.planning/REQUIREMENTS.md`](.
 | **Total** | **80 / 80** | |
 
 "Built" means the code does it and passes the check in its row. Real fans haven't used the app yet, and it hasn't been run on a physical phone. Both are the next step; see [Open items](#open-items).
-
-## The problem
-
-Cricbuzz tells you what happened. CricHeroes helps you score your own games. Nothing records how fans felt about a match: who they backed before the toss, how good it was, which player they'd crown, and where they were when it finished.
-
-Innings v1.0 has to make that whole loop work for one fan and their friends:
-
-1. **Before the first ball:** make your call (winner, top run-scorer, top wicket-taker).
-2. **During:** follow the score and see which friends are watching.
-3. **After:** rate the match and the players, say where you watched it, and get a ticket stub.
-4. **Over time:** collect stubs, earn bragging points, and pin your all-time Top 5.
-
-## Who it's for
-
-A fan who watches most matches, usually with other people, and argues about them afterwards. They already have a scores app, so Innings shouldn't compete on scores. It has to be quicker to log a match than to type a group-chat message about it, and the stub has to look good enough to post.
-
-## Scope
-
-**In the app today**
-
-- Five tabs: Home, Matches, Log, Vault, Profile
-- The Match Page before, during and after play
-- Predictions, locked at the first ball
-- Logging in four steps, the ticket stub and a shareable story card
-- Friends, likes, replies, notifications and search
-- 58 real classic matches
-- iPhone and Android from one codebase
-- Sign-up with an email and a password, confirmed by an emailed code, with forgot and change password
-- A fan card with a unique @username and up to five teams, and friends found from contacts
-- Real matches from ESPN's public scores feed: live scores, the week's fixtures with squads, playing XIs and results
-- A chat room for every real match, and calls on how it goes while it's on
-- A Go API with SQLite, simulated fans, and a whole simulated cricket world when `INNINGS_MATCHES=sim`
-
-**Not in yet**
-
-| Left out | Why |
-| --- | --- |
-| Real emails | Sign-up works, but codes show on screen in dev mode until `.env` holds a mail account's settings (README → Real emails). Real delivery hasn't been tried yet. |
-| Sign in with Apple or Google | Email and password cover new and returning fans for now (ACCT-09). |
-| Photo upload | The profile picture stays on the device for now, and the log no longer asks for a photo (MEDIA-01). |
-| App Store and Play Store releases | These need the developer's Apple and Google accounts (STORE-01). |
-| Live mood reactions, Season Wrapped, fan clubs, AI summaries of reviews | The plan marks these as later (LIVE-01, WRAP-01, CLUB-01, AI-01). |
 
 ## Functional requirements
 
@@ -221,7 +179,7 @@ Added 2026-10-29, when the developer said the app is mainly about talking a matc
 | PLAT-05 | Keep one JSON contract in TypeScript, mirrored in Go, used through typed hooks | No endpoint returns `null` for a list (`TestNoNulls`, `TestEveryGET`) | `src/domain/`, `internal/domain/`, `src/data/index.ts` |
 | PLAT-06 | Work on Android: icons, fonts, the API host and the system navigation bar | Home loads with data on the emulator; the emulator reaches the API at 10.0.2.2 | `src/data/client.ts` |
 | PLAT-07 | Ship an app icon, an Android adaptive icon and a splash screen in the chosen look | A red ball on the concrete ground #ECEAE4 | `assets/`, `app.json` |
-| PLAT-08 | Have a README and a GitHub repository | The README's run steps work from a fresh clone. The repository is private | `README.md` |
+| PLAT-08 | Have a README and a GitHub repository | The README's run steps work from a fresh clone. The repository is public (it was private until 2026-11-16) | `README.md` |
 
 ## Rules
 
@@ -314,7 +272,7 @@ For example, the fifth correct winner in a row, calling an upset and the top sco
 
 ### Accessibility
 
-- The code sets accessibility roles in 76 places and labels in 61.
+- The code sets accessibility roles in 91 places and labels in 73 (counted on 2026-11-16).
 - Filter chips are at least 40 pt tall.
 - Ratings and split bars have spoken labels, e.g. "IND 62%, AUS 38%".
 - Not done yet: a full pass with VoiceOver and TalkBack.

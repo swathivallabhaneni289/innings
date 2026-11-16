@@ -26,9 +26,9 @@ Capture how fans felt about a match, not what happened in it. Cricbuzz covers th
 - [x] The repo is ready to show: icons, Android check, README, GitHub (Phase 6)
 - [x] Fans sign in with a phone number and a texted code, set up a fan card with a unique @username, find friends from contacts, and can sign out or delete their account (Phase 7, v1.1; the phone number and texted code were replaced by email and password in Phase 10)
 - [x] Fans sign up with an email and a password confirmed by an emailed code, reset a forgotten password by email or change it in Settings, and back up to five teams; phone numbers are no longer collected (Phase 10, v1.3)
-- [x] Fans can find and log any match from every World Cup, Champions Trophy, Asia Cup and IPL season since 1973, and rate, pin to their Top 5 or review any finished match right on its page (2026-11-13 and 2026-11-16, after Phase 10)
+- [x] Fans can find and log any match from every World Cup, Champions Trophy, Asia Cup and IPL season since 1973, and rate, pin to their Top 5 or review any finished match right on its page (2026-11-13, after Phase 10)
 
-See REQUIREMENTS.md for the full checkable list (64 v1, 8 v1.1, 4 v1.2 and 3 v1.3 requirements across 10 phases, plus DATA-02 as a quick task, all complete). `docs/REQUIREMENTS.md` is the same list written for readers, with acceptance checks and where each one lives in the code.
+See `docs/REQUIREMENTS.md` for the full list (64 v1, 8 v1.1, 4 v1.2 and 3 v1.3 requirements across 10 phases, plus DATA-02 as a quick task, all complete), with acceptance checks and where each one lives in the code.
 
 ### Out of Scope
 
@@ -38,12 +38,12 @@ See REQUIREMENTS.md for the full checkable list (64 v1, 8 v1.1, 4 v1.2 and 3 v1.
 - App Store and Play Store builds: need the developer's Apple and Google accounts
 - The heritage scorebook look: built first, then superseded by direction C (see Key Decisions)
 - Launch tactics from the plan (launch before a big series, seed with friends and the developer's AI club): not build tasks
-- The plan's "Later" list (live mood reactions, Season Wrapped, team fan clubs, AI summaries of reviews): see REQUIREMENTS.md v2
+- The plan's "Later" list (live mood reactions, Season Wrapped, team fan clubs, AI summaries of reviews): see `docs/REQUIREMENTS.md` → Later (v2)
 
 ## Context
 
-- Source plan: the claude.ai doc "Innings — Cricket Fan App Plan", copied into `docs/PLAN.md` with a "Build decisions" table that settles the plan's open gaps.
-- Planned and built on 2026-10-22, in one evening, by directing Claude Code: a lead agent plus parallel sub-agents, each owning a fixed set of files. Ownership notes are still visible in the code (for example the "CONTRACT (owned by the Home agent)" header in `src/features/feed/FeedCard.tsx` and the Vault seed note in `internal/sim/classics.go`).
+- Source plan: the developer's plan document "Innings — Cricket Fan App Plan", copied into `docs/PLAN.md` with a "Build decisions" table that settles the plan's open gaps.
+- The developer planned and built it on 2026-10-22, in one evening, by prompting Claude Code, which split the work across parallel sub-agents, each owning a fixed set of files. Ownership notes are still visible in the code (for example the "CONTRACT (owned by the Home agent)" header in `src/features/feed/FeedCard.tsx` and the Vault seed note in `internal/sim/classics.go`).
 - Same split as the developer's other project, RNDMRoll: an Expo app talking to a Go API.
 - There is no cricket API key. `internal/sim` builds a deterministic world around server start: 29 fixtures (live, upcoming, just finished, recent) across internationals, IPL, WPL, World Cup, BBL, SA20 and The Hundred; real current playing XIs (65 teams, 374 players in the catalog); 8 friends and 16 public fans with about 640 logs; anonymous crowd ratings and prediction picks; live scores that move with the clock.
 - The Vault holds 58 real matches. Each was checked against web sources by 3 independent checker agents (58 confirmed, 0 corrected, 0 dropped). One source per match is listed in `docs/VAULT_SOURCES.md`.
@@ -84,7 +84,7 @@ See REQUIREMENTS.md for the full checkable list (64 v1, 8 v1.1, 4 v1.2 and 3 v1.
 | Directions A Almanack and B Pavilion Scoreboard | Sketched on the design canvas alongside C | Not chosen |
 | API on port 8088, Metro on 8082 | 8080 is used by another local API on the developer's machine | In use |
 | Phones run a development build, not store Expo Go | Store Expo Go only opens the newest SDK | README run steps use `npx expo run:ios --device` and `npx expo run:android --device` |
-| Private GitHub repository | Developer's choice | `swathivallabhaneni289/innings`, branch `main` |
+| GitHub repository, public since 2026-11-16 | Developer's choice: private while it was built, then public | `swathivallabhaneni289/innings`, branch `main` |
 
 ---
-*Last updated: 2026-11-16, after past matches (2026-11-13) and the match page's rating, Top 5 pin, review box and Top 5 editor*
+*Last updated: 2026-11-16, when the repo went public. Before that, on 2026-11-13: past matches, and the match page's rating, Top 5 pin, review box and Top 5 editor*
