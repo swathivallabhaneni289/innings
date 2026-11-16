@@ -1,45 +1,52 @@
+import { Feather } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useRef, useState, type ReactNode } from 'react';
-import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Avatar, Button, CricketBall, KeyboardAware, MatchTicket, QueryState, Screen, SectionHeader, TeamBadge, Txt } from '@/components';
-import { getPlayer, matchTitle, playerName, useActions, useLogItem, useMe, useNow } from '@/data';
+import { ApiError, getPlayer, matchTitle, playerName, useActions, useLogItem, useMe, useNow } from '@/data';
 import type { FeedItem } from '@/domain/api';
 import type { Reply } from '@/domain/types';
 import { placeLine } from '@/features/feed/FeedCard';
 import { useKnownUsers, useUser, UserChip, type KnownUsers } from '@/features/feed/people';
 import { StubActions } from '@/features/feed/StubActions';
+import { Perforation } from '@/features/vault/Perforation';
 import { relative, stubNo } from '@/lib/format';
 import { fonts, useTheme } from '@/theme';
+
+const GUTTER = 20; // the content's side padding: the tear line runs past it to the screen edges
 
 export default function StubScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const q = useLogItem(id);
   const me = useMe();
   const item = q.data;
+  const mine = !!item && item.user.id === me.data?.id;
   // The ticket below already carries the teams, so the title names whose stub this is.
-  const title = !item ? 'Stub' : item.user.id === me.data?.id ? 'Your stub' : `${item.user.name.split(' ')[0]}'s stub`;
+  const title = !item ? 'Stub' : mine ? 'Your stub' : `${item.user.name.split(' ')[0]}'s stub`;
   return (
     <KeyboardAware>
       <Screen back title={title} kicker={item ? stubNo(item.log.stubNo) : undefined} scroll={false}>
-        <QueryState q={q}>{(d) => <StubBody item={d} />}</QueryState>
+        <QueryState q={q}>{(d) => <StubBody item={d} mine={mine} />}</QueryState>
       </Screen>
     </KeyboardAware>
   );
 }
 
-function StubBody({ item }: { item: FeedItem }) {
+function StubBody({ item, mine }: { item: FeedItem; mine: boolean }) {
   const t = useTheme();
   const insets = useSafeAreaInsets();
   const now = useNow(60_000);
   const known = useKnownUsers([item.user]);
-  const { addReply } = useActions();
+  const { addReply, deleteLog } = useActions();
   const inputRef = useRef<TextInput>(null);
   const scrollRef = useRef<ScrollView>(null);
   const [text, setText] = useState('');
   const [posting, setPosting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const { log, user, match } = item;
 
   const ratings = Object.entries(log.playerRatings).sort((a, b) => b[1] - a[1]);
@@ -60,6 +67,26 @@ function StubBody({ item }: { item: FeedItem }) {
       setPosting(false);
     }
   };
+
+  // Goes back at once rather than waiting: the delete refreshes every open screen, and this stub would be gone
+  // from under the fan. If it fails, an alert says so on whichever screen they've landed on.
+  const remove = () => {
+    setDeleting(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    deleteLog(log.id).catch((e) => {
+      if (e instanceof ApiError && e.status === 401) return; // the session has ended and sign-in takes over
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+      Alert.alert('Couldn’t delete your stub', e instanceof Error ? e.message : 'It’s still in your collection. Try again.');
+    });
+    if (router.canGoBack()) router.back();
+    else router.replace('/');
+  };
+
+  const confirmDelete = () =>
+    Alert.alert('Delete this stub?', 'Your rating, the stub and its replies go for good.', [
+      { text: 'Keep it', style: 'cancel' },
+      { text: 'Delete', style: 'destructive', onPress: remove },
+    ]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -158,6 +185,22 @@ function StubBody({ item }: { item: FeedItem }) {
         ) : (
           item.replies.map((r, i) => <ReplyRow key={r.id} reply={r} known={known} now={now} first={i === 0} />)
         )}
+
+        {mine ? (
+          // Your own stub ends in a tear line, with the way to tear it up beneath it.
+          <View style={styles.tearOff}>
+            <Perforation inset={GUTTER} />
+            <Button
+              label={deleting ? 'Deleting…' : 'Delete this stub'}
+              kind="ghost"
+              size="sm"
+              icon={<Feather name="trash-2" size={14} color={t.red} />}
+              loading={deleting}
+              onPress={confirmDelete}
+              style={styles.delete}
+            />
+          </View>
+        ) : null}
       </ScrollView>
 
       <View style={[styles.composer, { borderTopColor: t.rule, backgroundColor: t.paper, paddingBottom: Math.max(insets.bottom, 10) }]}>
@@ -231,7 +274,7 @@ function ReplyRow({ reply, known, now, first }: { reply: Reply; known: KnownUser
 }
 
 const styles = StyleSheet.create({
-  content: { paddingHorizontal: 20, paddingTop: 4, paddingBottom: 28 },
+  content: { paddingHorizontal: GUTTER, paddingTop: 4, paddingBottom: 28 },
   author: { flexDirection: 'row', alignItems: 'center' },
   review: { marginTop: 18, fontSize: 18, lineHeight: 28 },
   facts: { marginTop: 18, borderTopWidth: StyleSheet.hairlineWidth, borderBottomWidth: StyleSheet.hairlineWidth, paddingVertical: 6 },
@@ -240,6 +283,8 @@ const styles = StyleSheet.create({
   ratingRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8 },
   reply: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 10 },
   replyHead: { flexDirection: 'row', alignItems: 'baseline' },
+  tearOff: { marginTop: 28 },
+  delete: { alignSelf: 'flex-start', minHeight: 44, marginTop: 4 },
   composer: { borderTopWidth: StyleSheet.hairlineWidth, paddingHorizontal: 20, paddingTop: 10 },
   composerRow: { flexDirection: 'row', alignItems: 'flex-end' },
   input: { flex: 1, minHeight: 40, maxHeight: 110, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 12, paddingTop: 9, paddingBottom: 9, fontFamily: fonts.serif, fontSize: 15 },

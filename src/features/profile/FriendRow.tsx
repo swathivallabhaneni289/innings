@@ -5,6 +5,7 @@ import { Avatar, TeamBadge, Txt } from '@/components';
 import { getTeam } from '@/data';
 import type { User } from '@/domain/types';
 import { useTheme } from '@/theme';
+import { listLine } from '@/features/onboarding/teams';
 import { FollowButton } from './FollowButton';
 
 /**
@@ -17,7 +18,7 @@ export function FriendRow({ user, following, last = false }: { user: User; follo
     <Pressable
       onPress={() => router.push('/user/' + user.id)}
       accessibilityRole="button"
-      accessibilityLabel={`${user.name}'s profile. Backs ${getTeam(user.favouriteTeamId).name}`}
+      accessibilityLabel={`${user.name}'s profile. Backs ${listLine(user.teamIds.map((id) => getTeam(id).name))}`}
       style={({ pressed }) => [
         styles.row,
         { borderBottomColor: t.rule, borderBottomWidth: last ? 0 : StyleSheet.hairlineWidth, opacity: pressed ? 0.7 : 1 },

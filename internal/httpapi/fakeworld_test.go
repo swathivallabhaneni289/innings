@@ -102,6 +102,7 @@ func (w *fakeWorld) Teams() map[string]domain.Team             { return w.teams 
 func (w *fakeWorld) Players() map[string]domain.Player         { return w.players }
 func (w *fakeWorld) Fixtures(time.Time) []domain.Match         { return w.fixtures }
 func (w *fakeWorld) Classics() []domain.Match                  { return w.classics }
+func (w *fakeWorld) Archive() []domain.Match                   { return []domain.Match{} }
 func (w *fakeWorld) Friends() []domain.User                    { return w.friends }
 func (w *fakeWorld) PublicFans() []domain.User                 { return w.public }
 func (w *fakeWorld) Logs(time.Time) []domain.MatchLog          { return w.logs }

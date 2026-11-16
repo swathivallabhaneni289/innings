@@ -100,12 +100,21 @@ func ts(t time.Time) string { return t.UTC().Format(time.RFC3339) }
 
 // ---- users ----
 
-const userCols = `id, name, handle, avatar_colour, favourite_team_id, bio, photo_uri`
+const userCols = `id, name, handle, avatar_colour, favourite_team_id, team_ids, bio, photo_uri`
 
 func scanUser(sc interface{ Scan(...any) error }) (domain.User, error) {
 	var u domain.User
-	err := sc.Scan(&u.ID, &u.Name, &u.Handle, &u.AvatarColour, &u.FavouriteTeamID, &u.Bio, &u.PhotoURI)
+	var teams string
+	err := sc.Scan(&u.ID, &u.Name, &u.Handle, &u.AvatarColour, &u.FavouriteTeamID, &teams, &u.Bio, &u.PhotoURI)
+	_ = json.Unmarshal([]byte(teams), &u.TeamIDs)
+	u.TeamIDs = u.Teams()
 	return u, err
+}
+
+// teamsJSON is how users.team_ids stores u's teams.
+func teamsJSON(u domain.User) string {
+	b, _ := json.Marshal(u.Teams())
+	return string(b)
 }
 
 func (s *Store) userWhere(ctx context.Context, where string, arg any) (domain.User, bool, error) {
@@ -128,8 +137,8 @@ func (s *Store) Users(ctx context.Context) ([]domain.User, error) {
 // UpdateUser saves u's profile. ErrHandleTaken when another user got the same handle first (the lower(handle)
 // unique index catches the race that a check-then-write would miss).
 func (s *Store) UpdateUser(ctx context.Context, u domain.User) error {
-	_, err := s.db.ExecContext(ctx, `UPDATE users SET name = ?, handle = ?, avatar_colour = ?, favourite_team_id = ?, bio = ?, photo_uri = ? WHERE id = ?`,
-		u.Name, u.Handle, u.AvatarColour, u.FavouriteTeamID, u.Bio, u.PhotoURI, u.ID)
+	_, err := s.db.ExecContext(ctx, `UPDATE users SET name = ?, handle = ?, avatar_colour = ?, favourite_team_id = ?, team_ids = ?, bio = ?, photo_uri = ? WHERE id = ?`,
+		u.Name, u.Handle, u.AvatarColour, u.FavouriteTeamID, teamsJSON(u), u.Bio, u.PhotoURI, u.ID)
 	if isUniqueViolation(err) {
 		return ErrHandleTaken
 	}

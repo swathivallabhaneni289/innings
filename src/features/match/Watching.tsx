@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 
 import { Button, Panel, Txt } from '@/components';
@@ -18,7 +18,12 @@ export function WatchingButton({ matchId, watching }: { matchId: string; watchin
   const [busy, setBusy] = useState<WatchPlace | 'clear' | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => setPicked(undefined), [watching]);
+  // A new answer from the server (the page refetched) replaces the optimistic pick.
+  const [seen, setSeen] = useState(watching);
+  if (seen !== watching) {
+    setSeen(watching);
+    setPicked(undefined);
+  }
   const current = picked === undefined ? watching : picked;
   const place = WATCH_PLACES.find((w) => w.id === current);
 

@@ -36,7 +36,7 @@ func typicalEnd(m domain.Match) time.Time {
 
 // chatWindow says whether m's chat takes messages now and, before it opens, when it will.
 func (v *view) chatWindow(m domain.Match) (open bool, opensAt string) {
-	if m.Kind == "classic" {
+	if m.Kind == "classic" || m.Archived {
 		return false, ""
 	}
 	if opens := startOf(m).Add(-chatOpensBefore); v.now.Before(opens) {

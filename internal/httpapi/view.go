@@ -23,7 +23,9 @@ type view struct {
 
 	fixtureList []domain.Match
 	classicList []domain.Match
+	archiveList []domain.Match
 	matchIdx    map[string]domain.Match
+	archiveIdx  map[string]domain.Match
 	teamMap     map[string]domain.Team
 
 	realUsers   map[string]domain.User
@@ -79,6 +81,18 @@ func (v *view) classics() []domain.Match {
 	return v.classicList
 }
 
+func (v *view) archive() []domain.Match {
+	if v.archiveList == nil {
+		v.archiveList = []domain.Match{}
+		for _, m := range v.s.World.Archive() {
+			v.archiveList = append(v.archiveList, normMatch(m))
+		}
+	}
+	return v.archiveList
+}
+
+// match finds a fixture or a classic, and only then looks in the archive, so a request that never meets a past
+// match doesn't load thousands of them.
 func (v *view) match(id string) (domain.Match, bool) {
 	if v.matchIdx == nil {
 		v.matchIdx = map[string]domain.Match{}
@@ -89,7 +103,16 @@ func (v *view) match(id string) (domain.Match, bool) {
 			v.matchIdx[m.ID] = m
 		}
 	}
-	m, ok := v.matchIdx[id]
+	if m, ok := v.matchIdx[id]; ok {
+		return m, true
+	}
+	if v.archiveIdx == nil {
+		v.archiveIdx = map[string]domain.Match{}
+		for _, m := range v.archive() {
+			v.archiveIdx[m.ID] = m
+		}
+	}
+	m, ok := v.archiveIdx[id]
 	return m, ok
 }
 

@@ -5,9 +5,7 @@ import { ActivityIndicator, Linking, Share, StyleSheet, View } from 'react-nativ
 import { Button, Panel, Rule, Txt } from '@/components';
 import { useAccount } from '@/data';
 import type { User } from '@/domain/types';
-import { DEFAULT_COUNTRY } from '@/features/auth/countries';
 import { errorText } from '@/features/auth/errors';
-import { countryOf } from '@/lib/phone';
 import { useTheme } from '@/theme';
 import { findFriendsInContacts } from './contacts';
 
@@ -36,8 +34,7 @@ export function ContactsFinder({ Row, onMatched }: { Row: Row; onMatched?: (ids:
   const search = async () => {
     setContacts({ kind: 'working' });
     try {
-      const phone = account.data?.phone;
-      const res = await findFriendsInContacts(countryOf(phone) ?? DEFAULT_COUNTRY, phone);
+      const res = await findFriendsInContacts(account.data?.email);
       if (res.kind === 'denied') {
         setContacts(res);
         return;
@@ -59,7 +56,7 @@ export function ContactsFinder({ Row, onMatched }: { Row: Row; onMatched?: (ids:
         <View>
           <Txt variant="body">See who&apos;s already here from your phone&apos;s contacts.</Txt>
           <Txt variant="monoSmall" tone="soft" style={{ marginTop: 6 }}>
-            Numbers are matched as hashes and never stored.
+            Fans are matched by the email addresses in your contacts, sent as hashes and never stored.
           </Txt>
           <Button
             label="Find friends from contacts"

@@ -7,7 +7,9 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"path/filepath"
+	"slices"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -39,7 +41,7 @@ func init() {
 	}
 }
 
-// testClock is the sign-in clock in tests (code expiry, resend gaps, rate limits). It starts at testNow and only
+// testClock is the sign-up clock in tests (code expiry, resend gaps, rate limits). It starts at testNow and only
 // moves when a test advances it; the sim clock stays pinned at testNow.
 type testClock struct {
 	mu sync.Mutex
@@ -51,36 +53,42 @@ func (c *testClock) now() time.Time { c.mu.Lock(); defer c.mu.Unlock(); return c
 func (c *testClock) advance(d time.Duration) { c.mu.Lock(); defer c.mu.Unlock(); c.t = c.t.Add(d) }
 
 type client struct {
-	t     *testing.T
-	base  string
-	token string
-	api   *Server
-	clock *testClock
-	phone string // the number this client signed in with
-	id    string // the signed-in user's id
+	t        *testing.T
+	base     string
+	token    string
+	api      *Server
+	clock    *testClock
+	email    string // the address this client signed in with
+	password string
+	id       string // the signed-in user's id
 }
 
 // eachWorld runs fn against the real sim (empty until it lands, full after) and against a small fake world. Each
-// run signs in a fresh phone number.
+// run signs up a fresh email address.
 func eachWorld(t *testing.T, fn func(t *testing.T, c *client)) {
 	t.Run("sim", func(t *testing.T) { fn(t, newTestAPI(t, sim.NewWorld(testAnchor))) })
 	t.Run("fake", func(t *testing.T) { fn(t, newTestAPI(t, newFakeWorld(testNow))) })
 }
 
-var phoneSeq atomic.Int64
+var emailSeq atomic.Int64
 
-// nextPhone is a phone number no other test client has used, so no two share a code row or send log.
-func nextPhone() string { return fmt.Sprintf("+9190%08d", phoneSeq.Add(1)) }
+// testPassword is every test fan's password unless a test says otherwise.
+const testPassword = "tests-are-fun-42"
 
-// newTestAPI starts a server in dev sign-in mode and returns a client signed in as a new fan.
+// nextEmail is an address no other test client has used, so no two share a code row or send log.
+func nextEmail() string { return fmt.Sprintf("fan%d@example.com", emailSeq.Add(1)) }
+
+// newTestAPI starts a server in dev sign-up mode and returns a client signed in as a new fan.
 func newTestAPI(t *testing.T, world World) *client {
 	t.Helper()
 	c := newTestServer(t, world)
-	c.signIn(nextPhone())
+	c.signUp(nextEmail())
 	return c
 }
 
-// newTestServer starts a server in dev sign-in mode on its own database and returns a client with no session.
+// newTestServer starts a server in dev sign-up mode (codes come back as devCode, nothing is emailed) on its own
+// database and returns a client with no session. Passwords are hashed with far fewer PBKDF2 rounds than in
+// production, which only makes the tests fast.
 func newTestServer(t *testing.T, world World) *client {
 	t.Helper()
 	st, err := store.Open(filepath.Join(t.TempDir(), "api.db"))
@@ -92,60 +100,83 @@ func newTestServer(t *testing.T, world World) *client {
 	api := New(st, world, func() time.Time { return testNow }, logger)
 	clock := &testClock{t: testNow}
 	api.Auth.Now = clock.now
-	api.Auth.Verifier = auth.DevVerifier{Log: logger}
+	api.Auth.Mailer = auth.DevMailer{Log: logger}
+	api.Auth.Iterations = 1000
 	srv := httptest.NewServer(api.Handler())
 	t.Cleanup(srv.Close)
 	return &client{t: t, base: srv.URL, api: api, clock: clock}
 }
 
+// fresh returns a client with no session on the same server.
+func (c *client) fresh() *client {
+	return &client{t: c.t, base: c.base, api: c.api, clock: c.clock}
+}
+
 // another returns a client signed in as a new fan on the same server.
 func (c *client) another() *client {
 	c.t.Helper()
-	o := &client{t: c.t, base: c.base, api: c.api, clock: c.clock}
-	o.signIn(nextPhone())
+	o := c.fresh()
+	o.signUp(nextEmail())
 	return o
 }
 
-// device returns a second client for the same fan: same number, its own session.
+// device returns a second client for the same fan: signed in with the same email and password, its own session.
 func (c *client) device() *client {
 	c.t.Helper()
-	c.clock.advance(auth.ResendGap) // the number just had a code
-	o := &client{t: c.t, base: c.base, api: c.api, clock: c.clock}
-	o.signIn(c.phone)
+	o := c.fresh()
+	o.signInWith(c.email, c.password)
 	return o
 }
 
-// startCode asks for a code for phone and returns the devCode (dev mode).
-func (c *client) startCode(phone string) string {
+// askCode posts body to path (sign-up, resending the confirmation, forgot password) and returns the devCode.
+func (c *client) askCode(path string, body any) string {
 	c.t.Helper()
-	status, b, _ := c.req("POST", "/v1/auth/start", map[string]string{"phone": phone})
+	status, b, _ := c.req("POST", path, body)
 	var out struct {
 		DevCode string `json:"devCode"`
 	}
 	json.Unmarshal(b, &out)
 	if status != http.StatusOK || len(out.DevCode) != 6 {
-		c.t.Fatalf("start %s: %d %s", phone, status, b)
+		c.t.Fatalf("%s: %d %s", path, status, b)
 	}
 	return out.DevCode
 }
 
-// signIn signs c in as phone through /v1/auth/start and /v1/auth/verify, then checks /v1/bootstrap with the new
-// session. It returns the verify response.
-func (c *client) signIn(phone string) map[string]any {
+// signUp makes an account for email with testPassword, confirms it with the emailed code and keeps the session,
+// then checks /v1/bootstrap with it. It returns the confirm response.
+func (c *client) signUp(email string) map[string]any {
 	c.t.Helper()
-	code := c.startCode(phone)
-	status, b := c.do("POST", "/v1/auth/verify", map[string]string{"phone": phone, "code": code})
+	code := c.askCode("/v1/auth/signup", map[string]string{"email": email, "password": testPassword})
+	status, b := c.do("POST", "/v1/auth/confirm", map[string]string{"email": email, "code": code})
+	if status != http.StatusOK {
+		c.t.Fatalf("confirm %s: %d %s", email, status, b)
+	}
+	c.email, c.password = email, testPassword
+	return c.keepSession(b)
+}
+
+// signInWith signs c in with an email and password and keeps the session.
+func (c *client) signInWith(email, password string) map[string]any {
+	c.t.Helper()
+	status, b := c.do("POST", "/v1/auth/signin", map[string]string{"email": email, "password": password})
+	if status != http.StatusOK {
+		c.t.Fatalf("sign in %s: %d %s", email, status, b)
+	}
+	c.email, c.password = email, password
+	return c.keepSession(b)
+}
+
+// keepSession takes the token and user from a session response and checks bootstrap with them.
+func (c *client) keepSession(b []byte) map[string]any {
+	c.t.Helper()
 	var obj map[string]any
 	json.Unmarshal(b, &obj)
-	if status != http.StatusOK {
-		c.t.Fatalf("verify %s: %d %s", phone, status, b)
-	}
 	for _, k := range []string{"token", "me", "account", "isNew"} {
 		if _, ok := obj[k]; !ok {
-			c.t.Fatalf("verify: missing %s", k)
+			c.t.Fatalf("session response: missing %s in %s", k, b)
 		}
 	}
-	c.phone, c.token, c.id = phone, str(obj, "token"), str(obj, "me", "id")
+	c.token, c.id = str(obj, "token"), str(obj, "me", "id")
 	if c.bootstrap(c.token) != c.token {
 		c.t.Fatal("bootstrap returned a different token")
 	}
@@ -389,6 +420,130 @@ func testEveryGET(t *testing.T, c *client) {
 	c.getJSON("/v1/search?q=", "matches", "users")
 	c.getJSON("/v1/log/suggestions", "suggested", "recent")
 	c.getJSON("/v1/notifications", "items")
+}
+
+// TestSearchMatches: fans type "ind vs aus 2023", so the "vs" is dropped, and a team's code or name finds that team
+// only, men's and women's sides alike ("ind" is India, never the West Indies).
+func TestSearchMatches(t *testing.T) {
+	c := newTestAPI(t, sim.NewWorld(testAnchor)) // the Vault: 9 India–Australia classics (4 women's), 5 West Indies–Australia (1)
+	search := func(q string) []any { return list(c.getJSON("/v1/search?q=" + url.QueryEscape(q))["matches"]) }
+	classics := func(ms []any) (n int) {
+		for _, m := range ms {
+			if m.(map[string]any)["classic"] != nil {
+				n++
+			}
+		}
+		return n
+	}
+	for _, q := range []string{"ind vs aus", "IND v AUS", "aus vs. ind", "india versus australia"} {
+		ms := search(q)
+		for _, m := range ms {
+			teams := list(m.(map[string]any)["teamIds"])
+			has := func(ids ...any) bool {
+				return slices.ContainsFunc(teams, func(id any) bool { return slices.Contains(ids, id) })
+			}
+			if !has("ind", "ind-w") || !has("aus", "aus-w") {
+				t.Errorf("%q found %s, %v", q, str(m, "id"), teams)
+			}
+		}
+		if n := classics(ms); n != 9 {
+			t.Errorf("%q found %d of the 9 India–Australia classics", q, n)
+		}
+		if n := len(slices.DeleteFunc(slices.Clone(ms), func(m any) bool { return !strings.HasPrefix(str(m, "id"), "ar-") })); n != 44 {
+			t.Errorf("%q found %d of the archive's 44 India–Australia games", q, n)
+		}
+	}
+	if n := classics(search("ind-w vs aus-w")); n != 4 {
+		t.Errorf("ind-w vs aus-w: %d classics, want the 4 women's", n)
+	}
+	// Two words, one team: not every match played in the West Indies.
+	if n := classics(search("west indies vs australia")); n != 5 {
+		t.Errorf("west indies vs australia: %d classics, want 5", n)
+	}
+	// The past newest first, Vault and archive together: the final above the group game in Chennai, then the women's
+	// T20 World Cup semi-final in Cape Town that February.
+	ids := func(ms []any) (out []string) {
+		for _, m := range ms {
+			out = append(out, str(m, "id"))
+		}
+		return out
+	}
+	if got := ids(search("ind vs aus 2023")); !slices.Equal(got, []string{"wc-2023-final", "ar-1384396", "ar-1338060"}) {
+		t.Errorf("ind vs aus 2023: %v", got)
+	}
+	if ms := search("vs"); len(ms) != 0 {
+		t.Errorf("a lone vs found %d matches", len(ms))
+	}
+}
+
+// TestArchiveMatches: a past match from the archive is found, opened, logged and its (closed) chat read like any
+// other, and never crowds the Matches tab.
+func TestArchiveMatches(t *testing.T) {
+	c := newTestAPI(t, sim.NewWorld(testAnchor))
+	const id = "ar-1384403" // India v Pakistan, ICC Cricket World Cup 2023
+	found := list(c.getJSON("/v1/search?q=" + url.QueryEscape("ind vs pak 2023"))["matches"])
+	if !slices.ContainsFunc(found, func(m any) bool { return str(m, "id") == id }) {
+		t.Fatalf("ind vs pak 2023: %v", found)
+	}
+	// Archived: the app prints its day without a made-up hour and offers no chat.
+	if page := c.getJSON("/v1/matches/"+id, "match", "locked"); str(page, "match", "result", "text") != "India won by 7 wickets" ||
+		page["locked"] != true || page["match"].(map[string]any)["archived"] != true {
+		t.Fatalf("match page: %v", page)
+	}
+	if status, b := c.do("POST", "/v1/logs", map[string]any{"matchId": id, "rating": 4.5, "watchedAt": "friends"}); status != http.StatusCreated {
+		t.Fatalf("log: %d %s", status, b)
+	}
+	logs := list(c.getJSON("/v1/users/me")["logs"])
+	if len(logs) == 0 || str(logs[0], "match", "id") != id {
+		t.Fatalf("my logs: %v", logs)
+	}
+	if status, b := c.do("GET", "/v1/matches/"+id+"/chat", nil); status != http.StatusOK || !strings.Contains(string(b), `"open":false`) {
+		t.Fatalf("chat: %d %s", status, b)
+	}
+	for _, m := range list(c.getJSON("/v1/matches")["matches"]) {
+		if strings.HasPrefix(str(m, "id"), "ar-") {
+			t.Fatalf("the Matches tab lists a past match: %s", str(m, "id"))
+		}
+	}
+
+	// The Match Page pins any match to the Top 5, not just the Vault's: this one and a recent fixture, in that order,
+	// each printed in the Vault with its fans' rating.
+	recent := c.findMatch("recent")
+	if status, b := c.do("PUT", "/v1/me/top5", map[string]any{"matchIds": []string{id, recent}}); status != http.StatusOK {
+		t.Fatalf("top 5: %d %s", status, b)
+	}
+	vault := c.getJSON("/v1/vault")
+	top5, ratings := list(vault["top5"]), vault["fanRatings"].(map[string]any)
+	if len(top5) != 2 || str(top5[0], "id") != id || str(top5[1], "id") != recent || ratings[id] == nil || ratings[recent] == nil {
+		t.Fatalf("vault top 5: %v, ratings %v", top5, ratings)
+	}
+	// A review typed under Reviews saves the log again with it, keeping the stub number.
+	stub := logs[0].(map[string]any)["log"].(map[string]any)["stubNo"]
+	status, b := c.do("POST", "/v1/logs", map[string]any{"matchId": id, "rating": 4.5, "watchedAt": "friends", "review": "Bumrah at his best."})
+	if status != http.StatusCreated || !strings.Contains(string(b), `"review":"Bumrah at his best."`) || !strings.Contains(string(b), fmt.Sprintf(`"stubNo":%v`, stub)) {
+		t.Fatalf("review: %d %s", status, b)
+	}
+	// Emptying the box and saving sends the saved log back without its review, as the app does: the review goes, the
+	// stub stays.
+	var saved, after struct{ Log map[string]any }
+	if err := json.Unmarshal(b, &saved); err != nil {
+		t.Fatal(err)
+	}
+	for _, k := range []string{"id", "userId", "createdAt", "stubNo", "review"} {
+		delete(saved.Log, k)
+	}
+	status, b = c.do("POST", "/v1/logs", saved.Log)
+	_ = json.Unmarshal(b, &after)
+	if _, kept := after.Log["review"]; status != http.StatusCreated || kept || after.Log["stubNo"] != stub {
+		t.Fatalf("review taken off: %d %s", status, b)
+	}
+	// Taking every game out under Edit leaves an empty Top 5: a list, never null.
+	if status, b := c.do("PUT", "/v1/me/top5", map[string]any{"matchIds": []string{}}); status != http.StatusOK || !strings.Contains(string(b), `"top5":[]`) {
+		t.Fatalf("clear top 5: %d %s", status, b)
+	}
+	if status, b := c.do("GET", "/v1/vault", nil); status != http.StatusOK || !strings.Contains(string(b), `"top5":[]`) {
+		t.Fatalf("vault after clearing: %d %s", status, b)
+	}
 }
 
 // findMatch returns the id of a fixture in state (live|recent|upcoming), or "".

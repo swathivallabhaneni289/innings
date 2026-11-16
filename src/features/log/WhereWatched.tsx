@@ -1,11 +1,8 @@
 import { Feather } from '@expo/vector-icons';
-import { Image } from 'expo-image';
 import * as Haptics from 'expo-haptics';
-import * as ImagePicker from 'expo-image-picker';
-import { useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
-import { Avatar, Button, Chip, Empty, QueryState, SectionHeader, Txt } from '@/components';
+import { Avatar, Chip, Empty, QueryState, SectionHeader, Txt } from '@/components';
 import { useFriends } from '@/data';
 import { WATCH_PLACES } from '@/domain/constants';
 import type { User, WatchPlace } from '@/domain/types';
@@ -16,7 +13,7 @@ export interface WhereValue {
   placeNote: string;
   companions: number;
   watchedWith: string[];
-  photoUri?: string;
+  photoUri?: string; // not offered on this step for now; a re-logged stub's photo rides along in the draft
   review: string;
 }
 
@@ -37,7 +34,7 @@ function FriendToggle({ user, on, onPress }: { user: User; on: boolean; onPress:
   );
 }
 
-/** Last step: the place (7 spots), where exactly, how many people, tagged friends, a photo and a review. */
+/** Last step: the place (7 spots), where exactly, how many people, tagged friends and a review. */
 export function WhereWatched({
   value,
   defaulted,
@@ -53,7 +50,6 @@ export function WhereWatched({
 }) {
   const t = useTheme();
   const friends = useFriends();
-  const [photoError, setPhotoError] = useState<string | null>(null);
 
   const setCompanions = (n: number) => {
     Haptics.selectionAsync();
@@ -66,16 +62,6 @@ export function WhereWatched({
     const watchedWith = on ? value.watchedWith.filter((x) => x !== id) : [...value.watchedWith, id];
     // Tagged friends were with you, so the head count is at least that many.
     onChange({ watchedWith, companions: Math.max(value.companions, watchedWith.length) });
-  };
-
-  const pickPhoto = async () => {
-    setPhotoError(null);
-    try {
-      const res = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsEditing: true, aspect: [4, 3], quality: 0.7 });
-      if (!res.canceled && res.assets[0]) onChange({ photoUri: res.assets[0].uri });
-    } catch (e) {
-      setPhotoError(e instanceof Error ? e.message : "Couldn't open your photos.");
-    }
   };
 
   return (
@@ -163,30 +149,7 @@ export function WhereWatched({
         }}
       </QueryState>
 
-      <SectionHeader title="Photo & review" />
-      <View style={styles.photoRow}>
-        {value.photoUri ? (
-          <>
-            <Image source={{ uri: value.photoUri }} style={styles.thumb} contentFit="cover" />
-            <View style={{ marginLeft: 14, alignItems: 'flex-start' }}>
-              <Button label="Change" kind="outline" onPress={pickPhoto} />
-              <Pressable onPress={() => onChange({ photoUri: undefined })} accessibilityRole="button" style={styles.remove}>
-                <Txt tone="red" style={{ fontFamily: fonts.uiBold, fontSize: 13 }}>
-                  Remove
-                </Txt>
-              </Pressable>
-            </View>
-          </>
-        ) : (
-          <Button label="Add a photo" kind="outline" icon={<Feather name="camera" size={14} color={t.ink} />} onPress={pickPhoto} />
-        )}
-      </View>
-      {photoError ? (
-        <Txt variant="bodySmall" tone="red" style={{ marginTop: 6 }}>
-          {photoError}
-        </Txt>
-      ) : null}
-
+      <SectionHeader title="Review" />
       <TextInput
         value={value.review}
         onChangeText={(review) => onChange({ review })}
@@ -211,8 +174,5 @@ const styles = StyleSheet.create({
   stepBtn: { width: 44, height: '100%', alignItems: 'center', justifyContent: 'center' },
   stepValue: { minWidth: 48, height: '100%', alignItems: 'center', justifyContent: 'center', borderLeftWidth: 1, borderRightWidth: 1, paddingHorizontal: 6 },
   friend: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, minHeight: 44, paddingLeft: 8, paddingRight: 12, marginRight: 8, marginBottom: 8, maxWidth: 170 },
-  photoRow: { flexDirection: 'row', alignItems: 'center' },
-  thumb: { width: 104, height: 78 },
-  remove: { minHeight: 44, justifyContent: 'center' },
-  review: { fontFamily: fonts.serif, fontSize: 16, lineHeight: 23, minHeight: 120, padding: 14, marginTop: 12 },
+  review: { fontFamily: fonts.serif, fontSize: 16, lineHeight: 23, minHeight: 120, padding: 14 },
 });

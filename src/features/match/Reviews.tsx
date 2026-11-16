@@ -41,7 +41,7 @@ export function Reviews({ fans }: { fans: FanSummary }) {
       </View>
       {list.length === 0 ? (
         tab === 'popular' ? (
-          <Empty title="No reviews yet" body="Nobody has had their say yet. Log it and write the first one." />
+          <Empty title="No reviews yet" body="Nobody has had their say yet. Write the first one above." />
         ) : (
           <Empty title="Quiet in the dressing room" body="None of your friends have reviewed this one yet." />
         )

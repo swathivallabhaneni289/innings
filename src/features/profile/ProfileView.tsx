@@ -62,7 +62,7 @@ function ProfileBody({ data }: { data: UserResponse }) {
     <View>
       <ProfileHeader data={data} />
 
-      <SectionHeader title="Top 5 matches" />
+      <SectionHeader title="Top 5 matches" action={isMe && top5.length > 0 ? 'Edit' : undefined} onAction={() => router.push('/top5')} />
       <Top5Strip top5={top5} ratings={ratings} isMe={isMe} ownerFirstName={owner} />
 
       <StatsRow stats={stats} />

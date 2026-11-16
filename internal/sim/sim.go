@@ -69,6 +69,9 @@ func (w *World) Match(id string, now time.Time) (domain.Match, bool) {
 	if c, ok := classicByID[id]; ok {
 		return cloneClassic(c.match), true
 	}
+	if i, ok := archiveByID[id]; ok {
+		return cloneArchived(archiveList[i]), true
+	}
 	return domain.Match{}, false
 }
 

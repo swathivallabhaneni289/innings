@@ -1,7 +1,7 @@
 // CONTRACT (owned by the Home agent): props below are fixed; the Match Page imports this too.
 import { Feather } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { Button, Chip, TeamBadge, Txt } from '@/components';
@@ -41,7 +41,13 @@ const surname = (id: string | undefined) => (id ? playerName(id).split(' ').slic
 const BOWLING_ORDER: Record<PlayerRole, number> = { BOWL: 0, AR: 1, BAT: 2, WK: 3 };
 
 /** Winner, top run-scorer and top wicket-taker in three quick taps. */
-export function PredictionPicker({ match, mine, split, locked, compact = false, onSaved }: PredictionPickerProps) {
+export function PredictionPicker(props: PredictionPickerProps) {
+  // Keyed by match: when the slot moves on to another match (Home's "Your Call"), the picker starts over from
+  // that match's saved picks, with nothing carried across from the last one.
+  return <Picker key={props.match.id} {...props} />;
+}
+
+function Picker({ match, mine, split, locked, compact = false, onSaved }: PredictionPickerProps) {
   const now = useNow(5_000);
   const { predict } = useActions();
   const [picks, setPicks] = useState<Partial<Picks>>(() => toPicks(mine));
@@ -51,28 +57,20 @@ export function PredictionPicker({ match, mine, split, locked, compact = false, 
   const [lockedByServer, setLockedByServer] = useState(false);
 
   // Follow the server's copy of my picks, unless the fan is mid-change.
-  const dirty = useRef(false);
-  dirty.current = !samePicks(picks, saved) && Object.keys(picks).length > 0;
-  const prevMatchId = useRef(match.id);
   const mineKey = mine ? `${mine.winnerId}|${mine.topRunScorerId}|${mine.topWicketTakerId}` : '';
-  useEffect(() => {
-    const server = mine ? (toPicks(mine) as Picks) : null;
-    if (prevMatchId.current !== match.id) {
-      prevMatchId.current = match.id;
-      setPicks(server ?? {});
+  const [syncedKey, setSyncedKey] = useState(mineKey);
+  if (syncedKey !== mineKey) {
+    setSyncedKey(mineKey);
+    if (mine) {
+      const server = toPicks(mine) as Picks;
+      const dirty = !samePicks(picks, saved) && Object.keys(picks).length > 0;
       setSaved(server);
-      setStep(server ? 'done' : 0);
-      setStatus({ kind: 'idle' });
-      setLockedByServer(false);
-      return;
+      if (!dirty) {
+        setPicks(server);
+        setStep('done');
+      }
     }
-    if (!server) return;
-    setSaved(server);
-    if (!dirty.current) {
-      setPicks(server);
-      setStep('done');
-    }
-  }, [match.id, mineKey]);
+  }
 
   const save = async (p: Picks) => {
     setStatus({ kind: 'saving' });
@@ -266,7 +264,7 @@ function PlayerStep({
   if (groups.every((g) => g.players.length === 0)) {
     return (
       <Txt variant="bodySmall" tone="soft">
-        The XIs aren't out yet. Check back at the toss.
+        The XIs aren&apos;t out yet. Check back at the toss.
       </Txt>
     );
   }

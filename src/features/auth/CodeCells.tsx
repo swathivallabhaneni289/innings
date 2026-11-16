@@ -8,8 +8,8 @@ export const CODE_LENGTH = 6;
 
 /**
  * Six cells printed like a ticket's red serial digits, over one real TextInput. The input covers the cells
- * with its text drawn transparent (not hidden), so taps focus it and iOS and Android both offer the texted
- * code above the keyboard.
+ * with its text drawn transparent (not hidden), so taps focus it and an iPhone offers the code from Mail above
+ * the keyboard.
  */
 export function CodeCells({
   value,

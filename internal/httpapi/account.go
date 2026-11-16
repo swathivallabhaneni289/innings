@@ -35,33 +35,127 @@ func (s *Server) authFail(w http.ResponseWriter, err error) bool {
 	return true
 }
 
-func (s *Server) handleAuthStart(w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleSignUp(w http.ResponseWriter, r *http.Request) {
 	var in struct {
-		Phone string `json:"phone"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
 	}
 	if !decode(w, r, &in) {
 		return
 	}
-	resp, err := s.Auth.Start(r.Context(), in.Phone, auth.ClientIP(r))
+	resp, err := s.Auth.SignUp(r.Context(), in.Email, in.Password, auth.ClientIP(r))
 	if s.authFail(w, err) {
 		return
 	}
 	writeJSON(w, http.StatusOK, resp)
 }
 
-func (s *Server) handleAuthVerify(w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleConfirmEmail(w http.ResponseWriter, r *http.Request) {
 	var in struct {
-		Phone string `json:"phone"`
+		Email string `json:"email"`
 		Code  string `json:"code"`
 	}
 	if !decode(w, r, &in) {
 		return
 	}
-	si, err := s.Auth.Verify(r.Context(), in.Phone, in.Code)
+	si, err := s.Auth.ConfirmEmail(r.Context(), in.Email, in.Code)
 	if s.authFail(w, err) {
 		return
 	}
-	writeJSON(w, http.StatusOK, domain.AuthVerifyResponse{Token: si.Token, Me: si.User, Account: si.Account, IsNew: si.IsNew})
+	writeSession(w, si)
+}
+
+func (s *Server) handleResendConfirmation(w http.ResponseWriter, r *http.Request) {
+	var in struct {
+		Email string `json:"email"`
+	}
+	if !decode(w, r, &in) {
+		return
+	}
+	resp, err := s.Auth.ResendConfirmation(r.Context(), in.Email, auth.ClientIP(r))
+	if s.authFail(w, err) {
+		return
+	}
+	writeJSON(w, http.StatusOK, resp)
+}
+
+func (s *Server) handleSignIn(w http.ResponseWriter, r *http.Request) {
+	var in struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+	if !decode(w, r, &in) {
+		return
+	}
+	si, err := s.Auth.SignInWithPassword(r.Context(), in.Email, in.Password, auth.ClientIP(r))
+	if s.authFail(w, err) {
+		return
+	}
+	writeSession(w, si)
+}
+
+func (s *Server) handleForgotPassword(w http.ResponseWriter, r *http.Request) {
+	var in struct {
+		Email string `json:"email"`
+	}
+	if !decode(w, r, &in) {
+		return
+	}
+	resp, err := s.Auth.ForgotPassword(r.Context(), in.Email, auth.ClientIP(r))
+	if s.authFail(w, err) {
+		return
+	}
+	writeJSON(w, http.StatusOK, resp)
+}
+
+func (s *Server) handleResetCode(w http.ResponseWriter, r *http.Request) {
+	var in struct {
+		Email string `json:"email"`
+		Code  string `json:"code"`
+	}
+	if !decode(w, r, &in) {
+		return
+	}
+	resp, err := s.Auth.CheckResetCode(r.Context(), in.Email, in.Code)
+	if s.authFail(w, err) {
+		return
+	}
+	writeJSON(w, http.StatusOK, resp)
+}
+
+func (s *Server) handleResetPassword(w http.ResponseWriter, r *http.Request) {
+	var in struct {
+		ResetToken string `json:"resetToken"`
+		Password   string `json:"password"`
+	}
+	if !decode(w, r, &in) {
+		return
+	}
+	si, err := s.Auth.ResetPassword(r.Context(), in.ResetToken, in.Password)
+	if s.authFail(w, err) {
+		return
+	}
+	writeSession(w, si)
+}
+
+func writeSession(w http.ResponseWriter, si auth.SignIn) {
+	writeJSON(w, http.StatusOK, domain.AuthSessionResponse{Token: si.Token, Me: si.User, Account: si.Account, IsNew: si.IsNew})
+}
+
+// handleChangePassword replaces the fan's password; their other devices are signed out, this one stays in.
+func (s *Server) handleChangePassword(v *view, w http.ResponseWriter, r *http.Request) {
+	var in struct {
+		CurrentPassword string `json:"currentPassword"`
+		NewPassword     string `json:"newPassword"`
+	}
+	if !decode(w, r, &in) {
+		return
+	}
+	err := s.Auth.ChangePassword(v.ctx, v.me.ID, auth.SessionFrom(v.ctx), in.CurrentPassword, in.NewPassword, auth.ClientIP(r))
+	if s.authFail(w, err) {
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
 }
 
 // handleLogout ends only the session this request came in on; the fan's other devices stay signed in.
@@ -139,7 +233,7 @@ const maxContactHashes = 5000
 var sha256Hex = regexp.MustCompile(`^[0-9a-f]{64}$`)
 
 // handleContactsMatch finds onboarded fans among the caller's contacts, given SHA-256 hex hashes of the contacts'
-// E.164 numbers. The hashes are only compared, never stored or logged.
+// email addresses, trimmed and lower-cased. The hashes are only compared, never stored or logged.
 func (s *Server) handleContactsMatch(v *view, w http.ResponseWriter, r *http.Request) {
 	var in struct {
 		Hashes []string `json:"hashes"`
@@ -155,7 +249,7 @@ func (s *Server) handleContactsMatch(v *view, w http.ResponseWriter, r *http.Req
 	uniq := []string{}
 	for _, h := range in.Hashes {
 		if !sha256Hex.MatchString(h) {
-			writeErr(w, http.StatusBadRequest, "bad-hashes", "each hash must be 64 lower-case hex characters (SHA-256 of an E.164 number)")
+			writeErr(w, http.StatusBadRequest, "bad-hashes", "each hash must be 64 lower-case hex characters (SHA-256 of a lower-cased email address)")
 			return
 		}
 		if !seen[h] {
@@ -164,7 +258,7 @@ func (s *Server) handleContactsMatch(v *view, w http.ResponseWriter, r *http.Req
 		}
 	}
 	rows := []domain.FriendRow{}
-	for _, u := range must(s.Store.ListedUsersByPhoneHash(v.ctx, uniq)) {
+	for _, u := range must(s.Store.ListedUsersByEmailHash(v.ctx, uniq)) {
 		if u.ID != v.me.ID {
 			rows = append(rows, domain.FriendRow{User: u, Following: v.iFollow(u.ID)})
 		}
@@ -177,8 +271,18 @@ func (s *Server) handleContactsMatch(v *view, w http.ResponseWriter, r *http.Req
 
 // ---- deleting an account ----
 
-// handleDeleteMe deletes the account and everything it made (see Store.DeleteUser), signing out every device.
+// handleDeleteMe deletes the account and everything it made (see Store.DeleteUser), signing out every device. The
+// fan's password is asked for again first.
 func (s *Server) handleDeleteMe(v *view, w http.ResponseWriter, r *http.Request) {
+	var in struct {
+		Password string `json:"password"`
+	}
+	if !decode(w, r, &in) {
+		return
+	}
+	if s.authFail(w, s.Auth.CheckCurrentPassword(v.ctx, v.me.ID, in.Password, auth.ClientIP(r))) {
+		return
+	}
 	check(s.Store.DeleteUser(v.ctx, v.me.ID))
 	w.WriteHeader(http.StatusNoContent)
 }

@@ -25,6 +25,7 @@ const (
 	idleEvery    = 5 * time.Minute // and otherwise
 	aheadDays    = 7               // the next week's fixtures, one scoreboard call per day…
 	sweepEvery   = 6 * time.Hour   // …every six hours
+	backDays     = 14              // after time off, the most days caught up (ESPN only answers for recent days)
 	liveSummary  = 2 * time.Minute // a live match's summary (XIs, per-innings lines)
 	squadSummary = 6 * time.Hour   // an upcoming match's summary (announced squads), all week
 	squadAhead   = aheadDays * 24 * time.Hour
@@ -69,6 +70,7 @@ type Source struct {
 	newTeams  map[string]bool
 	newPlayer map[string]bool
 	lastSweep time.Time // last look at the week ahead (a restart looks again straight away)
+	seen      time.Time // last scoreboard read; after a restart, the newest match's SeenAt stands in for it
 }
 
 // FromEnv returns the real feed unless INNINGS_MATCHES is "sim" (then nil: run the simulation). known is the
@@ -126,6 +128,9 @@ func (s *Source) Load(ctx context.Context) error {
 		}
 		if len(r.Event.Competitors) == 2 {
 			s.recs[r.Match.ID] = &r
+			if r.SeenAt.After(s.seen) {
+				s.seen = r.SeenAt
+			}
 		}
 	}
 	s.log.Info("feed: loaded saved matches", "matches", len(s.recs), "teams", len(s.feedTeams), "players", len(s.players))
@@ -210,6 +215,8 @@ func (s *Source) poll(ctx context.Context) time.Duration {
 		s.log.Warn("feed: scoreboard failed", "err", err)
 	} else {
 		s.merge(events, now)
+		s.catchUp(ctx, now)
+		s.seen = now
 	}
 	if now.Sub(s.lastSweep) >= sweepEvery {
 		// The week ahead, so fixtures (and their squads, once announced) show up days before the first ball.
@@ -239,6 +246,25 @@ func (s *Source) poll(ctx context.Context) time.Duration {
 	}
 	s.log.Info("feed: polled", "matches", s.count(), "next", wait)
 	return wait
+}
+
+// catchUp asks for each day missed since the last scoreboard read (the server was stopped, or the Mac slept), from
+// that day to yesterday: the scoreboard itself only lists today's and the latest matches. It looks back backDays at
+// most, which is also what a fresh database gets. A day that fails is logged, not retried.
+func (s *Source) catchUp(ctx context.Context, now time.Time) {
+	today := now.UTC().Truncate(24 * time.Hour)
+	from := today.AddDate(0, 0, -backDays)
+	if last := s.seen.UTC().Truncate(24 * time.Hour); last.After(from) {
+		from = last
+	}
+	for d := from; d.Before(today); d = d.AddDate(0, 0, 1) {
+		events, err := s.c.scoreboard(ctx, d.Format("20060102"))
+		if err != nil {
+			s.log.Warn("feed: catch-up scoreboard failed", "day", d.Format(time.DateOnly), "err", err)
+			continue
+		}
+		s.merge(events, now)
+	}
 }
 
 func (s *Source) count() int {

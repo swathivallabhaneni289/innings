@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { View, type ViewStyle } from 'react-native';
 
 import { Button, Txt } from '@/components';
@@ -28,7 +28,12 @@ export function FollowButton({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => setOn(following), [following]);
+  // When the server's answer changes (a refetch after a follow here or elsewhere), it replaces what this button shows.
+  const [seen, setSeen] = useState(following);
+  if (seen !== following) {
+    setSeen(following);
+    setOn(following);
+  }
 
   const press = async () => {
     Haptics.selectionAsync();

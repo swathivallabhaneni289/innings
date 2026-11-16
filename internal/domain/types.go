@@ -4,6 +4,7 @@
 package domain
 
 import (
+	"encoding/json"
 	"errors"
 	"slices"
 )
@@ -115,6 +116,7 @@ type Match struct {
 	Result        *MatchResult        `json:"result,omitempty"`
 	XI            map[string][]string `json:"xi,omitempty"` // fixtures only
 	Classic       *ClassicInfo        `json:"classic,omitempty"`
+	Archived      bool                `json:"archived,omitempty"` // a past tournament's match: its day is on record, not its hour, and it has no chat
 }
 
 type WatchPlace string
@@ -138,14 +140,39 @@ type User struct {
 	Name            string `json:"name"`
 	Handle          string `json:"handle"`
 	AvatarColour    string `json:"avatarColour"`
-	FavouriteTeamID string `json:"favouriteTeamId"`
-	Bio             string `json:"bio"`
-	PhotoURI        string `json:"photoUri,omitempty"`
+	FavouriteTeamID string `json:"favouriteTeamId"` // the main team: TeamIDs[0]
+	// TeamIDs are every team the fan backs, main team first, at most MaxTeams.
+	TeamIDs  []string `json:"teamIds"`
+	Bio      string   `json:"bio"`
+	PhotoURI string   `json:"photoUri,omitempty"`
+}
+
+// MaxTeams is how many teams one fan can back.
+const MaxTeams = 5
+
+// Teams returns the teams u backs, main team first: TeamIDs, or just the favourite team for a user made without
+// them (the simulated fans). Never nil.
+func (u User) Teams() []string {
+	if len(u.TeamIDs) > 0 {
+		return u.TeamIDs
+	}
+	if u.FavouriteTeamID != "" {
+		return []string{u.FavouriteTeamID}
+	}
+	return []string{}
+}
+
+// MarshalJSON keeps teamIds a list, never null (see Teams).
+func (u User) MarshalJSON() ([]byte, error) {
+	type plain User
+	p := plain(u)
+	p.TeamIDs = u.Teams()
+	return json.Marshal(p)
 }
 
 // Account is the signed-in fan's own account. Private: never part of a public profile.
 type Account struct {
-	Phone     string `json:"phone"`     // E.164
+	Email     string `json:"email"`     // the address the fan signs in with, trimmed and lower-cased
 	Onboarded bool   `json:"onboarded"` // name and @username chosen, sign-up finished
 	CreatedAt string `json:"createdAt"`
 }

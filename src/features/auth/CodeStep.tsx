@@ -1,28 +1,39 @@
-import { Redirect, router } from 'expo-router';
 import { useRef, useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 import { Screen, Txt } from '@/components';
-import { ApiError, signIn, startSignIn, useNow } from '@/data';
-import { CODE_LENGTH, CodeCells } from '@/features/auth/CodeCells';
-import { errorText } from '@/features/auth/errors';
-import { useSignInFlow } from '@/features/auth/flow';
+import { ApiError, useNow, type AuthCodeResponse } from '@/data';
 import { countdown } from '@/lib/format';
-import { formatPhone } from '@/lib/phone';
 import { fonts, useTheme } from '@/theme';
+import { CODE_LENGTH, CodeCells } from './CodeCells';
+import { errorText } from './errors';
+import type { SentCode } from './flow';
 
 /**
- * "Enter the code": six serial cells that verify themselves at the sixth digit. A new account then lands on
- * onboarding (the only group open to it); a returning, onboarded one goes straight to Home.
+ * "Enter the code": six serial cells that check themselves at the sixth digit, a resend countdown, a way back to
+ * fix the address, and (dev builds) the code itself to tap in. Used to confirm a new account and to reset a
+ * password; `onCheck` does the rest and `onResend` asks for another code.
  */
-export default function CodeScreen() {
+export function CodeStep({
+  title,
+  lead,
+  sent,
+  onCheck,
+  onResend,
+  onChangeEmail,
+}: {
+  title: string;
+  lead: string; // "We sent a 6-digit code to"
+  sent: SentCode;
+  onCheck: (code: string) => Promise<void>;
+  onResend: () => Promise<AuthCodeResponse>;
+  onChangeEmail: () => void;
+}) {
   const t = useTheme();
-  const sent = useSignInFlow((s) => s.sent);
-  const setSent = useSignInFlow((s) => s.setSent);
   const now = useNow(1_000);
   const input = useRef<TextInput>(null);
-  // One verify at a time: autofill can deliver the six digits twice. A ref, not state, so a second
-  // onChangeText in the same tick sees it; the input stays editable so a retry keeps the keyboard up.
+  // One check at a time: autofill can deliver the six digits twice. A ref, not state, so a second onChangeText in
+  // the same tick sees it; the input stays editable so a retry keeps the keyboard up.
   const busy = useRef(false);
   const [code, setCode] = useState('');
   const [checking, setChecking] = useState(false);
@@ -31,18 +42,15 @@ export default function CodeScreen() {
   const [notice, setNotice] = useState<string | null>(null);
   const [resending, setResending] = useState(false);
 
-  if (!sent) return <Redirect href="/phone" />;
-
-  const verify = async (value: string) => {
+  const check = async (value: string) => {
     if (value.length !== CODE_LENGTH || busy.current) return;
     busy.current = true;
     setChecking(true);
     setError(null);
     setNotice(null);
     try {
-      const account = await signIn(sent.phone, value);
-      // The root guard has opened the right group by now; an onboarded fan is sent Home explicitly as well.
-      if (account.onboarded) router.replace('/');
+      await onCheck(value);
+      // Success moves on (to the next screen, or the root guard opens the app); keep the cells as they are.
     } catch (e) {
       busy.current = false;
       setChecking(false);
@@ -51,7 +59,7 @@ export default function CodeScreen() {
         setExpired(true);
         setError(e.message || 'That code has run out. Ask for a new one below.');
       } else {
-        setError(errorText(e, "That code didn't work. Check the text and try again."));
+        setError(errorText(e, "That code didn't work. Check the email and try again."));
       }
       input.current?.focus();
     }
@@ -61,7 +69,7 @@ export default function CodeScreen() {
     if (busy.current) return; // the code being checked stays put until the answer comes back
     setCode(digits);
     if (digits.length > 0) setError(null);
-    if (digits.length === CODE_LENGTH) verify(digits);
+    if (digits.length === CODE_LENGTH) check(digits);
   };
 
   const resendAt = sent.sentAt + sent.resendInSeconds * 1000;
@@ -73,10 +81,10 @@ export default function CodeScreen() {
     setError(null);
     setNotice(null);
     try {
-      setSent(await startSignIn(sent.phone));
+      const res = await onResend();
       setExpired(false);
       setCode('');
-      setNotice('New code on its way.');
+      setNotice(res.devCode || res.resendInSeconds >= 30 ? 'New code on its way.' : 'A code is already on its way.');
       input.current?.focus();
     } catch (e) {
       setError(errorText(e, "Couldn't send a new code. Try again in a moment."));
@@ -88,28 +96,25 @@ export default function CodeScreen() {
   const fillDev = () => {
     if (!sent.devCode || busy.current) return;
     setCode(sent.devCode);
-    verify(sent.devCode);
+    check(sent.devCode);
   };
 
   return (
     <Screen back>
       <Txt variant="h1" accessibilityRole="header" style={{ marginTop: 4 }}>
-        Enter the code
+        {title}
       </Txt>
-      <View style={styles.sentRow}>
-        <Txt variant="body" tone="soft">
-          Sent to{' '}
-          <Txt variant="body" style={{ fontFamily: fonts.label }}>
-            {formatPhone(sent.phone)}
-          </Txt>
-          {'  ·  '}
+      <Txt variant="body" tone="soft" style={{ marginTop: 6 }}>
+        {lead}{' '}
+        <Txt variant="body" style={{ fontFamily: fonts.label }}>
+          {sent.email}
         </Txt>
-        <Pressable onPress={() => router.back()} hitSlop={12} accessibilityRole="button" accessibilityLabel="Change number">
-          <Txt variant="body" tone="red" style={{ fontFamily: fonts.uiBold }}>
-            Change
-          </Txt>
-        </Pressable>
-      </View>
+      </Txt>
+      <Pressable onPress={onChangeEmail} hitSlop={12} accessibilityRole="button" style={styles.change}>
+        <Txt variant="bodySmall" tone="red" style={{ fontFamily: fonts.uiBold }}>
+          Wrong email? Change it
+        </Txt>
+      </Pressable>
 
       <CodeCells value={code} onChangeText={onChange} inputRef={input} error={!!error} />
 
@@ -126,7 +131,11 @@ export default function CodeScreen() {
           <Txt variant="bodySmall" tone="soft">
             {notice}
           </Txt>
-        ) : null}
+        ) : (
+          <Txt variant="bodySmall" tone="faint">
+            It can take a minute to arrive. Check spam if it doesn&apos;t.
+          </Txt>
+        )}
       </View>
 
       {wait > 0 && !expired ? (
@@ -154,7 +163,7 @@ export default function CodeScreen() {
           style={({ pressed }) => [styles.dev, { borderColor: t.cardEdge, opacity: pressed ? 0.6 : 1 }]}>
           <Txt variant="mono">Dev mode: your code is {sent.devCode}</Txt>
           <Txt variant="monoSmall" tone="soft" style={{ marginTop: 2 }}>
-            No text in dev builds. Tap to fill it in.
+            Nothing is emailed until the server has a mail account. Tap to fill it in.
           </Txt>
         </Pressable>
       ) : null}
@@ -163,7 +172,7 @@ export default function CodeScreen() {
 }
 
 const styles = StyleSheet.create({
-  sentRow: { flexDirection: 'row', alignItems: 'baseline', flexWrap: 'wrap', marginTop: 6 },
+  change: { alignSelf: 'flex-start', minHeight: 36, justifyContent: 'center', marginTop: 2 },
   status: { minHeight: 40, justifyContent: 'center', marginTop: 10 },
   resendRow: { flexDirection: 'row', alignItems: 'baseline', alignSelf: 'flex-start', minHeight: 44, paddingVertical: 10 },
   dev: { marginTop: 28, borderWidth: 1.5, borderStyle: 'dashed', paddingHorizontal: 14, paddingVertical: 12 },

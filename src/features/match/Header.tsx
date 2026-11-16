@@ -5,7 +5,7 @@ import { Barcode } from '@/components/TicketStub';
 import { getTeam, useNow } from '@/data';
 import { COMPETITIONS } from '@/domain/constants';
 import type { Match, Team } from '@/domain/types';
-import { clock, dayLabel } from '@/lib/format';
+import { clock, dayLabel, recordedDay } from '@/lib/format';
 import { fonts, stockFor, useTheme } from '@/theme';
 import { codeFontSize, serialFor, TicketFrame } from './TicketFrame';
 
@@ -33,8 +33,9 @@ export function Header({ match }: { match: Match }) {
   const codeSize = codeFontSize(Math.max(a.short.length, b.short.length), (width - 40 - 32 - VS_W) / 2, 64);
   const classic = match.classic;
   const competition = classic?.competitionName ?? COMPETITIONS.find((c) => c.id === match.competitionId)?.name ?? match.competitionId;
-  // Classics have no real start time on record, only the day.
-  const when = classic ? proseDate(classic.date) : `${dayLabel(match.startTime, now)}, ${clock(match.startTime)}`;
+  // Classics and archive matches have no real start time on record, only the day.
+  const day = recordedDay(match);
+  const when = day ? proseDate(day) : `${dayLabel(match.startTime, now)}, ${clock(match.startTime)}`;
 
   return (
     <View>

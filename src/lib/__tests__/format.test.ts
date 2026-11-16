@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { countdown, dayLabel, inningsLine, isLocked, pct, relative, stubNo, ticketDate } from '../format';
+import { countdown, dayLabel, inningsLine, isLocked, pct, recordedDay, relative, stubNo, ticketDate } from '../format';
 
 describe('inningsLine', () => {
   it('prints runs/wickets and overs', () => {
@@ -45,6 +45,11 @@ describe('ticket text', () => {
   it('prints a classic on its recorded date, whatever the time zone', () => {
     expect(ticketDate({ startTime: '2011-04-02T12:00:00Z', classic: { date: '2011-04-02' } as never })).toBe('02 APR 2011');
   });
+  it('prints an archive match on its recorded day, never the next one east of UTC+12', () => {
+    expect(ticketDate({ startTime: '1996-03-13T12:00:00Z', archived: true })).toBe('13 MAR 1996');
+    expect(recordedDay({ startTime: '1996-03-13T12:00:00Z', archived: true })).toBe('1996-03-13');
+    expect(recordedDay({ startTime: '2026-11-13T14:00:00Z' })).toBeUndefined();
+  });
   it('pads stub numbers to four digits', () => {
     expect(stubNo(42)).toBe('No. 0042');
   });
@@ -63,5 +68,9 @@ describe('relative and dayLabel', () => {
     expect(dayLabel(new Date(2026, 9, 22, 19, 30).toISOString(), now)).toBe('Today');
     expect(dayLabel(new Date(2026, 9, 23, 9, 0).toISOString(), now)).toBe('Tomorrow');
     expect(dayLabel(new Date(2026, 9, 21, 9, 0).toISOString(), now)).toBe('Yesterday');
+  });
+  it('adds the year only outside this one', () => {
+    expect(dayLabel(new Date(2026, 9, 24, 19, 30).toISOString(), now)).toBe('Sat 24 Oct');
+    expect(dayLabel(new Date(2023, 9, 14, 17, 30).toISOString(), now)).toBe('Sat 14 Oct 2023');
   });
 });

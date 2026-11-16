@@ -9,6 +9,7 @@ import type { User } from '@/domain/types';
 import { handleOk, HandleField, useHandleCheck } from '@/features/onboarding/HandleField';
 import { pickSquarePhoto } from '@/features/onboarding/photo';
 import { TeamChips } from '@/features/onboarding/TeamChips';
+import { sameTeams } from '@/features/onboarding/teams';
 import { fonts, useTheme } from '@/theme';
 import { AVATAR_SWATCHES, BIO_MAX, NAME_MAX } from './constants';
 
@@ -23,7 +24,7 @@ export function SettingsForm({ me }: { me: User }) {
   const [handleError, setHandleError] = useState<string | null>(null);
   const handleCheck = useHandleCheck(handle, me.handle || undefined);
   const [bio, setBio] = useState(me.bio ?? '');
-  const [teamId, setTeamId] = useState(me.favouriteTeamId);
+  const [teamIds, setTeamIds] = useState(me.teamIds);
   const [colour, setColour] = useState(me.avatarColour);
   const [photoUri, setPhotoUri] = useState(me.photoUri ?? '');
   const [saving, setSaving] = useState(false);
@@ -34,11 +35,11 @@ export function SettingsForm({ me }: { me: User }) {
     if (name.trim() !== me.name) p.name = name.trim();
     if (handle !== me.handle) p.handle = handle;
     if (bio.trim() !== (me.bio ?? '')) p.bio = bio.trim();
-    if (teamId !== me.favouriteTeamId) p.favouriteTeamId = teamId;
+    if (teamIds.length > 0 && !sameTeams(teamIds, me.teamIds)) p.teamIds = teamIds;
     if (colour.toLowerCase() !== me.avatarColour.toLowerCase()) p.avatarColour = colour;
     if (photoUri !== (me.photoUri ?? '')) p.photoUri = photoUri;
     return p;
-  }, [name, handle, bio, teamId, colour, photoUri, me]);
+  }, [name, handle, bio, teamIds, colour, photoUri, me]);
   const dirty = Object.keys(patch).length > 0;
   const nameError = name.trim().length === 0 ? 'Every fan needs a name on the scorecard.' : null;
   const handleBlocked = !handleOk(handleCheck) || !!handleError;
@@ -134,9 +135,14 @@ export function SettingsForm({ me }: { me: User }) {
         </Field>
       </Panel>
 
-      <SectionHeader title="Favourite team" />
+      <SectionHeader title="Teams you back" />
       <Panel>
-        <TeamChips value={teamId} onChange={setTeamId} saved={me.favouriteTeamId} />
+        <TeamChips value={teamIds} onChange={setTeamIds} saved={me.teamIds} />
+        {teamIds.length === 0 ? (
+          <Txt variant="bodySmall" tone="red" style={{ marginTop: 8 }}>
+            Back at least one team.
+          </Txt>
+        ) : null}
       </Panel>
 
       <SectionHeader title="Avatar colour" />

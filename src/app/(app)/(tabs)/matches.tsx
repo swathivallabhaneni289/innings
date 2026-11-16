@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { View } from 'react-native';
 
 import { Button, Empty, QueryState, Rule, Screen, Txt } from '@/components';
@@ -29,9 +29,10 @@ export default function MatchesScreen() {
   const q = useMatches(filter);
 
   // Keep the previous list on screen (dimmed) while a new filter loads, instead of flashing a spinner.
-  const last = useRef<MatchesResponse | undefined>(undefined);
-  if (q.data) last.current = q.data;
-  const stale = q.data === undefined && !q.error ? last.current : undefined;
+  // The last list is held in state and swapped during render when a new one arrives.
+  const [last, setLast] = useState<MatchesResponse | undefined>(q.data);
+  if (q.data && q.data !== last) setLast(q.data);
+  const stale = q.data === undefined && !q.error ? last : undefined;
   const shown = { data: q.data ?? stale, isLoading: q.isLoading, error: q.error, refetch: q.refetch };
 
   const refresh = async () => {

@@ -6,7 +6,7 @@ import { Barcode } from '@/components/TicketStub';
 import { getTeam } from '@/data';
 import { competitionShort } from '@/domain/constants';
 import type { Match } from '@/domain/types';
-import { dayLabel, stubNo as fmtStubNo } from '@/lib/format';
+import { dayLabel, recordedDay, stubNo as fmtStubNo } from '@/lib/format';
 import { fonts, stockFor, useTheme } from '@/theme';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -15,10 +15,11 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 // clipped on these slim tickets, and the stub already prints its full date.
 const competitionOf = (m: Match) => competitionShort(m.competitionId);
 
-/** "Today", "Sat 24 Oct"; classics print their recorded date, "2 Apr 2011". */
+/** "Today", "Sat 24 Oct"; classics and archive matches print their recorded date, "2 Apr 2011". */
 function dateOf(m: Match, now: number) {
-  if (m.classic?.date) {
-    const [y, mo, d] = m.classic.date.split('-').map(Number);
+  const day = recordedDay(m);
+  if (day) {
+    const [y, mo, d] = day.split('-').map(Number);
     return `${d} ${MONTHS[mo - 1]} ${y}`;
   }
   return dayLabel(m.startTime, now);

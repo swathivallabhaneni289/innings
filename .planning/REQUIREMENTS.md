@@ -27,7 +27,7 @@ Derived from every bullet in `docs/PLAN.md`, with the gaps settled in its "Build
 - [x] **MATCH-07**: Prediction results for the fan and friends, with points awarded
 - [x] **MATCH-08**: Reviews in two lists: popular (most liked, all fans) and friends'
 - [x] **MATCH-09**: "Where fans watched" summary as shares by place
-- [x] **MATCH-10**: "Log this match" button on finished matches and classics
+- [x] **MATCH-10**: On finished matches and classics: rate with a tap, "Log this match", pin to the Top 5, and write a review under Reviews
 
 ### Predictions
 
@@ -45,7 +45,7 @@ Derived from every bullet in `docs/PLAN.md`, with the gaps settled in its "Build
 - [x] **LOG-02**: Step 1, pick the match: live now or ended in the last 24 hours, plus search for older matches and classics
 - [x] **LOG-03**: Step 2, rate 0.5 to 5 balls in half-ball steps, with an optional "Instant classic" tag
 - [x] **LOG-04**: Step 3, rate players: both XIs, a 1 to 10 slider each, skip any, crown your own Player of the Match
-- [x] **LOG-05**: Step 4, where I watched it: 7 places, a place note, head count, tagged friends, optional photo, optional review
+- [x] **LOG-05**: Step 4, where I watched it: 7 places, a place note, head count, tagged friends, optional review
 - [x] **LOG-06**: Save prints a ticket stub with the LOGGED stamp animation
 - [x] **LOG-07**: The stub can be shared as a 9:16 story card image through the share sheet
 - [x] **LOG-08**: Logging the same match again updates the stub and keeps its stub number
@@ -56,18 +56,18 @@ Derived from every bullet in `docs/PLAN.md`, with the gaps settled in its "Build
 - [x] **VAULT-02**: All-time fan rankings, filterable by format and era
 - [x] **VAULT-03**: "I watched this" logging for old matches, with the place note as the memory
 - [x] **VAULT-04**: On This Day: a classic from today's date (or the next anniversary coming up), with a nudge to log it
-- [x] **VAULT-05**: Your Top 5: pin and unpin up to five matches
+- [x] **VAULT-05**: Your Top 5: pin and unpin up to five matches from any match page or the Vault, and edit it (reorder, take one out)
 - [x] **VAULT-06**: The Vault is seeded with about 50 real classic matches, each fact-checked (58 shipped)
 
 ### Profile
 
-- [x] **PROF-01**: Header with photo, name, favourite team badge and one-line fan bio
+- [x] **PROF-01**: Header with photo, name, a badge for each team the fan backs and one-line fan bio
 - [x] **PROF-02**: Top 5 Matches shown as large ticket stubs
 - [x] **PROF-03**: Stats row: matches logged, average rating given, prediction accuracy, bragging points
 - [x] **PROF-04**: Stub Collection: every logged match
 - [x] **PROF-05**: Where I've Watched breakdown and a stadiums-visited list
 - [x] **PROF-06**: Predictor Rank among the fan and the people they follow, with badges (Called the Upset, 5-Match Streak and others)
-- [x] **PROF-07**: Edit the fan card: photo, name, bio, favourite team, avatar colour
+- [x] **PROF-07**: Edit the fan card: photo, name, bio, the teams they back, avatar colour
 
 ### Social
 
@@ -91,7 +91,7 @@ Derived from every bullet in `docs/PLAN.md`, with the gaps settled in its "Build
 
 - [x] **PLAT-01**: One Expo codebase runs on iPhone and Android as a native development build (Expo Go from the stores only opens the newest SDK)
 - [x] **PLAT-02**: Go API with SQLite, embedded migrations and Postgres-portable SQL; `make api` needs no setup
-- [x] **PLAT-03**: Guest accounts: `POST /v1/bootstrap` creates or resumes a guest; the token lives on the device *(v1.0; replaced in v1.1 by phone sign-in, ACCT-01 to ACCT-07)*
+- [x] **PLAT-03**: Guest accounts: `POST /v1/bootstrap` creates or resumes a guest; the token lives on the device *(v1.0; replaced in v1.1 by phone sign-in and in v1.3 by email and password, ACCT-01 to ACCT-07)*
 - [x] **PLAT-04**: A deterministic simulated world (fixtures, XIs, live scores, friends, fans, crowd) needs no API keys
 - [x] **PLAT-05**: One JSON contract in TypeScript, mirrored in Go, consumed through typed react-query hooks
 - [x] **PLAT-06**: Android readiness: the app checked on an Android emulator or device (icons, fonts, API host, system navigation)
@@ -100,14 +100,14 @@ Derived from every bullet in `docs/PLAN.md`, with the gaps settled in its "Build
 
 ## v1.1 Requirements: Accounts
 
-Added 2026-10-25 when the developer asked for "a proper sign in like how Beli has".
+Added 2026-10-25 when the developer asked for "a proper sign in like how Beli has". Moved from a phone number and a texted code to email and password on 2026-10-30 (Phase 10, v1.3); the surviving requirements kept their IDs.
 
-- [x] **ACCT-01**: Sign up and sign in with a phone number and a 6-digit text code; the same flow works for new and returning fans, on any number of phones
-- [x] **ACCT-02**: Codes expire after 10 minutes and allow 5 tries; a new code after 30 seconds, at most 5 an hour per number and 20 sign-ins an hour per IP address
-- [x] **ACCT-03**: Codes are texted through Twilio Verify when it is configured; in dev mode (`make api`) the code shows on screen and in the server log; with neither, sign-in is refused
-- [x] **ACCT-04**: New fans set up a fan card: name, a unique @username checked as they type, favourite team and an optional photo
-- [x] **ACCT-05**: Find friends from contacts (numbers hashed on the phone, matched on the server, never stored), invite the rest through the share sheet, and follow suggested fans
-- [x] **ACCT-06**: Sign out of this phone; delete the account and everything it made
+- [x] **ACCT-01**: Sign up with an email address and a password, confirmed by a 6-digit code emailed to that address; then sign in with them on any number of phones *(a phone number and a texted code until 2026-10-30)*
+- [x] **ACCT-02**: Codes expire after 10 minutes and allow 5 tries; a new code after 30 seconds, at most 5 an hour per address and 20 code emails an hour per IP address; 10 wrong passwords per account in 15 minutes, or 50 per IP address in an hour, make sign-in wait
+- [x] **ACCT-03**: Codes are emailed through an SMTP server when one is configured (Gmail with an app password works); in dev mode (`make api` with no SMTP settings in `.env`) the code shows on screen and in the server log; with neither, no codes are sent *(replaced texting them through Twilio Verify)*
+- [x] **ACCT-04**: New fans set up a fan card: name, a unique @username checked as they type, the teams they back (ACCT-12) and an optional photo
+- [x] **ACCT-05**: Find friends from contacts (email addresses hashed on the phone, matched on the server, never stored), invite the rest through the share sheet, and follow suggested fans
+- [x] **ACCT-06**: Sign out of this phone; delete the account and everything it made, after typing the password again
 - [x] **ACCT-07**: The session token lives in the phone's secure storage and only its hash on the server; a signed-out or unknown token sends the fan back to sign-in
 - [x] **ACCT-08**: A brand-new account with no history looks right on every screen
 
@@ -119,6 +119,20 @@ Added 2026-10-29: the plan asked for a cricket data API in week 1; nothing paid,
 - [x] **LIVE-02**: Calls during a match (where will they finish, will they chase it, will he make 50), locking at set points and settling on their own, 5 points each on the Bragging Board
 - [x] **CHAT-01**: A chat room for every real match, open from a day before the first ball until a day after it, with the score above and new messages within seconds
 - [x] **DATA-01**: Today's real matches with live scores, the week's fixtures with announced squads, playing XIs at the toss, and results with top scorers, top wicket-takers and player of the match, from ESPN's public scores feed (no key)
+
+## v1.3 Requirements: Email sign-in and close-out
+
+Added 2026-10-30, when sign-in moved to email and password (ACCT-01 to ACCT-06 above were reworded in place).
+
+- [x] **ACCT-10**: Reset a forgotten password with a 6-digit code emailed to the address; the new password signs this phone in and every other device out
+- [x] **ACCT-11**: Change the password in Settings, given the current one; every other device is signed out and this one stays in
+- [x] **ACCT-12**: Back up to five teams, main team first, chosen in sign-up and Settings from the international sides and all 10 IPL sides
+
+## v1.4 Requirements: Past matches
+
+Added 2026-11-13: fans couldn't find the older matches they wanted to log, and ESPN's feed only answers for recent days.
+
+- [x] **DATA-02**: Find and log any match from every World Cup (men's and women's, ODI and T20), Champions Trophy, Asia Cup and IPL season since 1973, from an archive Innings builds itself with Wikipedia's tournament pages as the reference
 
 ## v2 Requirements
 
@@ -133,9 +147,9 @@ From the plan's "Later" list, plus items deferred by build decisions on 2026-10-
 
 ### Deferred by decision
 
-- **SMS-01**: Real text messages: an SMS provider account, a sender ID and, for Indian numbers, DLT registration
+- **SMS-01**: *Replaced 2026-10-30 (Phase 10): codes go by email instead (ACCT-01, ACCT-03), so no SMS provider is needed.* It was real text messages, with an SMS provider account, a sender ID and, for Indian numbers, DLT registration
 - **ACCT-09**: Sign in with Apple and Google
-- **MEDIA-01**: Upload log and profile photos to server storage (today they are device-local file URIs)
+- **MEDIA-01**: Upload photos to server storage: the profile picture (today a device-local file URI), and photos on stubs if the log asks for them again
 - **STORE-01**: EAS builds and App Store / Play Store submission
 
 ## Out of Scope
@@ -146,6 +160,7 @@ From the plan's "Later" list, plus items deferred by build decisions on 2026-10-
 | Heritage scorebook look (paper grain, ruled lines, Oswald / Source Serif) | Built in Phase 1, superseded by direction C on 2026-10-22 |
 | Directions A Almanack and B Pavilion Scoreboard | Sketched, not chosen |
 | Launch tactics (timing, seeding, growth) | Not build tasks for this milestone |
+| Phone numbers and texted codes | Replaced by email and password in Phase 10 (2026-10-30) |
 
 ## Traceability
 
@@ -167,17 +182,23 @@ From the plan's "Later" list, plus items deferred by build decisions on 2026-10-
 | SOC-05, LOG-07 | Phase 5 | Complete |
 | DESIGN-06, DESIGN-07 | Phase 6 | Complete |
 | PLAT-06, PLAT-07, PLAT-08 | Phase 6 | Complete |
-| ACCT-01, ACCT-02, ACCT-03, ACCT-04, ACCT-05, ACCT-06, ACCT-07, ACCT-08 | Phase 7 | Complete |
+| ACCT-01, ACCT-02, ACCT-03, ACCT-04, ACCT-05, ACCT-06, ACCT-07, ACCT-08 | Phase 7 (ACCT-01 to ACCT-06 reworked in Phase 10) | Complete |
 | DATA-01 | Phase 8 | Complete |
 | CHAT-01, LIVE-02, LIVE-03 | Phase 9 | Complete |
+| ACCT-10, ACCT-11, ACCT-12 | Phase 10 | Complete |
+| SMS-01 (v2) | Phase 10 | Replaced by ACCT-01 and ACCT-03 |
+| DATA-02 | Quick task, 2026-11-13 | Complete |
 
 **Coverage:**
 
 - v1 requirements: 64 total (64 complete, 0 pending)
 - v1.1 requirements: 8 total (8 complete, 0 pending)
-- Mapped to phases: 72
+- v1.2 requirements: 4 total (4 complete, 0 pending)
+- v1.3 requirements: 3 total (3 complete, 0 pending)
+- v1.4 requirements: 1 total (1 complete, 0 pending)
+- Mapped to phases: 79, plus DATA-02 done as a quick task
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-10-22*
-*Last updated: 2026-10-25, after Phase 7 (phone sign-in) shipped. The readable version with acceptance checks is `docs/REQUIREMENTS.md`.*
+*Last updated: 2026-11-13, adding DATA-02 (past matches) after Phase 10. The readable version with acceptance checks is `docs/REQUIREMENTS.md`.*

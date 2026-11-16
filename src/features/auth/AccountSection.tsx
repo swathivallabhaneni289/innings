@@ -1,91 +1,62 @@
 import { Feather } from '@expo/vector-icons';
-import { useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, StyleSheet, View } from 'react-native';
+import { router } from 'expo-router';
+import { Alert, Pressable, StyleSheet, View } from 'react-native';
 
 import { Panel, Rule, SectionHeader, Txt } from '@/components';
-import { deleteAccount, signOut, useAccount } from '@/data';
-import { maskPhone } from '@/lib/phone';
+import { signOut, useAccount } from '@/data';
 import { fonts, useTheme } from '@/theme';
-import { errorText } from './errors';
 
-/** Settings → Account: the number this account signs in with (masked), Sign out, and Delete account. */
+/** Settings → Account: the email this account signs in with, Change password, Sign out, and Delete account. */
 export function AccountSection() {
-  const t = useTheme();
   const account = useAccount();
-  const [deleting, setDeleting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const confirmSignOut = () =>
-    Alert.alert('Sign out?', 'Your stubs, calls and follows stay on your account. Sign in with the same number to pick up where you left off.', [
+    Alert.alert('Sign out?', 'Your stubs, calls and follows stay on your account. Sign in with your email and password to pick up where you left off.', [
       { text: 'Stay', style: 'cancel' },
       { text: 'Sign out', style: 'destructive', onPress: signOut },
     ]);
-
-  const remove = async () => {
-    setDeleting(true);
-    setError(null);
-    try {
-      await deleteAccount(); // ends the session: the app goes back to Welcome
-    } catch (e) {
-      setError(errorText(e, "Couldn't delete your account. Try again."));
-      setDeleting(false);
-    }
-  };
-
-  const confirmDelete = () =>
-    Alert.alert(
-      'Delete your account?',
-      "This deletes your stubs, calls and follows for good. Your Top 5 and fan card go with them. It can't be undone.",
-      [
-        { text: 'Keep my account', style: 'cancel' },
-        { text: 'Delete for good', style: 'destructive', onPress: remove },
-      ],
-    );
 
   return (
     <View>
       <SectionHeader title="Account" />
       <Panel style={{ paddingVertical: 4 }}>
         <View style={styles.row}>
-          <Txt variant="bodySmall" tone="soft" style={{ fontFamily: fonts.label, flex: 1 }}>
-            Phone
+          <Txt variant="bodySmall" tone="soft" style={{ fontFamily: fonts.label, marginRight: 12 }}>
+            Email
           </Txt>
-          <Txt variant="mono" accessibilityLabel={account.data ? `Phone ending ${account.data.phone.slice(-4)}` : undefined}>
-            {account.data ? maskPhone(account.data.phone) : '–'}
+          <Txt variant="mono" numberOfLines={1} ellipsizeMode="middle" selectable style={{ flex: 1, textAlign: 'right' }}>
+            {account.data?.email || '–'}
           </Txt>
         </View>
         <Txt variant="monoSmall" tone="faint" style={{ marginTop: -4, marginBottom: 12 }}>
           Only you see this. Sign in with it on any phone.
         </Txt>
         <Rule />
-        <Pressable onPress={confirmSignOut} accessibilityRole="button" style={({ pressed }) => [styles.row, { opacity: pressed ? 0.6 : 1 }]}>
-          <Feather name="log-out" size={17} color={t.ink} />
-          <Txt variant="body" style={styles.label}>
-            Sign out
-          </Txt>
-        </Pressable>
+        <Row icon="lock" label="Change password" onPress={() => router.push('/change-password')} chevron />
         <Rule />
-        <Pressable
-          onPress={confirmDelete}
-          disabled={deleting}
-          accessibilityRole="button"
-          style={({ pressed }) => [styles.row, { opacity: pressed ? 0.6 : 1 }]}>
-          {deleting ? <ActivityIndicator size="small" color={t.red} /> : <Feather name="trash-2" size={17} color={t.red} />}
-          <Txt variant="body" tone="red" style={styles.label}>
-            {deleting ? 'Deleting…' : 'Delete account'}
-          </Txt>
-        </Pressable>
+        <Row icon="log-out" label="Sign out" onPress={confirmSignOut} />
+        <Rule />
+        <Row icon="trash-2" label="Delete account" tone="red" onPress={() => router.push('/delete-account')} chevron />
       </Panel>
-      {error ? (
-        <Txt variant="bodySmall" tone="red" style={{ marginTop: 8 }}>
-          {error}
-        </Txt>
-      ) : null}
     </View>
+  );
+}
+
+/** One line of the account panel: an icon, a label, and a chevron when it opens another screen. */
+function Row({ icon, label, onPress, tone, chevron }: { icon: 'lock' | 'log-out' | 'trash-2'; label: string; onPress: () => void; tone?: 'red'; chevron?: boolean }) {
+  const t = useTheme();
+  return (
+    <Pressable onPress={onPress} accessibilityRole="button" style={({ pressed }) => [styles.row, { opacity: pressed ? 0.6 : 1 }]}>
+      <Feather name={icon} size={17} color={tone === 'red' ? t.red : t.ink} />
+      <Txt variant="body" tone={tone} style={styles.label}>
+        {label}
+      </Txt>
+      {chevron ? <Feather name="chevron-right" size={17} color={t.inkFaint} /> : null}
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', minHeight: 50 },
-  label: { marginLeft: 12, fontFamily: fonts.label },
+  label: { marginLeft: 12, fontFamily: fonts.label, flex: 1 },
 });

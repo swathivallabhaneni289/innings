@@ -93,18 +93,26 @@ type BoardRow struct {
 	IsMe   bool `json:"isMe"`
 }
 
-type AuthStartResponse struct {
-	Phone            string `json:"phone"`
+// AuthCodeResponse answers every call that emails a code: sign-up, resending the confirmation, forgot password.
+type AuthCodeResponse struct {
+	Email            string `json:"email"`
 	ResendInSeconds  int    `json:"resendInSeconds"`
 	ExpiresInSeconds int    `json:"expiresInSeconds"`
 	DevCode          string `json:"devCode,omitempty"`
 }
 
-type AuthVerifyResponse struct {
+// AuthSessionResponse answers every call that signs a device in.
+type AuthSessionResponse struct {
 	Token   string  `json:"token"`
 	Me      User    `json:"me"`
 	Account Account `json:"account"`
 	IsNew   bool    `json:"isNew"`
+}
+
+// ResetCodeResponse trades the right reset code for a short-lived token that may set a new password.
+type ResetCodeResponse struct {
+	ResetToken       string `json:"resetToken"`
+	ExpiresInSeconds int    `json:"expiresInSeconds"`
 }
 
 type HandleCheckResponse struct {

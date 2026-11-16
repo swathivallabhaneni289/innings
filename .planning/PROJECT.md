@@ -24,15 +24,17 @@ Capture how fans felt about a match, not what happened in it. Cricbuzz covers th
 - [x] Fans have a profile: Top 5 stubs, stats, stub collection, where they watched, predictor rank and badges
 - [x] The app wears the chosen Matchday Ticket design across every screen in both themes (Phase 6)
 - [x] The repo is ready to show: icons, Android check, README, GitHub (Phase 6)
-- [x] Fans sign in with a phone number and a texted code, set up a fan card with a unique @username, find friends from contacts, and can sign out or delete their account (Phase 7, v1.1)
+- [x] Fans sign in with a phone number and a texted code, set up a fan card with a unique @username, find friends from contacts, and can sign out or delete their account (Phase 7, v1.1; the phone number and texted code were replaced by email and password in Phase 10)
+- [x] Fans sign up with an email and a password confirmed by an emailed code, reset a forgotten password by email or change it in Settings, and back up to five teams; phone numbers are no longer collected (Phase 10, v1.3)
+- [x] Fans can find and log any match from every World Cup, Champions Trophy, Asia Cup and IPL season since 1973, and rate, pin to their Top 5 or review any finished match right on its page (2026-11-13 and 2026-11-16, after Phase 10)
 
-See REQUIREMENTS.md for the full checkable list (64 v1 and 8 v1.1 requirements across 7 phases, all complete). `docs/REQUIREMENTS.md` is the same list written for readers, with acceptance checks and where each one lives in the code.
+See REQUIREMENTS.md for the full checkable list (64 v1, 8 v1.1, 4 v1.2 and 3 v1.3 requirements across 10 phases, plus DATA-02 as a quick task, all complete). `docs/REQUIREMENTS.md` is the same list written for readers, with acceptance checks and where each one lives in the code.
 
 ### Out of Scope
 
 - Supabase: replaced by the Go API and SQLite (see Key Decisions)
-- Sign in with Apple, Google or email: phone sign-in only for now (ACCT-09)
-- Real text messages: need an SMS provider account; dev mode shows the code on screen (SMS-01)
+- Sign in with Apple or Google: email and password only for now (ACCT-09)
+- Real text messages: no longer needed, since codes go by email (SMS-01, replaced in Phase 10)
 - App Store and Play Store builds: need the developer's Apple and Google accounts
 - The heritage scorebook look: built first, then superseded by direction C (see Key Decisions)
 - Launch tactics from the plan (launch before a big series, seed with friends and the developer's AI club): not build tasks
@@ -65,7 +67,9 @@ See REQUIREMENTS.md for the full checkable list (64 v1 and 8 v1.1 requirements a
 | Phone app in Expo SDK 57, React Native, TypeScript | One codebase runs on iPhone and Android; Go cannot build native phone screens well | Built 2026-10-22 (`src/`) |
 | Go API plus SQLite replaces Supabase from the plan | Zero-setup local runs; embedded migrations; SQL stays portable to Postgres for production | Built 2026-10-22 (`internal/store`) |
 | Guest accounts via `POST /v1/bootstrap` token | Fastest path to a usable loop; token stored on the device | Built in v1.0; replaced by phone sign-in in v1.1 |
-| Phone and text-code sign-in, like Beli | Developer asked for "a proper sign in like how Beli has" (2026-10-25): no passwords, one flow for new and returning fans, contacts for finding friends | Built 2026-10-25 (Phase 7); Twilio Verify wired in, dev mode shows the code |
+| Phone and text-code sign-in, like Beli | Developer asked for "a proper sign in like how Beli has" (2026-10-25): no passwords, one flow for new and returning fans, contacts for finding friends | Built 2026-10-25 (Phase 7); Twilio Verify wired in, dev mode shows the code; replaced by email and password 2026-10-30 (Phase 10) |
+| Email and password sign-in, with an emailed code to confirm the address | Texts cost money for every sign-in, and without them nobody checked the phone number, so anyone could type in another fan's number and pose as them. An emailed code costs nothing through an ordinary Gmail account and proves the address | Built 2026-10-30 (Phase 10, `internal/auth`); real delivery untested until a Gmail app password is in `.env` |
+| Fans back up to five teams, main team first | A fan often backs a country and an IPL side; `favouriteTeamId` stays as the main team, so everything that shows one team keeps working | Built 2026-10-30 (Phase 10) |
 | Simulated world instead of a cricket API | No API key available; deterministic, so tests can pin exact numbers | Built (`internal/sim`); replaced for matches by the real feed in v1.2 |
 | Real matches from ESPN's public scores feed | The plan asked for real data in week 1; the developer wants nothing paid and no sign-ups. CricketData.org needs an account, SportMonks costs from €29 a month, scraping Google or bcci.tv breaks their terms | Built 2026-10-29 (`internal/feed`); unofficial, so it may change without notice |
 | Streak multiplier x1 / x1.5 / x2 | Plan said "streaks multiply" without numbers: 1 to 2 correct winners x1, 3 to 4 x1.5, 5 or more x2 | Built (`internal/domain/scoring.go`) |
@@ -83,4 +87,4 @@ See REQUIREMENTS.md for the full checkable list (64 v1 and 8 v1.1 requirements a
 | Private GitHub repository | Developer's choice | `swathivallabhaneni289/innings`, branch `main` |
 
 ---
-*Last updated: 2026-10-25 after v1.1 (phone sign-in) was completed*
+*Last updated: 2026-11-16, after past matches (2026-11-13) and the match page's rating, Top 5 pin, review box and Top 5 editor*

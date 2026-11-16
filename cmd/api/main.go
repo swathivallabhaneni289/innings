@@ -9,13 +9,16 @@
 //	INNINGS_MATCHES real (default): fixtures, live scores, squads and results from ESPN's public scores feed, on
 //	                the real clock (INNINGS_ANCHOR is ignored). sim: the simulated cricket world instead.
 //
-// Sign-in codes (docs/API.md → Auth, "SMS providers"):
+// Sign-up emails (docs/API.md → Auth, "Sending the emails"):
 //
-//	TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_VERIFY_SERVICE_SID
-//	                all three: codes go through Twilio Verify (setting only some is a startup error)
-//	INNINGS_DEV_OTP=1
-//	                with no Twilio settings: the server makes codes, logs them and returns them as devCode
-//	                (what `make api` does). With neither, /v1/auth/start answers 503 sms-unavailable.
+//	SMTP_HOST, SMTP_USERNAME, SMTP_PASSWORD
+//	                all three: codes are emailed through that server (setting only some is a startup error).
+//	                SMTP_PORT defaults to 587; MAIL_FROM defaults to "Innings <SMTP_USERNAME>".
+//	INNINGS_DEV_CODES=1
+//	                with no SMTP settings: nothing is emailed; the server logs each code and returns it as devCode
+//	                (what `make api` does). With neither, every call that would email a code answers 503.
+//	INNINGS_ENV_FILE
+//	                a file of KEY=VALUE lines to read first (`make api` passes .env); the environment wins over it.
 package main
 
 import (
@@ -25,6 +28,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -59,7 +63,16 @@ func run(logger *slog.Logger) error {
 	// The sim clock starts at the anchor and runs in real time from there.
 	now := func() time.Time { return anchor.Add(time.Since(started)) }
 
-	verifier, smsMode, err := auth.VerifierFromEnv(os.Getenv, logger)
+	if path := os.Getenv("INNINGS_ENV_FILE"); path != "" {
+		keys, err := loadEnvFile(path)
+		if err != nil {
+			return err
+		}
+		if len(keys) > 0 {
+			logger.Info("settings read from "+path, "keys", strings.Join(keys, ", ")) // names only, never values
+		}
+	}
+	mailer, mailMode, err := auth.MailerFromEnv(os.Getenv, logger)
 	if err != nil {
 		return err
 	}
@@ -85,14 +98,14 @@ func run(logger *slog.Logger) error {
 	}
 
 	api := httpapi.New(st, world, now, logger)
-	api.Auth.Verifier = verifier
-	switch smsMode {
-	case "twilio":
-		logger.Info("sign-in codes: Twilio Verify")
-	case "dev":
-		logger.Warn("sign-in codes: DEV mode (INNINGS_DEV_OTP=1): codes are logged and returned as devCode, never texted")
+	api.Auth.Mailer = mailer
+	switch m := mailer.(type) {
+	case *auth.SMTPMailer:
+		logger.Info("sign-up emails: SMTP", "server", m.Host+":"+m.Port, "from", m.From.String())
+	case auth.DevMailer:
+		logger.Warn("sign-up emails: DEV mode (INNINGS_DEV_CODES=1): codes are logged and returned as devCode, never emailed")
 	default:
-		logger.Warn("sign-in codes: OFF (no Twilio settings and INNINGS_DEV_OTP isn't 1): /v1/auth/start answers 503")
+		logger.Warn("sign-up emails: OFF (no SMTP settings and INNINGS_DEV_CODES isn't 1): sign-up and password resets answer 503", "mode", mailMode)
 	}
 
 	srv := &http.Server{

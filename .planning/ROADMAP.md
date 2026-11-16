@@ -6,7 +6,9 @@ Innings delivers a cricket fan's diary in six phases. Phase 1 fixes the shared J
 
 All six phases were planned and built on 2026-10-22 in one evening, by a lead agent directing parallel sub-agents with strict file ownership. Milestone v1.0 is complete: 8 of 8 plans, 64 of 64 v1 requirements.
 
-Milestone v1.1 (Accounts) added Phase 7 on 2026-10-25 at the developer's request: phone sign-in and a Beli-style onboarding, replacing the guest accounts. It is complete. Milestone v1.2 (Real matches) added Phase 8 on 2026-10-29: the app had shipped on simulated matches, and the plan asked for real data in week 1. The Phase 1 contract (`src/domain/types.ts`, `src/domain/api.ts`, `docs/API.md`) was the fixed interface every workstream built against.
+Milestone v1.1 (Accounts) added Phase 7 on 2026-10-25 at the developer's request: phone sign-in and a Beli-style onboarding, replacing the guest accounts. It is complete. Milestone v1.2 (Real matches) added Phase 8 on 2026-10-29: the app had shipped on simulated matches, and the plan asked for real data in week 1. Milestone v1.3 (Email sign-in and close-out) added Phase 10 on 2026-10-30: sign-in moved from phone numbers to email and password, fans can back up to five teams, and the loose ends from earlier phases were closed. The Phase 1 contract (`src/domain/types.ts`, `src/domain/api.ts`, `docs/API.md`) was the fixed interface every workstream built against.
+
+After v1.3, two additions were built directly, without a phase. A quick task on 2026-11-13 added past matches (DATA-02): 2,948 games from every World Cup, Champions Trophy, Asia Cup and IPL season since 1973, in an archive Innings builds itself from Wikipedia's tournament pages. On 2026-11-16, at the developer's request, every finished match's page gained a tap-to-rate panel, "Pin to Top 5" for any match and a review box under Reviews, and the Top 5 gained an editor to reorder it or take games out (MATCH-10 and VAULT-05, reworded in place).
 
 ## Phases
 
@@ -30,6 +32,10 @@ Milestone v1.1 (Accounts) added Phase 7 on 2026-10-25 at the developer's request
 
 - [x] **Phase 8: Real matches** - Today's matches, the week's fixtures, squads, playing XIs and results from ESPN's public scores feed (completed 2026-10-29)
 - [x] **Phase 9: During the match** - A chat room per match, and calls on how it goes while it's on (completed 2026-10-29)
+
+**Milestone v1.3: Email sign-in and close-out**
+
+- [x] **Phase 10: Email sign-in and close-out** - Email and password in place of phone numbers and texted codes, forgot and change password, up to five teams, and the earlier phases' loose ends (completed 2026-10-30)
 
 ## Phase Details
 
@@ -172,7 +178,7 @@ Plans:
   4. Sign out ends this device's session; delete account removes everything the fan made
   5. A brand-new account with no history looks right on every screen
 
-*Outcome:* all five criteria met on the Android emulator and in a 70-check end-to-end API run. Real text messages still need an SMS provider account (SMS-01); in dev mode the code shows on screen.
+*Outcome:* all five criteria met on the Android emulator and in a 70-check end-to-end API run. Real text messages still need an SMS provider account (SMS-01); in dev mode the code shows on screen. Phase 10 later replaced texts with emailed codes.
 
 **Plans**: 1/1 plans executed
 
@@ -201,10 +207,30 @@ Plans:
 
 **UI hint**: no (the app picks up new teams and players by reloading its catalog)
 
+### Phase 10: Email sign-in and close-out
+
+**Goal**: Fans sign up with an email and a password instead of a phone number, so sign-up costs nothing and every address is proven, and the loose ends from earlier phases are closed
+**Depends on**: Phase 9
+**Requirements**: ACCT-01 to ACCT-06 (reworded in place), ACCT-10, ACCT-11, ACCT-12; replaces SMS-01
+**Success Criteria** (what must be TRUE):
+
+  1. A new fan gives an email and a password, types the 6-digit code emailed to them, then sets up a fan card and finds friends; the account can't sign in until the code is in
+  2. The same email and password open the same account on another phone
+  3. Forgot password sets a new one with an emailed code; resetting or changing the password signs out every other device, and deleting the account asks for the password
+  4. Wrong codes, wrong passwords and too many requests are refused with clear messages, and a server with neither mail settings nor dev mode sends no codes
+  5. A fan backs up to five teams, main team first, chosen in sign-up and Settings
+  6. Phone numbers are no longer collected, and contacts match on SHA-256 hashes of lower-cased email addresses
+
+*Outcome:* all six met. The app was walked on the Innings QA iPhone simulator and the Android emulator in dev mode, where the code shows on screen. `go test ./...`, `go vet`, `npx tsc --noEmit` and `npx expo lint` pass, with the 13 lint errors from earlier phases fixed; 62 Jest tests pass (new ones cover the log draft, the Top 5, the sign-up checks, contact emails and teams); and `scripts/smoke.py` passes 88 checks against a fresh server. The phase also added "Delete this stub" on your own stub and took the photo picker out of the log's last step. Codes go out through any SMTP server, such as Gmail with an app password, but real delivery is untested until one is set in `.env`.
+
+**Plans**: no separate plan file; built directly in `internal/auth`, `internal/httpapi`, `internal/store` and `src/app/(auth)`
+
+**UI hint**: yes
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 (2's two plans ran in parallel, as did 5's; 7's server and app ran in parallel against one contract)
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10 (2's two plans ran in parallel, as did 5's; 7's server and app ran in parallel against one contract)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -217,3 +243,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 (2'
 | 7. Phone sign-in & onboarding | 1/1 | Complete | 2026-10-25 |
 | 8. Real matches | n/a | Complete | 2026-10-29 |
 | 9. During the match | n/a | Complete | 2026-10-29 |
+| 10. Email sign-in and close-out | n/a | Complete | 2026-10-30 |

@@ -5,9 +5,10 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { Avatar, Button, TeamBadge, Txt } from '@/components';
 import { getTeam, type UserResponse } from '@/data';
 import { fonts, useTheme } from '@/theme';
+import { listLine } from '@/features/onboarding/teams';
 import { FollowButton } from './FollowButton';
 
-/** Photo, name, @handle, favourite team and fan bio; Friends + Edit on my own profile, Follow on anyone else's. */
+/** Photo, name, @handle, the teams they back and fan bio; Friends + Edit on my own profile, Follow on anyone else's. */
 export function ProfileHeader({ data }: { data: UserResponse }) {
   const t = useTheme();
   const { user, isMe, following, stats } = data;
@@ -25,11 +26,17 @@ export function ProfileHeader({ data }: { data: UserResponse }) {
           <Txt variant="bodySmall" tone="soft" numberOfLines={1}>
             @{user.handle}
           </Txt>
-          <View style={styles.teamRow}>
-            <TeamBadge teamId={user.favouriteTeamId} size="sm" />
-            <Txt variant="bodySmall" tone="soft" numberOfLines={2} style={styles.teamName}>
-              {team.name}
-            </Txt>
+          <View style={styles.teamRow} accessible accessibilityLabel={`Backs ${listLine(user.teamIds.map((id) => getTeam(id).name))}`}>
+            {user.teamIds.map((id) => (
+              <View key={id} style={styles.teamBadge}>
+                <TeamBadge teamId={id} size="sm" />
+              </View>
+            ))}
+            {user.teamIds.length === 1 ? (
+              <Txt variant="bodySmall" tone="soft" numberOfLines={2} style={styles.teamName}>
+                {team.name}
+              </Txt>
+            ) : null}
           </View>
         </View>
       </View>
@@ -77,8 +84,9 @@ export function ProfileHeader({ data }: { data: UserResponse }) {
 const styles = StyleSheet.create({
   top: { flexDirection: 'row', alignItems: 'center', marginTop: 4 },
   idBlock: { flex: 1, marginLeft: 16 },
-  teamRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
-  teamName: { marginLeft: 8, flexShrink: 1, fontFamily: fonts.ui },
+  teamRow: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginTop: 8 },
+  teamBadge: { paddingTop: 2 },
+  teamName: { flexShrink: 1, fontFamily: fonts.ui },
   bio: { marginTop: 16 },
   actions: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginTop: 16 },
   action: { minHeight: 44 },

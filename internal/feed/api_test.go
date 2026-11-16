@@ -33,7 +33,8 @@ func TestAPIServesRealMatches(t *testing.T) {
 	}
 	api := httpapi.New(st, NewWorld(simWorld, src), func() time.Time { return clock }, logger)
 	api.Auth.Now = func() time.Time { return clock }
-	api.Auth.Verifier = auth.DevVerifier{Log: logger}
+	api.Auth.Mailer = auth.DevMailer{Log: logger}
+	api.Auth.Iterations = 1000
 	srv := httptest.NewServer(api.Handler())
 	t.Cleanup(srv.Close)
 
@@ -68,9 +69,9 @@ func TestAPIServesRealMatches(t *testing.T) {
 		json.Unmarshal(raw, &out)
 		return res.StatusCode, out
 	}
-	_, start := call("POST", "/v1/auth/start", map[string]string{"phone": "+919845011111"})
-	_, verify := call("POST", "/v1/auth/verify", map[string]string{"phone": "+919845011111", "code": start["devCode"].(string)})
-	token = verify["token"].(string)
+	_, sent := call("POST", "/v1/auth/signup", map[string]string{"email": "fan@example.com", "password": "tests-are-fun-42"})
+	_, confirmed := call("POST", "/v1/auth/confirm", map[string]string{"email": "fan@example.com", "code": sent["devCode"].(string)})
+	token = confirmed["token"].(string)
 
 	status, boot := call("POST", "/v1/bootstrap", nil)
 	if status != 200 || boot["teams"].(map[string]any)["oman"] == nil || boot["players"].(map[string]any)["esp-502714"] == nil {

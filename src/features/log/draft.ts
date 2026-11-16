@@ -82,6 +82,24 @@ export function toNewLog(d: Draft, matchId: string, place: WatchPlace, xi: Set<s
   };
 }
 
+/** Where the fan logged from last (their newest log's place), or null before their first log. */
+export function lastPlaceOf(logs: Pick<MatchLog, 'watchedAt' | 'createdAt'>[]): WatchPlace | null {
+  let last: Pick<MatchLog, 'watchedAt' | 'createdAt'> | null = null;
+  for (const l of logs) if (!last || l.createdAt > last.createdAt) last = l;
+  return last?.watchedAt ?? null;
+}
+
+/**
+ * A log saved from the Match Page: a rating tapped on its balls or a review typed under Reviews. An existing log keeps
+ * everything else as it was; a first one starts like a new log in the Log flow, watched at `place`.
+ */
+export function relog(log: MatchLog | null, matchId: string, place: WatchPlace, patch: { rating?: number; review?: string }): NewLog {
+  if (!log) return toNewLog({ ...emptyDraft(matchId), rating: patch.rating ?? 0, review: patch.review ?? '' }, matchId, place, new Set());
+  const { id: _id, userId: _userId, createdAt: _createdAt, stubNo: _stubNo, ...rest } = log;
+  const review = patch.review === undefined ? rest.review : patch.review.trim() || undefined;
+  return { ...rest, rating: patch.rating ?? rest.rating, review };
+}
+
 /** One or two words for a rating, as a fan would say it. */
 export function verdict(rating: number): string {
   if (rating <= 0) return 'Not rated yet';

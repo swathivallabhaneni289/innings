@@ -107,6 +107,7 @@ export interface Match {
   result?: MatchResult; // present once state === 'completed' (classics: winner + text + innings may be partial)
   xi?: Record<string, string[]>; // teamId → playing XI player ids (fixtures only)
   classic?: ClassicInfo; // archive matches only
+  archived?: boolean; // a past tournament's match: its day is on record, not its hour, and it has no chat
 }
 
 export type WatchPlace = 'stadium' | 'home' | 'friends' | 'hostel' | 'office' | 'cafe' | 'on-the-go';
@@ -116,14 +117,15 @@ export interface User {
   name: string; // "Aditi Rao"
   handle: string; // "aditi"
   avatarColour: string;
-  favouriteTeamId: string;
+  favouriteTeamId: string; // the main team: teamIds[0]
+  teamIds: string[]; // every team the fan backs, main team first, at most 5
   bio: string; // "Dhoni finishes, I cry"
   photoUri?: string;
 }
 
 /** The signed-in fan's own account. Private: never part of a public profile. */
 export interface Account {
-  phone: string; // E.164, e.g. "+919876543210"
+  email: string; // the address the fan signs in with, trimmed and lower-cased
   onboarded: boolean; // true once the fan has chosen a name and @username and finished sign-up
   createdAt: string;
 }

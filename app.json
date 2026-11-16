@@ -45,14 +45,14 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Innings uses your photos so you can add one to a match memory."
+          "photosPermission": "Innings uses your photos so you can add one to your fan card."
         }
       ],
       "expo-secure-store",
       [
         "expo-contacts",
         {
-          "contactsPermission": "Innings uses your contacts to find friends who are already on Innings. Numbers are matched as hashes and never stored."
+          "contactsPermission": "Innings uses your contacts to find friends who are already on Innings. Email addresses are matched as hashes and never stored."
         }
       ]
     ],

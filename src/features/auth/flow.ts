@@ -1,24 +1,43 @@
-// The sign-in in progress, shared by the phone, country and code screens. In memory only: an app restart
-// starts sign-in again, which is what you'd want for a 10-minute code anyway.
-import type { CountryCode } from 'libphonenumber-js';
+// The sign-up or sign-in in progress, shared by the screens in (auth). In memory only: an app restart starts again,
+// which is what you'd want for a 10-minute code anyway.
 import { create } from 'zustand';
 
-import type { AuthStartResponse } from '@/data';
-import { DEFAULT_COUNTRY } from './countries';
+import type { AuthCodeResponse } from '@/data';
 
-interface SignInFlow {
-  country: CountryCode;
-  /** The last code sent: the number, when it was sent and (dev only) the code itself. */
-  sent: (AuthStartResponse & { sentAt: number }) | null;
-  setCountry: (c: CountryCode) => void;
-  setSent: (res: AuthStartResponse) => void;
-  reset: () => void;
+/** What the last emailed code was for: confirming a new account, or resetting a password. */
+export type CodePurpose = 'confirm' | 'reset';
+
+export type SentCode = AuthCodeResponse & { purpose: CodePurpose; sentAt: number };
+
+interface AuthFlow {
+  /** The address typed last, carried between sign-in, sign-up and forgot password so nobody types it twice. */
+  email: string;
+  /** The last code emailed: where, what for, when, and (dev builds only) the code itself. */
+  sent: SentCode | null;
+  /** From the right reset code: lets the new-password screen set one, until it expires. */
+  reset: { token: string; expiresAt: number } | null;
+  setEmail: (email: string) => void;
+  setSent: (res: AuthCodeResponse, purpose: CodePurpose) => void;
+  setReset: (token: string, expiresInSeconds: number) => void;
+  clear: () => void;
 }
 
-export const useSignInFlow = create<SignInFlow>((set) => ({
-  country: DEFAULT_COUNTRY,
+export const useAuthFlow = create<AuthFlow>((set, get) => ({
+  email: '',
   sent: null,
-  setCountry: (country) => set({ country }),
-  setSent: (res) => set({ sent: { ...res, sentAt: Date.now() } }),
-  reset: () => set({ country: DEFAULT_COUNTRY, sent: null }),
+  reset: null,
+  setEmail: (email) => set({ email }),
+  setSent: (res, purpose) => {
+    const prev = get().sent;
+    // Asking again inside the resend gap sends nothing new: the earlier code (and, in dev, its devCode) still works.
+    const devCode = res.devCode ?? (prev?.email === res.email && prev.purpose === purpose ? prev.devCode : undefined);
+    set({ email: res.email, sent: { ...res, devCode, purpose, sentAt: Date.now() } });
+  },
+  setReset: (token, expiresInSeconds) => set({ reset: { token, expiresAt: Date.now() + expiresInSeconds * 1000 } }),
+  clear: () => set({ email: '', sent: null, reset: null }),
 }));
+
+/** A code for this address and purpose that's still within its 10 minutes, so there's no need to ask for another. */
+export function liveCode(sent: SentCode | null, email: string, purpose: CodePurpose): boolean {
+  return !!sent && sent.email === email && sent.purpose === purpose && Date.now() < sent.sentAt + sent.expiresInSeconds * 1000;
+}

@@ -32,7 +32,7 @@ func TestStoreRoundTrip(t *testing.T) {
 	s := openTest(t)
 	now := time.Date(2026, 3, 1, 10, 0, 0, 0, time.UTC)
 	u := domain.User{ID: "u-1", Name: "Guest", Handle: "guest", AvatarColour: "#000", FavouriteTeamID: "ind"}
-	if err := s.CreateAccount(ctx, u, "+919800000001", now); err != nil {
+	if _, err := s.SignUp(ctx, u, "guest@example.com", "hash", now); err != nil {
 		t.Fatal(err)
 	}
 	if err := s.CreateSession(ctx, "tok-hash", "u-1", now); err != nil {
@@ -111,7 +111,7 @@ func TestSeedHistoryUsesFreshIDs(t *testing.T) {
 		{ID: "same", MatchID: "m0", Rating: 3, WatchedAt: domain.WatchHome, CreatedAt: "2026-01-01T00:00:00Z"},
 	}
 	for i, id := range []string{"a", "b"} {
-		s.CreateAccount(ctx, domain.User{ID: id, Name: id, Handle: id}, fmt.Sprintf("+9198000000%02d", i), now)
+		s.SignUp(ctx, domain.User{ID: id, Name: id, Handle: id}, fmt.Sprintf("fan%d@example.com", i), "hash", now)
 		if err := s.SeedHistory(ctx, id, demo, []domain.Prediction{{MatchID: "m1", WinnerID: "ind"}}, []string{"f1", "f2"}, now); err != nil {
 			t.Fatal(err)
 		}

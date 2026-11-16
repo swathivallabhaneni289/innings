@@ -28,9 +28,9 @@ func NewWorld(w *sim.World, src *Source) *World {
 
 func (w *World) Fixtures(time.Time) []domain.Match { return w.src.Fixtures() }
 
-// Match finds a real match or a Vault classic.
+// Match finds a real match, a Vault classic or a past match from the archive.
 func (w *World) Match(id string, now time.Time) (domain.Match, bool) {
-	if w.classic[id] {
+	if w.classic[id] || w.World.Archived(id) {
 		return w.World.Match(id, now)
 	}
 	for _, m := range w.src.Fixtures() {

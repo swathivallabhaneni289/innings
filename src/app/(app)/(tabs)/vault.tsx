@@ -77,7 +77,7 @@ function VaultBody({ vault }: { vault: VaultResponse }) {
         </Panel>
       )}
 
-      <SectionHeader title="Your Top 5" />
+      <SectionHeader title="Your Top 5" action={vault.top5.length > 0 ? 'Edit' : undefined} onAction={() => router.push('/top5')} />
       <Top5Pager top5={vault.top5} ratings={ratings} />
 
       {vault.collections.map(({ collection, matches }) => (

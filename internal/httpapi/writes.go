@@ -2,6 +2,7 @@ package httpapi
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"slices"
 	"strings"
@@ -201,12 +202,13 @@ func (s *Server) handleFollow(v *view, w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleUpdateMe(v *view, w http.ResponseWriter, r *http.Request) {
 	var in struct {
-		Name            *string `json:"name"`
-		Handle          *string `json:"handle"`
-		Bio             *string `json:"bio"`
-		FavouriteTeamID *string `json:"favouriteTeamId"`
-		AvatarColour    *string `json:"avatarColour"`
-		PhotoURI        *string `json:"photoUri"`
+		Name            *string   `json:"name"`
+		Handle          *string   `json:"handle"`
+		Bio             *string   `json:"bio"`
+		FavouriteTeamID *string   `json:"favouriteTeamId"`
+		TeamIDs         *[]string `json:"teamIds"`
+		AvatarColour    *string   `json:"avatarColour"`
+		PhotoURI        *string   `json:"photoUri"`
 	}
 	if !decode(w, r, &in) {
 		return
@@ -240,13 +242,31 @@ func (s *Server) handleUpdateMe(v *view, w http.ResponseWriter, r *http.Request)
 		}
 		u.Bio = strings.TrimSpace(*in.Bio)
 	}
-	if in.FavouriteTeamID != nil {
-		teams := v.teams()
-		if _, ok := teams[*in.FavouriteTeamID]; len(teams) > 0 && !ok {
-			writeErr(w, http.StatusBadRequest, "bad-team", "unknown team")
+	// teamIds sets every team the fan backs, main team first. favouriteTeamId alone (older apps) makes that team the
+	// main one and keeps the others.
+	var teamIDs []string
+	switch {
+	case in.TeamIDs != nil:
+		teamIDs = *in.TeamIDs
+	case in.FavouriteTeamID != nil:
+		teamIDs = append([]string{*in.FavouriteTeamID}, slices.DeleteFunc(slices.Clone(u.Teams()), func(id string) bool { return id == *in.FavouriteTeamID })...)
+		teamIDs = teamIDs[:min(len(teamIDs), domain.MaxTeams)]
+	}
+	if teamIDs != nil {
+		known := v.teams()
+		seen := map[string]bool{}
+		for _, id := range teamIDs {
+			if _, ok := known[id]; (len(known) > 0 && !ok) || seen[id] {
+				writeErr(w, http.StatusBadRequest, "bad-team", "unknown or repeated team: "+id)
+				return
+			}
+			seen[id] = true
+		}
+		if len(teamIDs) == 0 || len(teamIDs) > domain.MaxTeams {
+			writeErr(w, http.StatusBadRequest, "bad-team", fmt.Sprintf("back between 1 and %d teams", domain.MaxTeams))
 			return
 		}
-		u.FavouriteTeamID = *in.FavouriteTeamID
+		u.TeamIDs, u.FavouriteTeamID = teamIDs, teamIDs[0]
 	}
 	if in.AvatarColour != nil {
 		u.AvatarColour = *in.AvatarColour

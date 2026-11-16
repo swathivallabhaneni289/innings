@@ -32,7 +32,7 @@ export async function loadSession() {
 }
 
 /**
- * Stores a fresh token from /v1/auth/verify. The status stays as it is until the caller has bootstrapped
+ * Stores a fresh token from signing in. The status stays as it is until the caller has bootstrapped
  * (see `markReady`), so the guards flip once, with everything a screen needs already in the cache.
  */
 export async function saveToken(token: string) {

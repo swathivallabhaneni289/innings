@@ -1,11 +1,13 @@
-"""End-to-end check of the API: phone sign-in, onboarding, the main reads and writes, sign out and delete account.
+"""End-to-end check of the API: email sign-up and sign-in, onboarding, the main reads and writes, changing and resetting
+a password, sign out and delete account.
 
-Run it against a fresh server in dev mode, on a spare port and a throwaway database:
+Run it against a fresh server in dev mode, on simulated matches (they always include a live one), a spare port and a
+throwaway database (never `make api`, which reads .env and could send real emails):
 
-    DB_PATH=/tmp/innings-smoke.db PORT=8096 INNINGS_DEV_OTP=1 go run ./cmd/api
+    DB_PATH=/tmp/innings-smoke.db PORT=8096 INNINGS_DEV_CODES=1 INNINGS_MATCHES=sim go run ./cmd/api
     python3 scripts/smoke.py http://localhost:8096
 
-It takes about 70 seconds, because it waits out the 30-second resend gap twice.
+It takes about 35 seconds, because it waits out the 30-second resend gap once.
 """
 import json, sys, time, urllib.request, urllib.error
 
@@ -50,35 +52,53 @@ def bad_nulls(o, k=None):
     return []
 
 
-def sign_in(phone):
-    s, st, _ = req('POST', '/v1/auth/start', body={'phone': phone})
-    assert s == 200, (s, st)
-    s, v, _ = req('POST', '/v1/auth/verify', body={'phone': phone, 'code': st['devCode']})
-    assert s == 200, (s, v)
+def session(path, body):
+    s, v, _ = req('POST', path, body=body)
+    assert s == 200, (path, s, v)
     return v
 
 
-# ---- sign-in errors ----
-check('bad phone 400', req('POST', '/v1/auth/start', body={'phone': '98765'})[0] == 400)
-s, st, _ = req('POST', '/v1/auth/start', body={'phone': '+919876543210'})
-check('start 200 with devCode', s == 200 and len(st.get('devCode', '')) == 6 and st['resendInSeconds'] == 30 and st['expiresInSeconds'] == 600)
-s, b, h = req('POST', '/v1/auth/start', body={'phone': '+919876543210'})
+def sign_up(email, password):
+    s, sent, _ = req('POST', '/v1/auth/signup', body={'email': email, 'password': password})
+    assert s == 200, (s, sent)
+    return session('/v1/auth/confirm', {'email': email, 'code': sent['devCode']})
+
+
+def sign_in(email, password):
+    return session('/v1/auth/signin', {'email': email, 'password': password})
+
+
+EMAIL, PASSWORD = 'swathi@example.com', 'cover-drive-forever'
+
+# ---- sign-up errors ----
+check('bad email 400', req('POST', '/v1/auth/signup', body={'email': 'swathi@', 'password': PASSWORD})[1].get('error') == 'bad-email')
+check('short password 400', req('POST', '/v1/auth/signup', body={'email': EMAIL, 'password': 'short'})[1].get('error') == 'weak-password')
+check('common password 400', req('POST', '/v1/auth/signup', body={'email': EMAIL, 'password': 'password123'})[1].get('error') == 'weak-password')
+s, st, _ = req('POST', '/v1/auth/signup', body={'email': ' Swathi@Example.COM ', 'password': PASSWORD})
+check('sign up 200 with devCode', s == 200 and st['email'] == EMAIL and len(st.get('devCode', '')) == 6 and st['resendInSeconds'] == 30 and st['expiresInSeconds'] == 600)
+s, b, h = req('POST', '/v1/auth/confirm/resend', body={'email': EMAIL})
 check('resend too soon 429 + Retry-After', s == 429 and b.get('error') == 'too-soon' and 'Retry-After' in h)
+s, b, _ = req('POST', '/v1/auth/signin', body={'email': EMAIL, 'password': PASSWORD})
+check('sign in before confirming 403', s == 403 and b.get('error') == 'email-unconfirmed')
 wrong = '000000' if st['devCode'] != '000000' else '111111'
-s, b, _ = req('POST', '/v1/auth/verify', body={'phone': '+919876543210', 'code': wrong})
+s, b, _ = req('POST', '/v1/auth/confirm', body={'email': EMAIL, 'code': wrong})
 check('wrong code 400 bad-code', s == 400 and b.get('error') == 'bad-code')
-check('no code for other number 410', req('POST', '/v1/auth/verify', body={'phone': '+919999999999', 'code': '123456'})[0] == 410)
+check('no code for another address 410', req('POST', '/v1/auth/confirm', body={'email': 'nobody@example.com', 'code': '123456'})[0] == 410)
 check('401 without token', req('GET', '/v1/home')[0] == 401)
 check('bootstrap needs a session', req('POST', '/v1/bootstrap')[0] == 401)
 
 # ---- sign up ----
-s, v, _ = req('POST', '/v1/auth/verify', body={'phone': '+919876543210', 'code': st['devCode']})
-check('verify creates account', s == 200 and v['isNew'] and not v['account']['onboarded'] and v['account']['phone'] == '+919876543210')
+s, v, _ = req('POST', '/v1/auth/confirm', body={'email': EMAIL, 'code': st['devCode']})
+check('confirm signs in a new account', s == 200 and v['isNew'] and not v['account']['onboarded'] and v['account']['email'] == EMAIL)
 T = v['token']
-check('code cannot be reused', req('POST', '/v1/auth/verify', body={'phone': '+919876543210', 'code': st['devCode']})[0] == 410)
+check('code cannot be reused', req('POST', '/v1/auth/confirm', body={'email': EMAIL, 'code': st['devCode']})[0] == 410)
+check('confirmed address is taken', req('POST', '/v1/auth/signup', body={'email': EMAIL, 'password': 'another-password'})[1].get('error') == 'email-taken')
+s, b, _ = req('POST', '/v1/auth/signin', body={'email': EMAIL, 'password': 'not-my-password'})
+s2, b2, _ = req('POST', '/v1/auth/signin', body={'email': 'nobody@example.com', 'password': PASSWORD})
+check('wrong password and unknown address look the same', s == s2 == 401 and b == b2 and b.get('error') == 'bad-credentials')
 s, boot, _ = req('POST', '/v1/bootstrap', T)
 check('bootstrap with session', s == 200 and len(boot['teams']) > 50 and len(boot['players']) > 300 and 'account' in boot)
-check('phone not in public user', 'phone' not in boot['me'])
+check('email not in public user', 'email' not in boot['me'])
 
 # ---- empty account: every read works with no history ----
 s, live, _ = req('GET', '/v1/matches?state=live', T)
@@ -108,7 +128,7 @@ check('onboarded', s == 200 and ob['account']['onboarded'])
 check('own handle counts as available', req('GET', '/v1/handles/swathi', T)[1]['available'])
 
 # ---- a second fan ----
-v2 = sign_in('+447700900123')
+v2 = sign_up('ravi@example.com', 'ravi-bats-at-three')
 T2 = v2['token']
 check('second fan cannot take the handle', req('PUT', '/v1/me', T2, {'name': 'Other', 'handle': 'swathi'})[0] == 409)
 req('PUT', '/v1/me', T2, {'name': 'Ravi', 'handle': 'ravi_k'})
@@ -116,8 +136,8 @@ check('not onboarded yet: hidden from search', not any(u['handle'] == 'ravi_k' f
 req('POST', '/v1/me/onboarded', T2)
 check('onboarded: in search', any(u['handle'] == 'ravi_k' for u in req('GET', '/v1/search?q=ravi', T)[1]['users']))
 import hashlib
-h = hashlib.sha256(b'+447700900123').hexdigest()
-s, cm, _ = req('POST', '/v1/contacts/match', T, {'hashes': [h, hashlib.sha256(b'+15550000000').hexdigest()]})
+h = hashlib.sha256(b'ravi@example.com').hexdigest()
+s, cm, _ = req('POST', '/v1/contacts/match', T, {'hashes': [h, hashlib.sha256(b'stranger@example.com').hexdigest()]})
 check('contacts match finds the second fan', s == 200 and [m['user']['handle'] for m in cm['matches']] == ['ravi_k'])
 check('bad hashes 400', req('POST', '/v1/contacts/match', T, {'hashes': ['nope']})[0] == 400)
 
@@ -150,25 +170,51 @@ req('POST', f'/v1/users/{me["id"]}/follow', T2)
 s, _, _ = req('POST', f'/v1/logs/{LID}/like', T2); check('second fan likes the stub', s == 200)
 s, _, _ = req('POST', f'/v1/logs/{LID}/replies', T2, {'text': 'Same, mate'}); check('second fan replies', s == 201)
 
-# ---- second device: same account (wait out the 30-second resend gap first) ----
-time.sleep(31)
-v3 = sign_in('+919876543210')
+# ---- second device: same account ----
+v3 = sign_in(EMAIL, PASSWORD)
 check('second device signs in to the same account', not v3['isNew'] and v3['me']['id'] == me['id'] and v3['account']['onboarded'])
 T3 = v3['token']
 check('logout 204', req('POST', '/v1/auth/logout', T3)[0] == 204)
 check('logged-out token is refused', req('GET', '/v1/home', T3)[0] == 401)
 check('first device still signed in', req('GET', '/v1/home', T)[0] == 200)
 
-check('delete account 204', req('DELETE', '/v1/me', T)[0] == 204)
+# ---- change password: other devices are signed out, this one stays ----
+T3 = sign_in(EMAIL, PASSWORD)['token']
+s, b, _ = req('PUT', '/v1/me/password', T, {'currentPassword': 'not-my-password', 'newPassword': 'a-better-password'})
+check('wrong current password 403, still signed in', s == 403 and b.get('error') == 'bad-password' and req('GET', '/v1/home', T)[0] == 200)
+check('change password 204', req('PUT', '/v1/me/password', T, {'currentPassword': PASSWORD, 'newPassword': 'a-better-password'})[0] == 204)
+check('other device signed out by the change', req('GET', '/v1/home', T3)[0] == 401)
+check('this device still signed in', req('GET', '/v1/home', T)[0] == 200)
+check('old password refused', req('POST', '/v1/auth/signin', body={'email': EMAIL, 'password': PASSWORD})[0] == 401)
+PASSWORD = 'a-better-password'
+
+# ---- forgot password (wait out the 30-second resend gap from sign-up first) ----
+time.sleep(31)
+s, fp, _ = req('POST', '/v1/auth/password/forgot', body={'email': EMAIL})
+check('forgot password 200 with devCode', s == 200 and len(fp.get('devCode', '')) == 6)
+s, nb, _ = req('POST', '/v1/auth/password/forgot', body={'email': 'nobody@example.com'})
+check('forgot for an unknown address: same answer, no code', s == 200 and 'devCode' not in nb and nb['expiresInSeconds'] == 600)
+s, rc, _ = req('POST', '/v1/auth/password/code', body={'email': EMAIL, 'code': fp['devCode']})
+check('reset code buys a token', s == 200 and len(rc['resetToken']) == 64 and rc['expiresInSeconds'] == 900)
+check('weak new password 400', req('POST', '/v1/auth/password/reset', body={'resetToken': rc['resetToken'], 'password': 'short'})[1].get('error') == 'weak-password')
+s, rs, _ = req('POST', '/v1/auth/password/reset', body={'resetToken': rc['resetToken'], 'password': 'reset-and-ready'})
+check('reset signs in', s == 200 and rs['me']['id'] == me['id'])
+check('every other device signed out by the reset', req('GET', '/v1/home', T)[0] == 401)
+check('reset token is single use', req('POST', '/v1/auth/password/reset', body={'resetToken': rc['resetToken'], 'password': 'again-and-again'})[0] == 410)
+T, PASSWORD = rs['token'], 'reset-and-ready'
+
+# ---- delete account: the password is asked for again ----
+s, b, _ = req('DELETE', '/v1/me', T, {'password': 'not-my-password'})
+check('delete with a wrong password 403', s == 403 and b.get('error') == 'bad-password')
+check('delete account 204', req('DELETE', '/v1/me', T, {'password': PASSWORD})[0] == 204)
 check('deleted account token refused', req('GET', '/v1/home', T)[0] == 401)
 for p in ['/v1/home', '/v1/notifications', '/v1/friends', '/v1/users/me', '/v1/search?q=swathi']:
     s, b, _ = req('GET', p, T2)
     check(f'after delete, other fan GET {p} -> {s}', s == 200 and not bad_nulls(b))
 check('deleted stub is gone', req('GET', f'/v1/logs/{LID}', T2)[0] == 404)
 check('deleted fan not in search', not any(u['handle'] == 'swathi' for u in req('GET', '/v1/search?q=swathi', T2)[1]['users']))
-time.sleep(31)
-v4 = sign_in('+919876543210')
-check('same number after delete starts a new account', v4['isNew'] and v4['me']['id'] != me['id'])
+v4 = sign_up(EMAIL, 'a-fresh-start-1')
+check('same address after delete starts a new account', v4['isNew'] and v4['me']['id'] != me['id'])
 
 print(f'PASSED {ok} checks; FAILED {len(fail)}')
 for x in fail:

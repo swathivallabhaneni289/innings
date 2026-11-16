@@ -491,14 +491,78 @@ func (v *view) haystack(m domain.Match) string {
 	return strings.ToLower(strings.Join(parts, " | "))
 }
 
+// sameMatchKey is a match's day (UTC) and its two teams in either order: one game whichever source has it.
+func sameMatchKey(m domain.Match) string {
+	a, b := m.TeamIDs[0], m.TeamIDs[1]
+	if b < a {
+		a, b = b, a
+	}
+	return startOf(m).UTC().Format(time.DateOnly) + "|" + a + "|" + b
+}
+
+// searchFiller is what fans type between two teams, as in "ind vs aus". No match's text holds it, so it's skipped.
+var searchFiller = map[string]bool{"vs": true, "vs.": true, "v": true, "v.": true, "versus": true, "&": true, "-": true}
+
+// teamWords maps each code or one-word name a fan might type for a team to the sides it means: "ind" and "india"
+// are India and India Women, never the West Indies, whose name merely contains "ind".
+func (v *view) teamWords() map[string][]string {
+	words := map[string][]string{}
+	add := func(word, id string) {
+		word = strings.ToLower(word)
+		if word != "" && !strings.Contains(word, " ") && !slices.Contains(words[word], id) {
+			words[word] = append(words[word], id)
+		}
+	}
+	for id, t := range v.teams() {
+		for _, w := range []string{id, t.Short, t.Name} {
+			add(w, id)
+			if base, ok := strings.CutSuffix(strings.ToLower(w), "-w"); ok { // a women's side: ind-w, IND-W
+				add(base, id)
+			}
+			if base, ok := strings.CutSuffix(strings.ToLower(w), " women"); ok { // India Women
+				add(base, id)
+			}
+		}
+	}
+	return words
+}
+
+// searchTokens splits a search into words, minus the filler. With phrases set, a team name of several words becomes
+// its id first, so "west indies vs australia" is two teams, not a ground in the West Indies.
+func (v *view) searchTokens(q string, phrases bool) []string {
+	if phrases {
+		var names [][2]string
+		for id, t := range v.teams() {
+			if name := strings.ToLower(t.Name); strings.Contains(name, " ") {
+				names = append(names, [2]string{name, id})
+			}
+		}
+		// Longest first: "west indies women" before "west indies".
+		slices.SortFunc(names, func(a, b [2]string) int {
+			return cmp.Or(cmp.Compare(len(b[0]), len(a[0])), strings.Compare(a[0], b[0]))
+		})
+		q = " " + q + " "
+		for _, n := range names {
+			q = strings.ReplaceAll(q, " "+n[0]+" ", " "+n[1]+" ")
+		}
+	}
+	var tokens []string
+	for _, t := range strings.Fields(q) {
+		if !searchFiller[t] {
+			tokens = append(tokens, t)
+		}
+	}
+	return tokens
+}
+
 func (s *Server) handleSearch(v *view, w http.ResponseWriter, r *http.Request) {
 	q := strings.ToLower(strings.TrimSpace(r.URL.Query().Get("q")))
 	resp := domain.SearchResponse{Matches: []domain.Match{}, Users: []domain.User{}}
-	if q == "" {
+	tokens := v.searchTokens(q, false)
+	if len(tokens) == 0 {
 		writeJSON(w, http.StatusOK, resp)
 		return
 	}
-	tokens := strings.Fields(q)
 	hit := func(h string) bool {
 		for _, t := range tokens {
 			if !strings.Contains(h, t) {
@@ -507,9 +571,24 @@ func (s *Server) handleSearch(v *view, w http.ResponseWriter, r *http.Request) {
 		}
 		return true
 	}
+	// A match is found when each word names one of its teams or appears in its text (ground, city, year, stage).
+	teams, matchTokens := v.teamWords(), v.searchTokens(q, true)
+	matchHit := func(m domain.Match) bool {
+		h := v.haystack(m)
+		for _, t := range matchTokens {
+			if ids, ok := teams[t]; ok {
+				if !slices.ContainsFunc(m.TeamIDs[:], func(id string) bool { return slices.Contains(ids, id) }) {
+					return false
+				}
+			} else if !strings.Contains(h, t) {
+				return false
+			}
+		}
+		return true
+	}
 	var fx []domain.Match
 	for _, m := range v.fixtures() {
-		if hit(v.haystack(m)) {
+		if matchHit(m) {
 			fx = append(fx, m)
 		}
 	}
@@ -526,13 +605,27 @@ func (s *Server) handleSearch(v *view, w http.ResponseWriter, r *http.Request) {
 		return byStart(a, b)
 	})
 	resp.Matches = append(resp.Matches, fx...)
+	// Then the past, newest first: Vault classics and the archive together, so a World Cup final sits above its
+	// group games. An archive match the live feed also has (same day, same two teams) shows once, as the feed's.
+	feedHas := map[string]bool{}
+	for _, m := range v.fixtures() {
+		feedHas[sameMatchKey(m)] = true
+	}
+	var past []domain.Match
 	for _, m := range v.classics() {
-		if hit(v.haystack(m)) {
-			resp.Matches = append(resp.Matches, m)
+		if matchHit(m) {
+			past = append(past, m)
 		}
 	}
-	if len(resp.Matches) > 50 {
-		resp.Matches = resp.Matches[:50]
+	for _, m := range v.archive() {
+		if !feedHas[sameMatchKey(m)] && matchHit(m) {
+			past = append(past, m)
+		}
+	}
+	slices.SortStableFunc(past, byStartDesc)
+	resp.Matches = append(resp.Matches, past...)
+	if len(resp.Matches) > 100 { // room for two sides' whole history: India v Australia is 53 past games
+		resp.Matches = resp.Matches[:100]
 	}
 	users := append(append(slices.Clone(s.World.Friends()), s.World.PublicFans()...), v.listedUsers()...)
 	for _, u := range users {

@@ -18,7 +18,7 @@ export function FanCardTicket({
   userId,
   name,
   handle,
-  teamId,
+  teamIds,
   avatarColour,
   photoUri,
   memberSince,
@@ -27,7 +27,7 @@ export function FanCardTicket({
   userId: string;
   name: string;
   handle: string;
-  teamId: string;
+  teamIds: string[];
   avatarColour: string;
   photoUri?: string;
   memberSince: number;
@@ -60,8 +60,18 @@ export function FanCardTicket({
             </View>
           </View>
           <View style={styles.footer}>
-            {teamId ? (
-              <TeamBadge teamId={teamId} size="md" />
+            {teamIds.length > 0 ? (
+              <View style={styles.teams}>
+                <TeamBadge teamId={teamIds[0]} size="md" />
+                {teamIds.slice(1, 3).map((id) => (
+                  <TeamBadge key={id} teamId={id} size="sm" />
+                ))}
+                {teamIds.length > 3 ? (
+                  <Txt variant="monoSmall" tone="soft">
+                    +{teamIds.length - 3}
+                  </Txt>
+                ) : null}
+              </View>
             ) : (
               <Txt variant="bodySmall" tone="faint" style={{ fontFamily: fonts.ui }}>
                 Pick a team
@@ -89,6 +99,7 @@ const styles = StyleSheet.create({
   main: { flex: 1, justifyContent: 'space-between' },
   id: { flexDirection: 'row', alignItems: 'center' },
   footer: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', gap: 8 },
+  teams: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },
   side: { flex: 1, alignItems: 'center', justifyContent: 'space-between' },
   serial: { fontSize: 9.5, letterSpacing: 0.4 },
 });

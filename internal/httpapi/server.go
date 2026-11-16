@@ -24,6 +24,7 @@ type World interface {
 	Players() map[string]domain.Player
 	Fixtures(now time.Time) []domain.Match
 	Classics() []domain.Match
+	Archive() []domain.Match // past tournament matches: search, match pages and logs, never the lists
 	Friends() []domain.User
 	PublicFans() []domain.User
 	User(id string) (domain.User, bool)
@@ -49,8 +50,8 @@ type Server struct {
 	Log   *slog.Logger
 }
 
-// New returns the API on the sim clock now. Sign-in starts with no SMS provider (every start answers 503) until
-// the caller sets Auth.Verifier, e.g. from auth.VerifierFromEnv.
+// New returns the API on the sim clock now. Sign-up starts with no mailer (every call that would email a code
+// answers 503) until the caller sets Auth.Mailer, e.g. from auth.MailerFromEnv.
 func New(st *store.Store, world World, now func() time.Time, logger *slog.Logger) *Server {
 	if logger == nil {
 		logger = slog.Default()
@@ -65,9 +66,14 @@ func (s *Server) Handler() http.Handler {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		io.WriteString(w, "ok")
 	})
-	// Sign-in: the only API routes that don't need a session.
-	mux.HandleFunc("POST /v1/auth/start", s.handleAuthStart)
-	mux.HandleFunc("POST /v1/auth/verify", s.handleAuthVerify)
+	// Signing up and in: the only API routes that don't need a session.
+	mux.HandleFunc("POST /v1/auth/signup", s.handleSignUp)
+	mux.HandleFunc("POST /v1/auth/confirm", s.handleConfirmEmail)
+	mux.HandleFunc("POST /v1/auth/confirm/resend", s.handleResendConfirmation)
+	mux.HandleFunc("POST /v1/auth/signin", s.handleSignIn)
+	mux.HandleFunc("POST /v1/auth/password/forgot", s.handleForgotPassword)
+	mux.HandleFunc("POST /v1/auth/password/code", s.handleResetCode)
+	mux.HandleFunc("POST /v1/auth/password/reset", s.handleResetPassword)
 
 	authed := func(pattern string, fn func(v *view, w http.ResponseWriter, r *http.Request)) {
 		mux.Handle(pattern, s.Auth.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -81,6 +87,7 @@ func (s *Server) Handler() http.Handler {
 	authed("GET /v1/handles/{handle}", s.handleHandleCheck)
 	authed("POST /v1/me/onboarded", s.handleOnboarded)
 	authed("POST /v1/contacts/match", s.handleContactsMatch)
+	authed("PUT /v1/me/password", s.handleChangePassword)
 	authed("DELETE /v1/me", s.handleDeleteMe)
 	// Reads.
 	authed("GET /v1/home", s.handleHome)

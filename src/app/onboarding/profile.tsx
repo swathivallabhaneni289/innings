@@ -6,13 +6,13 @@ import { OnboardingHeader } from '@/features/onboarding/OnboardingHeader';
 import { ProfileStep } from '@/features/onboarding/ProfileStep';
 import { fonts } from '@/theme';
 
-/** Sign-up step 1: the fan card. "Sign out" is the way back for someone who typed the wrong number. */
+/** Sign-up step 1: the fan card. "Sign out" is the way back for someone who meant to use another account. */
 export default function OnboardingProfileScreen() {
   const me = useMe();
   const account = useAccount();
 
   const confirmSignOut = () =>
-    Alert.alert('Sign out?', 'You can sign in again with this number or another one.', [
+    Alert.alert('Sign out?', 'You can sign in again with this email or another one.', [
       { text: 'Stay', style: 'cancel' },
       { text: 'Sign out', style: 'destructive', onPress: signOut },
     ]);

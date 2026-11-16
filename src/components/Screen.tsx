@@ -23,6 +23,7 @@ export function Screen({
   refreshing = false,
   contentStyle,
   header,
+  keyboardInsets = false,
 }: {
   title?: string;
   kicker?: string; // small caps line above the title
@@ -34,6 +35,7 @@ export function Screen({
   refreshing?: boolean;
   contentStyle?: ViewStyle;
   header?: ReactNode; // replaces the default title bar
+  keyboardInsets?: boolean; // iOS: inset for the keyboard and scroll a focused field above it (wrap in KeyboardAware scrollInsets)
 }) {
   const t = useTheme();
   const insets = useSafeAreaInsets();
@@ -68,6 +70,7 @@ export function Screen({
             contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 140 }, contentStyle]}
             refreshControl={onRefresh ? <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={t.red} /> : undefined}
             keyboardShouldPersistTaps="handled"
+            automaticallyAdjustKeyboardInsets={keyboardInsets}
             showsVerticalScrollIndicator={false}>
             {children}
           </ScrollView>

@@ -69,7 +69,7 @@ export function RateMatch({
         <View style={{ flex: 1, marginLeft: 12 }}>
           <Txt variant="h3">Instant classic</Txt>
           <Txt variant="bodySmall" tone="soft">
-            You'll still be talking about this one in ten years.
+            You&apos;ll still be talking about this one in ten years.
           </Txt>
         </View>
         <View style={[styles.box, { borderColor: instantClassic ? t.ink : t.inkFaint, backgroundColor: instantClassic ? t.ink : 'transparent' }]}>

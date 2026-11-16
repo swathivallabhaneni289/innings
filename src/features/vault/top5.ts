@@ -58,7 +58,7 @@ export function useTop5(currentIds: string[]) {
   const toggle = (matchId: string) => {
     if (isPinned(matchId)) return unpin(matchId);
     if (currentIds.length >= MAX_TOP5) {
-      setMessage({ matchId, text: `Your Top ${MAX_TOP5} is full. Unpin one on the Vault tab first.` });
+      setMessage({ matchId, text: `Your Top ${MAX_TOP5} is full. Tap Edit on it in the Vault to take one out.` });
       return;
     }
     return save(matchId, [...currentIds, matchId]);

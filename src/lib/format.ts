@@ -5,10 +5,18 @@ const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', '
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const pad2 = (n: number) => String(n).padStart(2, '0');
 
-/** "02 APR 2011" — the date printed on a ticket. Classics use their recorded date. */
-export function ticketDate(m: Pick<Match, 'startTime' | 'classic'>): string {
-  if (m.classic?.date) {
-    const [y, mo, d] = m.classic.date.split('-').map(Number);
+/**
+ * 'YYYY-MM-DD' for a match whose day is on record but not its hour: a classic, or a past tournament's match from the
+ * archive. Printing that day as it is keeps it right in every time zone.
+ */
+export const recordedDay = (m: Pick<Match, 'startTime' | 'classic' | 'archived'>) =>
+  m.classic?.date ?? (m.archived ? m.startTime.slice(0, 10) : undefined);
+
+/** "02 APR 2011" — the date printed on a ticket. Classics and archive matches use their recorded date. */
+export function ticketDate(m: Pick<Match, 'startTime' | 'classic' | 'archived'>): string {
+  const day = recordedDay(m);
+  if (day) {
+    const [y, mo, d] = day.split('-').map(Number);
     return `${pad2(d)} ${MONTHS[mo - 1]} ${y}`;
   }
   const d = new Date(m.startTime);
@@ -27,14 +35,15 @@ const startOfDay = (t: number) => {
   return d.getTime();
 };
 
-/** "Today", "Tomorrow", "Yesterday", or "Sat 24 Oct". */
+/** "Today", "Tomorrow", "Yesterday", "Sat 24 Oct", or "Sat 14 Oct 2023" outside this year. */
 export function dayLabel(iso: string, now = Date.now()): string {
   const diff = Math.round((startOfDay(Date.parse(iso)) - startOfDay(now)) / 86_400_000);
   if (diff === 0) return 'Today';
   if (diff === 1) return 'Tomorrow';
   if (diff === -1) return 'Yesterday';
   const d = new Date(iso);
-  return `${DAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()].charAt(0)}${MONTHS[d.getMonth()].slice(1).toLowerCase()}`;
+  const year = d.getFullYear() === new Date(now).getFullYear() ? '' : ` ${d.getFullYear()}`;
+  return `${DAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()].charAt(0)}${MONTHS[d.getMonth()].slice(1).toLowerCase()}${year}`;
 }
 
 /** Stable key for grouping matches by local day. */

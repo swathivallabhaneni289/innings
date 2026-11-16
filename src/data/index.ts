@@ -5,8 +5,8 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tansta
 import { useCallback, useEffect, useState } from 'react';
 
 import type {
-  AuthStartResponse,
-  AuthVerifyResponse,
+  AuthCodeResponse,
+  AuthSessionResponse,
   BootstrapResponse,
   CallView,
   ChatResponse,
@@ -20,6 +20,7 @@ import type {
   MatchPageResponse,
   NotificationsResponse,
   RankingsResponse,
+  ResetCodeResponse,
   SearchResponse,
   UserResponse,
   VaultResponse,
@@ -111,7 +112,7 @@ export function useNow(intervalMs = 15_000): number {
 
 /** Loads the catalog, the fan and their account into the cache. Needs a session token. */
 async function bootstrap(): Promise<BootstrapResponse> {
-  // The response still carries `token`; it is ignored. The only token is the one from /v1/auth/verify.
+  // The response still carries `token`; it is ignored. The only token is the one from signing in.
   const res = await api<BootstrapResponse>('/v1/bootstrap', { method: 'POST' });
   catalog.teams = res.teams;
   catalog.players = res.players;
@@ -122,8 +123,8 @@ async function bootstrap(): Promise<BootstrapResponse> {
 }
 
 /**
- * Root layout only: bootstraps a session found in SecureStore at launch. Sign-in bootstraps on its own
- * (see `signIn`), so this only runs while `status` is signedIn and `ready` is false.
+ * Root layout only: bootstraps a session found in SecureStore at launch. Signing in bootstraps on its own
+ * (see `startSession`), so this only runs while `status` is signedIn and `ready` is false.
  */
 export function useBootstrap() {
   const [error, setError] = useState<Error | null>(null);
@@ -144,15 +145,26 @@ export function useBootstrap() {
   return { error, running, run };
 }
 
-/** Texts a sign-in code to an E.164 number. */
-export const startSignIn = (phone: string) => api<AuthStartResponse>('/v1/auth/start', { method: 'POST', body: { phone }, token: null });
+// Signing up and in (docs/API.md → Auth). None of these send a session token.
+const authPost = <T>(path: string, body: unknown) => api<T>(path, { method: 'POST', body, token: null });
+
+/** Makes an account (unconfirmed) and emails a code to confirm the address. */
+export const signUp = (email: string, password: string) => authPost<AuthCodeResponse>('/v1/auth/signup', { email, password });
+
+/** Emails a new confirmation code. The answer is the same whether or not the address has an unconfirmed account. */
+export const resendConfirmation = (email: string) => authPost<AuthCodeResponse>('/v1/auth/confirm/resend', { email });
+
+/** Emails a reset code if the address has an account. The answer is the same either way. */
+export const forgotPassword = (email: string) => authPost<AuthCodeResponse>('/v1/auth/password/forgot', { email });
+
+/** Trades the right reset code for a short-lived token that may set a new password. */
+export const checkResetCode = (email: string, code: string) => authPost<ResetCodeResponse>('/v1/auth/password/code', { email, code });
 
 /**
- * Checks the code, stores the session and bootstraps it. Resolves once everything is in the cache, then the
- * root guards flip to onboarding or the app. Returns the account so the caller can route by `onboarded`.
+ * Stores the session from a sign-in and bootstraps it. Resolves once everything is in the cache, then the root
+ * guards flip to onboarding or the app. Returns the account so the caller can route by `onboarded`.
  */
-export async function signIn(phone: string, code: string): Promise<Account> {
-  const res = await api<AuthVerifyResponse>('/v1/auth/verify', { method: 'POST', body: { phone, code }, token: null });
+async function startSession(res: AuthSessionResponse): Promise<Account> {
   await saveToken(res.token);
   try {
     const boot = await bootstrap();
@@ -164,6 +176,25 @@ export async function signIn(phone: string, code: string): Promise<Account> {
   }
 }
 
+/** Checks the emailed code: the account's first sign-in. */
+export async function confirmEmail(email: string, code: string): Promise<Account> {
+  return startSession(await authPost<AuthSessionResponse>('/v1/auth/confirm', { email, code }));
+}
+
+/** Signs in with an email and password. */
+export async function signInWithPassword(email: string, password: string): Promise<Account> {
+  return startSession(await authPost<AuthSessionResponse>('/v1/auth/signin', { email, password }));
+}
+
+/** Sets a new password with a reset token and signs in; every other device is signed out. */
+export async function resetPassword(resetToken: string, password: string): Promise<Account> {
+  return startSession(await authPost<AuthSessionResponse>('/v1/auth/password/reset', { resetToken, password }));
+}
+
+/** Changes the password after checking the current one. This device stays signed in; the others are signed out. */
+export const changePassword = (currentPassword: string, newPassword: string) =>
+  api<void>('/v1/me/password', { method: 'PUT', body: { currentPassword, newPassword } });
+
 /** Signs out of this device: back to Welcome at once; the server is told best-effort, in the background. */
 export function signOut() {
   const token = useSession.getState().token;
@@ -171,13 +202,13 @@ export function signOut() {
   if (token) api<void>('/v1/auth/logout', { method: 'POST', token }).catch(() => {});
 }
 
-/** Deletes the account and everything it made, then ends the session. */
-export async function deleteAccount() {
-  await api<void>('/v1/me', { method: 'DELETE' });
+/** Deletes the account and everything it made, after checking the password, then ends the session. */
+export async function deleteAccount(password: string) {
+  await api<void>('/v1/me', { method: 'DELETE', body: { password } });
   endSession();
 }
 
-/** The signed-in fan's private account (phone, onboarded). Seeded by bootstrap; never refetched on its own. */
+/** The signed-in fan's private account (email, onboarded). Seeded by bootstrap; never refetched on its own. */
 export function useAccount() {
   const signedIn = useSession((s) => s.status === 'signedIn' && s.ready);
   return useQuery({
@@ -197,7 +228,7 @@ export function useMe() {
 /** Is this @username free? Lower-cased by the server; your own current handle counts as available. */
 export const checkHandle = (handle: string) => api<HandleCheckResponse>(`/v1/handles/${encodeURIComponent(handle)}`);
 
-/** SHA-256 hashes of contacts' E.164 numbers → fans on Innings. The server takes at most 5000 per call. */
+/** SHA-256 hashes of contacts' email addresses → fans on Innings. The server takes at most 5000 per call. */
 export async function matchContacts(hashes: string[]): Promise<ContactsMatchResponse['matches']> {
   const found = new Map<string, ContactsMatchResponse['matches'][number]>();
   for (let i = 0; i < hashes.length; i += 5000) {

@@ -74,7 +74,7 @@ const MATCHES: { a: string; b: string; line: string; venue: string; rating: numb
  * goes up and the stub shows a fun fact about the match. It only moves while the screen is in front.
  * `lead` holds the first match for the launch splash.
  */
-export function WelcomeTicket({ lead = 0, onStart }: { lead?: number; onStart: () => void }) {
+export function WelcomeTicket({ lead = 0, onStart, onSignIn }: { lead?: number; onStart: () => void; onSignIn: () => void }) {
   const t = useTheme();
   const insets = useSafeAreaInsets();
   const { width, fontScale } = useWindowDimensions();
@@ -238,7 +238,7 @@ export function WelcomeTicket({ lead = 0, onStart }: { lead?: number; onStart: (
           <Barcode seed="innings-admit-one" width={46} height={factH + 18} />
         </View>
         <Button label="Get started" size="lg" onPress={onStart} maxFontSizeMultiplier={1.25} />
-        <Pressable onPress={onStart} accessibilityRole="button" style={({ pressed }) => [styles.secondary, { opacity: pressed ? 0.6 : 1 }]}>
+        <Pressable onPress={onSignIn} accessibilityRole="button" style={({ pressed }) => [styles.secondary, { opacity: pressed ? 0.6 : 1 }]}>
           <Txt variant="bodySmall" maxFontSizeMultiplier={1.25} style={{ fontFamily: fonts.label }}>
             I already have an account
           </Txt>

@@ -6,10 +6,10 @@ import { Button, Panel, Txt } from '@/components';
 import type { Match } from '@/domain/types';
 import { useTheme } from '@/theme';
 
-/** The way into a match's chat room, worded for where the match is. Vault classics have no chat. */
+/** The way into a match's chat room, worded for where the match is. Vault classics and archive matches have no chat. */
 export function ChatEntry({ match }: { match: Match }) {
   const t = useTheme();
-  if (match.kind === 'classic') return null;
+  if (match.kind === 'classic' || match.archived) return null;
   const live = match.state === 'live';
   const line = live
     ? 'Talk it through with other fans while it’s on.'

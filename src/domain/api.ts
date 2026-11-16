@@ -89,20 +89,32 @@ export interface BoardRow {
 
 // ---- Endpoint responses ----
 
-/** POST /v1/auth/start {phone} — texts a 6-digit code. The answer is the same whether or not the number has an account. */
-export interface AuthStartResponse {
-  phone: string; // the number as E.164
+/**
+ * POST /v1/auth/signup {email, password}, /v1/auth/confirm/resend {email} and /v1/auth/password/forgot {email} —
+ * each emails a 6-digit code. Resend and forgot answer the same whether or not the address has an account.
+ */
+export interface AuthCodeResponse {
+  email: string; // the address, trimmed and lower-cased
   resendInSeconds: number; // wait this long before asking for another code
   expiresInSeconds: number; // how long the code works
-  devCode?: string; // only when the server runs with INNINGS_DEV_OTP=1 and no SMS provider
+  devCode?: string; // only when the server runs with INNINGS_DEV_CODES=1 and no mail server
 }
 
-/** POST /v1/auth/verify {phone, code} — signs in, creating the account the first time this number verifies. */
-export interface AuthVerifyResponse {
+/**
+ * POST /v1/auth/confirm {email, code}, /v1/auth/signin {email, password} and /v1/auth/password/reset
+ * {resetToken, password} — each signs this device in. `isNew` is true the first time (confirming the address).
+ */
+export interface AuthSessionResponse {
   token: string;
   me: User;
   account: Account;
   isNew: boolean;
+}
+
+/** POST /v1/auth/password/code {email, code} — the right reset code buys a token that may set a new password. */
+export interface ResetCodeResponse {
+  resetToken: string;
+  expiresInSeconds: number;
 }
 
 /** GET /v1/handles/{handle} — is this @username free? Your own current handle counts as available. */

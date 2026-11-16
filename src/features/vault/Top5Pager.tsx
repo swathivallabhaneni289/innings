@@ -25,7 +25,7 @@ export function Top5Pager({ top5, ratings }: { top5: Match[]; ratings: Record<st
       <Panel style={{ paddingVertical: 4 }}>
         <Empty
           title="No Top 5 yet"
-          body="Open a collection below and tap “Pin to Top 5” on the games you'd take to your grave. Five tickets, your call."
+          body="Tap “Pin to Top 5” on any match, or on the games in a collection below. Five tickets, your call."
         />
       </Panel>
     );

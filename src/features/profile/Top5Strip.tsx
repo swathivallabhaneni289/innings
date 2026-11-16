@@ -37,7 +37,7 @@ export function Top5Strip({
         {isMe ? (
           <Empty
             title="No Top 5 yet"
-            body="The five matches you'd rewatch on any rain-delayed day. Pin them in the Vault."
+            body="The five matches you'd rewatch on any rain-delayed day. Pin them from any match, or in the Vault."
             action={<Button label="Open the Vault" kind="outline" size="sm" onPress={() => router.navigate('/vault')} style={{ minHeight: 44 }} />}
           />
         ) : (

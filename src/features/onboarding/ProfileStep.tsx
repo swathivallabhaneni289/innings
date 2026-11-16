@@ -22,7 +22,7 @@ const yearOf = (iso: string | undefined) => {
 };
 
 /**
- * Step 1, "Your fan card": name, @username, favourite team and an optional photo, with the card printing
+ * Step 1, "Your fan card": name, @username, the teams you back and an optional photo, with the card printing
  * itself above as the fan types. Continue saves it all with PUT /v1/me.
  */
 export function ProfileStep({ me, account }: { me: User; account: Account | undefined }) {
@@ -31,7 +31,7 @@ export function ProfileStep({ me, account }: { me: User; account: Account | unde
   const { updateMe } = useActions();
   const [name, setName] = useState(me.name);
   const [handle, setHandle] = useState(me.handle);
-  const [teamId, setTeamId] = useState(me.favouriteTeamId);
+  const [teamIds, setTeamIds] = useState(me.teamIds);
   const handleInput = useRef<TextInput>(null);
   const [photoUri, setPhotoUri] = useState(me.photoUri ?? '');
   const [saving, setSaving] = useState(false);
@@ -40,8 +40,8 @@ export function ProfileStep({ me, account }: { me: User; account: Account | unde
   const check = useHandleCheck(handle, me.handle || undefined);
 
   const nameOk = name.trim().length > 0;
-  const ready = nameOk && handleOk(check) && !handleError && !!teamId;
-  const missing = [!nameOk && 'your name', !handleOk(check) && 'a username', !teamId && 'a team'].filter(Boolean) as string[];
+  const ready = nameOk && handleOk(check) && !handleError && teamIds.length > 0;
+  const missing = [!nameOk && 'your name', !handleOk(check) && 'a username', teamIds.length === 0 && 'a team'].filter(Boolean) as string[];
 
   const pickPhoto = async () => {
     setError(null);
@@ -59,7 +59,7 @@ export function ProfileStep({ me, account }: { me: User; account: Account | unde
     setError(null);
     try {
       const photoChanged = photoUri !== (me.photoUri ?? '');
-      await updateMe({ name: name.trim(), handle, favouriteTeamId: teamId, ...(photoChanged ? { photoUri } : {}) });
+      await updateMe({ name: name.trim(), handle, teamIds, ...(photoChanged ? { photoUri } : {}) });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.push('/onboarding/friends');
     } catch (e) {
@@ -86,7 +86,7 @@ export function ProfileStep({ me, account }: { me: User; account: Account | unde
           userId={me.id}
           name={name}
           handle={handle}
-          teamId={teamId}
+          teamIds={teamIds}
           avatarColour={me.avatarColour}
           photoUri={photoUri}
           memberSince={yearOf(account?.createdAt)}
@@ -154,9 +154,9 @@ export function ProfileStep({ me, account }: { me: User; account: Account | unde
           />
         </Panel>
 
-        <SectionHeader title="Favourite team" />
+        <SectionHeader title="Teams you back" />
         <Panel>
-          <TeamChips value={teamId} onChange={setTeamId} saved={me.favouriteTeamId} />
+          <TeamChips value={teamIds} onChange={setTeamIds} saved={me.teamIds} />
         </Panel>
 
         {error ? (

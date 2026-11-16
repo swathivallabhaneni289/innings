@@ -9,8 +9,8 @@ import (
 )
 
 // windowLimiter allows at most n events per key in any rolling window. It lives in memory, so a restart forgets
-// it. That is fine for the per-IP cap, which only slows one source down; the per-number cap that protects people's
-// phones is stored in the database.
+// it. That is fine for the per-IP and per-account caps here, which only slow one source down; the per-address cap
+// that protects people's inboxes is stored in the database.
 type windowLimiter struct {
 	mu     sync.Mutex
 	n      int
@@ -30,26 +30,63 @@ const sweepAt = 4096
 func (l *windowLimiter) allow(key string, now time.Time) (bool, time.Duration) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
+	if wait := l.waitLocked(key, now); wait > 0 {
+		return false, wait
+	}
+	l.recordLocked(key, now)
+	return true, 0
+}
+
+// wait is how long until key may have another event: 0 while it is under the cap. It records nothing, for caps
+// that count only failures (see record).
+func (l *windowLimiter) wait(key string, now time.Time) time.Duration {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	return l.waitLocked(key, now)
+}
+
+// record counts an event for key at now, whether or not the cap is reached.
+func (l *windowLimiter) record(key string, now time.Time) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	l.recordLocked(key, now)
+}
+
+// forget clears key's events (a right password wipes the slate for that account).
+func (l *windowLimiter) forget(key string) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	delete(l.hits, key)
+}
+
+func (l *windowLimiter) waitLocked(key string, now time.Time) time.Duration {
 	cut := now.Add(-l.window)
 	hs := l.hits[key]
 	i := 0
 	for i < len(hs) && !hs[i].After(cut) {
 		i++
 	}
-	hs = hs[i:]
-	if len(hs) >= l.n {
-		l.hits[key] = hs
-		return false, hs[0].Add(l.window).Sub(now)
+	if hs = hs[i:]; len(hs) == 0 {
+		delete(l.hits, key)
+		return 0
 	}
-	l.hits[key] = append(hs, now)
+	l.hits[key] = hs
+	if len(hs) >= l.n {
+		return hs[len(hs)-l.n].Add(l.window).Sub(now)
+	}
+	return 0
+}
+
+func (l *windowLimiter) recordLocked(key string, now time.Time) {
+	l.hits[key] = append(l.hits[key], now)
 	if len(l.hits) > sweepAt {
+		cut := now.Add(-l.window)
 		for k, hs := range l.hits {
 			if !hs[len(hs)-1].After(cut) {
 				delete(l.hits, k)
 			}
 		}
 	}
-	return true, 0
 }
 
 // ClientIP is the host part of r.RemoteAddr. X-Forwarded-For is ignored on purpose: any client can set it. Behind a

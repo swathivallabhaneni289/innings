@@ -1,10 +1,10 @@
 // Profile and Settings constants: the teams a fan can back, and the avatar colours they can pick.
 import { paper } from '@/theme';
 
-/** Favourite-team choices in Settings (looked up with getTeam). Franchises show their short code on chips. */
+/** The teams a fan can back, in sign-up and Settings (looked up with getTeam). IPL sides show their short code on chips. */
 export const FAV_TEAMS = {
   international: ['ind', 'aus', 'eng', 'sa', 'nz', 'pak', 'sl', 'wi', 'ind-w', 'aus-w'],
-  franchise: ['csk', 'mi', 'rcb', 'kkr'],
+  franchise: ['csk', 'mi', 'rcb', 'kkr', 'srh', 'rr', 'dc', 'pbks', 'gt', 'lsg'],
 } as const;
 
 /**

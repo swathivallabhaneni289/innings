@@ -98,6 +98,11 @@ func buildTeams() map[string]domain.Team {
 	add(womenIntl, domain.Women, "international")
 	add(menFranchise, domain.Men, "franchise")
 	add(womenFranchise, domain.Women, "franchise")
+	for _, t := range archiveTeams { // past matches' sides the table doesn't have
+		if _, ok := m[t.ID]; !ok {
+			m[t.ID] = t
+		}
+	}
 	return m
 }
 

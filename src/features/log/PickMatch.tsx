@@ -27,7 +27,7 @@ export function PickMatch({ selectedId, onPick }: { selectedId: string | null; o
         <TextInput
           value={q}
           onChangeText={setQ}
-          placeholder="Search older matches and classics"
+          placeholder="Teams and a year, like ind vs aus 2023"
           placeholderTextColor={t.inkFaint}
           autoCorrect={false}
           autoCapitalize="none"
@@ -48,7 +48,12 @@ export function PickMatch({ selectedId, onPick }: { selectedId: string | null; o
             {(data) => {
               const matches = data.matches;
               if (matches.length === 0)
-                return <Empty title="No match found" body={`Nothing for “${q.trim()}”. Try a team, a ground or a year, like “2011 final”.`} />;
+                return (
+                  <Empty
+                    title="No match found"
+                    body={`Nothing for “${q.trim()}”. Innings has recent matches, the Vault's classics, and every World Cup, Champions Trophy, Asia Cup and IPL game since 1973. Try teams and a year, like “ind vs aus 2023”.`}
+                  />
+                );
               return <View>{rows(matches)}</View>;
             }}
           </QueryState>

@@ -7,13 +7,14 @@ import { LiveCalls } from './LiveCalls';
 import { FanRating } from './FanRating';
 import { Header } from './Header';
 import { FriendsWatching, LiveScoreboard, ResultCard } from './LiveScoreboard';
-import { LogAction } from './LogAction';
+import { ReviewBox } from './ReviewBox';
 import { PlayerRatings } from './PlayerRatings';
 import { PredictionResults } from './PredictionResults';
 import { PredictionSection, YourPicks } from './PredictionSection';
 import { Reviews } from './Reviews';
 import { WatchingButton } from './Watching';
 import { WatchSummary } from './WatchSummary';
+import { YourTake } from './YourTake';
 
 /** The Match Page body. Its layout follows the match: BEFORE (upcoming), DURING (live), AFTER (completed and every Vault classic). */
 export function MatchPage({ data }: { data: MatchPageResponse }) {
@@ -76,7 +77,7 @@ function After({ data }: { data: MatchPageResponse }) {
     <View>
       <ResultCard match={match} />
       <View style={{ marginTop: 12 }}>
-        <LogAction match={match} log={mine.log} />
+        <YourTake match={match} log={mine.log} />
       </View>
       <ChatEntry match={match} />
       {data.calls?.length ? (
@@ -105,6 +106,7 @@ function After({ data }: { data: MatchPageResponse }) {
       {fans ? (
         <>
           <SectionHeader title="Reviews" />
+          <ReviewBox match={match} log={mine.log} />
           <Reviews fans={fans} />
           <SectionHeader title="Where fans watched" />
           <WatchSummary watch={fans.watch} />

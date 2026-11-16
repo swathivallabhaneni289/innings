@@ -1,17 +1,17 @@
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button, Empty, KeyboardAware, Loading, QueryState, Rule, Screen, Txt } from '@/components';
 import { squads, useActions, useMatchPage, useNow, useUserProfile, type FeedItem } from '@/data';
-import type { Match, MatchLog } from '@/domain/types';
+import type { Match } from '@/domain/types';
 import { StoryCard, STORY_H } from '@/features/share/StoryCard';
 import { ForceTheme, useTheme } from '@/theme';
 import { useShareStory } from '@/features/share/useShareStory';
 import { stubNo as fmtStubNo } from '@/lib/format';
-import { draftFromLog, emptyDraft, toNewLog, type Draft, type StepId } from './draft';
+import { draftFromLog, emptyDraft, lastPlaceOf, toNewLog, type Draft, type StepId } from './draft';
 import { LogHeader } from './LogHeader';
 import { MatchLine } from './MatchLine';
 import { PickMatch } from './PickMatch';
@@ -36,6 +36,8 @@ export function LogFlow({ presetMatchId }: { presetMatchId?: string }) {
   const me = useUserProfile('me');
   const scroll = useRef<ScrollView>(null);
   const story = useShareStory();
+  // Pulled out by name so React's linter can tell the ref is handed to the story card, not read during render.
+  const { ref: storyRef } = story;
 
   const [skipPick, setSkipPick] = useState(!!presetMatchId);
   const [step, setStep] = useState<StepId | 'printed'>(presetMatchId ? 'rating' : 'match');
@@ -52,19 +54,15 @@ export function LogFlow({ presetMatchId }: { presetMatchId?: string }) {
   const ready = !!pageData && prefilledFor === draft.matchId;
 
   // Load the chosen match once: re-logging starts from the old stub, a new log starts blank.
-  useEffect(() => {
-    if (!pageData || prefilledFor === pageData.match.id) return;
+  // Done during render, so React redoes this render with the filled draft before anything reaches the screen.
+  if (pageData && prefilledFor !== pageData.match.id) {
     const log = pageData.mine.log;
     setDraft(log ? draftFromLog(log) : emptyDraft(pageData.match.id));
     setPrefilledFor(pageData.match.id);
-  }, [pageData, prefilledFor]);
+  }
 
   // Default place: wherever the fan logged from last, else Home.
-  const lastPlace = useMemo(() => {
-    let last: MatchLog | null = null;
-    for (const fi of me.data?.logs ?? []) if (!last || fi.log.createdAt > last.createdAt) last = fi.log;
-    return last?.watchedAt ?? null;
-  }, [me.data]);
+  const lastPlace = useMemo(() => lastPlaceOf((me.data?.logs ?? []).map((fi) => fi.log)), [me.data]);
   const place = draft.watchedAt ?? lastPlace ?? 'home';
 
   const steps: StepId[] | null =
@@ -273,7 +271,7 @@ export function LogFlow({ presetMatchId }: { presetMatchId?: string }) {
           // The 9:16 story card, mounted off-screen (outside the scroll view) so it's laid out and stamped before Share.
           <View pointerEvents="none" style={styles.offscreen}>
             <ForceTheme mode="paper">
-              <StoryCard ref={story.ref} match={saved.item.match} log={saved.item.log} />
+              <StoryCard ref={storyRef} match={saved.item.match} log={saved.item.log} />
             </ForceTheme>
           </View>
         ) : null}

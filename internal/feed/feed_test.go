@@ -24,12 +24,33 @@ import (
 // the app doesn't show.
 var now = time.Date(2026, 10, 29, 14, 0, 0, 0, time.UTC)
 
-func known() map[string]domain.Team { return sim.NewWorld(now).Teams() }
+// known is the app's team table without Oman, which the archive brings (the 2021 T20 World Cup), so the tests still
+// see the feed learn a side it has never met.
+func known() map[string]domain.Team {
+	teams := sim.NewWorld(now).Teams()
+	delete(teams, "oman")
+	return teams
+}
 
-// espnFake serves the testdata as ESPN would, counting calls per path.
+// espnFake serves the testdata as ESPN would, counting calls per path and noting the days asked for.
 type espnFake struct {
 	mu    sync.Mutex
 	calls map[string]int
+	days  []string
+}
+
+// takeDays returns the days asked for before today since the last call.
+func (f *espnFake) takeDays(today time.Time) []string {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	var out []string
+	for _, d := range f.days {
+		if d < today.UTC().Format("20060102") {
+			out = append(out, d)
+		}
+	}
+	f.days = nil
+	return out
 }
 
 var summaries = map[string]string{"1550718": "summary-engsl.json", "1539435": "summary-nzind.json", "1543945": "summary-wbbl.json"}
@@ -37,6 +58,9 @@ var summaries = map[string]string{"1550718": "summary-engsl.json", "1539435": "s
 func (f *espnFake) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	f.mu.Lock()
 	f.calls[r.URL.Path]++
+	if d := r.URL.Query().Get("dates"); d != "" {
+		f.days = append(f.days, d)
+	}
 	f.mu.Unlock()
 	file := ""
 	switch {
@@ -211,9 +235,10 @@ func TestPollFetchesSummariesSavesAndReloads(t *testing.T) {
 		t.Fatalf("Lanning = %+v", pl["esp-329336"])
 	}
 
-	// Today's scoreboard plus one per day of the week ahead, which found the series' 5th T20I on 1 November.
+	// Today's scoreboard, one per day of the week ahead (which found the series' 5th T20I on 1 November), and, as the
+	// database is new, one per day of the last two weeks.
 	boards, sums := f.count("/v2/scoreboard"), f.count("/site/")
-	if boards != 1+aheadDays {
+	if boards != 1+aheadDays+backDays {
 		t.Fatalf("scoreboard calls = %d", boards)
 	}
 	if fifth := ms["es-1539436"]; fifth.State != domain.Upcoming || fifth.Stage != "5th T20I" || fifth.Venue.Name != "Bay Oval" {
@@ -267,6 +292,45 @@ func TestQuietWhenNothingIsOn(t *testing.T) {
 	s.recs["es-1"].Match.StartTime = now.Add(30 * time.Minute).Format(time.RFC3339)
 	if !s.busy(now) {
 		t.Fatal("a match half an hour off is busy")
+	}
+}
+
+// TestCatchesUpAfterTimeOff: the scoreboard lists only today's and the latest matches, so after the server was off (or
+// the Mac slept) the feed asks for each day it missed, back to its last read and never more than backDays.
+func TestCatchesUpAfterTimeOff(t *testing.T) {
+	ctx := context.Background()
+	f := &espnFake{calls: map[string]int{}}
+	st := openStore(t)
+	clock := now
+	s := testSource(t, f, st, &clock)
+	s.poll(ctx)
+	if got := f.takeDays(clock); len(got) != backDays || got[0] != "20261015" || got[len(got)-1] != "20261028" {
+		t.Fatalf("a new database looks back %d days: %v", backDays, got)
+	}
+	clock = now.Add(time.Minute)
+	s.poll(ctx)
+	if got := f.takeDays(clock); len(got) != 0 {
+		t.Fatalf("a minute later: %v", got)
+	}
+	clock = now.Add(3 * 24 * time.Hour) // the Mac slept for three days
+	s.poll(ctx)
+	if got := strings.Join(f.takeDays(clock), ","); got != "20261029,20261030,20261031" {
+		t.Fatalf("after three days asleep: %s", got)
+	}
+	// A restart two days later picks up from the last read it saved.
+	clock = now.Add(5 * 24 * time.Hour)
+	s2 := testSource(t, f, st, &clock)
+	if err := s2.Load(ctx); err != nil {
+		t.Fatal(err)
+	}
+	s2.poll(ctx)
+	if got := strings.Join(f.takeDays(clock), ","); got != "20261101,20261102" {
+		t.Fatalf("after a restart: %s", got)
+	}
+	clock = now.Add(40 * 24 * time.Hour) // off for over a month
+	s2.poll(ctx)
+	if got := f.takeDays(clock); len(got) != backDays {
+		t.Fatalf("after a month off: %d days, want %d", len(got), backDays)
 	}
 }
 

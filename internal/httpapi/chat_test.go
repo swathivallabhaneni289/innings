@@ -87,7 +87,7 @@ func TestMatchChat(t *testing.T) {
 	}
 
 	// Deleting an account takes its messages with it.
-	if status, _ := friend.do("DELETE", "/v1/me", nil); status != http.StatusNoContent && status != http.StatusOK {
+	if status, _ := friend.do("DELETE", "/v1/me", map[string]string{"password": friend.password}); status != http.StatusNoContent && status != http.StatusOK {
 		t.Fatalf("delete: %d", status)
 	}
 	if _, got := chat(me, "/v1/matches/live/chat"); len(got.Messages) != 1 {
