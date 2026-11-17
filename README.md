@@ -10,25 +10,21 @@ I made Innings, from the first plan to a working app for iPhone and Android, by 
 
 ## Screenshots
 
-**Android** (Pixel 8 emulator):
+These come from `make demo` on 17 November 2026, on an iPhone 17 simulator. The matches, scores, players and grounds are real, from ESPN's feed and Innings' own archive. The friends, their stubs and the crowd ratings are simulated, since Innings hasn't launched, and the demo account's predictions are made up. The same app runs on Android and was tested on a Pixel 8 emulator.
 
-| Home | Matches | Match Page | Log it |
-| --- | --- | --- | --- |
-| <img src="docs/screenshots/android-home.png" width="200" alt="Home with live matches as tickets"> | <img src="docs/screenshots/android-matches.png" width="200" alt="Matches grouped by day"> | <img src="docs/screenshots/android-match.png" width="200" alt="Match Page after the match"> | <img src="docs/screenshots/android-log.png" width="200" alt="Rating a match in cricket balls"> |
-| **The Vault** | **Profile** | **A friend's stub** | **Dark theme** |
-| <img src="docs/screenshots/android-vault.png" width="200" alt="On This Day in the Vault"> | <img src="docs/screenshots/android-profile.png" width="200" alt="Profile with stats and stubs"> | <img src="docs/screenshots/android-stub.png" width="200" alt="A logged ticket stub"> | <img src="docs/screenshots/android-floodlights.png" width="200" alt="The dark floodlights theme"> |
-
-**Signing up** (Android): a welcome screen, an email and password confirmed by an emailed code, the fan card, and finding friends.
-
-| Welcome | The code | Fan card | Find friends |
-| --- | --- | --- | --- |
-| <img src="docs/screenshots/android-welcome.png" width="200" alt="Welcome screen showing a match ticket"> | <img src="docs/screenshots/android-signin-code.png" width="200" alt="Entering the 6-digit code emailed at sign-up"> | <img src="docs/screenshots/android-fancard.png" width="200" alt="Setting up a fan card with a username and three teams"> | <img src="docs/screenshots/android-find-friends.png" width="200" alt="Finding friends from contacts"> |
-
-**iPhone** (iPhone 17 Pro simulator):
-
-| Home | Match Page | Log it | The Vault | Profile | Dark theme |
-| --- | --- | --- | --- | --- | --- |
-| <img src="docs/screenshots/iphone-home.png" width="130" alt="Home"> | <img src="docs/screenshots/iphone-match.png" width="130" alt="Match Page"> | <img src="docs/screenshots/iphone-log.png" width="130" alt="Pick the match to log"> | <img src="docs/screenshots/iphone-vault.png" width="130" alt="The Vault"> | <img src="docs/screenshots/iphone-profile.png" width="130" alt="Profile"> | <img src="docs/screenshots/iphone-floodlights.png" width="130" alt="Dark theme"> |
+| Home | Matches | A live match |
+| --- | --- | --- |
+| <img src="docs/screenshots/iphone-home.png" width="250" alt="Home: South Africa v Bangladesh live, and Your Call on New Zealand v India"> | <img src="docs/screenshots/iphone-matches.png" width="250" alt="Matches: two Tests live, with their scores"> | <img src="docs/screenshots/iphone-live.png" width="250" alt="Match Page for South Africa v Bangladesh, live"> |
+| What's on now, and your call on the next big match, which locks at the first ball. | Live, upcoming and recent matches by day, with real scores. Chips filter by India, the IPL and other competitions. | SA v BAN, live from the Wanderers. The score refreshes every 20 seconds, and the chat is a tap away. |
+| **Make a call** | **Log it** | **A friend's stub** |
+| <img src="docs/screenshots/iphone-call.png" width="250" alt="Making a call on whether a South African batter reaches a score"> | <img src="docs/screenshots/iphone-log.png" width="250" alt="Logging a match, step one: pick the match"> | <img src="docs/screenshots/iphone-stub.png" width="250" alt="A friend's stub for Sri Lanka v India at Hobart, 2012"> |
+| Fans make their own calls for the chat: a batter from the real XI and a score, then everyone picks a side. Right answers earn 5 points. | Step one of four is picking the match. Then rate it, rate the players and say where you watched. | Sipho's stub for Kohli's 133* at Hobart: the rating, the review and where it was watched. |
+| **The Vault** | **A match from the Vault** | **Profile** |
+| <img src="docs/screenshots/iphone-vault.png" width="250" alt="The Vault: On This Day shows the 2023 World Cup final"> | <img src="docs/screenshots/iphone-match.png" width="250" alt="Match Page for the 2011 World Cup final"> | <img src="docs/screenshots/iphone-profile.png" width="250" alt="Profile with the Top 5 and stats"> |
+| On This Day brings back the 2023 World Cup final, three years ago this week. | The 2011 final: rate it with a tap, log it, or pin it to your Top 5. | The Top 5 as tickets, then matches logged, average rating, prediction accuracy and points. |
+| **Friends** | **Floodlights** | **Welcome** |
+| <img src="docs/screenshots/iphone-friends.png" width="250" alt="Friends: finding fans from contacts and following them"> | <img src="docs/screenshots/iphone-floodlights.png" width="250" alt="The Matches tab in the dark theme"> | <img src="docs/screenshots/iphone-welcome.png" width="250" alt="Welcome screen: a ticket for MI v CSK at Chepauk"> |
+| Follow fans to see their stubs on Home and race them on the Bragging Board. Contacts are matched on hashed email addresses. | Floodlights, the dark theme, follows the phone's setting or can be turned on in Settings. | The first screen: one ticket that flips through real matches like a scoreboard. |
 
 ## Why Innings
 
@@ -50,7 +46,7 @@ Innings treats every match like a release on opening night, the way Letterboxd t
 
 **Profile.** The fan's Top 5 as big tickets, editable at any time, along with matches logged, average rating, prediction accuracy and points, every stub collected, where they've watched from, and their rank among friends, with badges like *Called the Upset*.
 
-**Accounts.** Sign-up asks for an email and a password, and a 6-digit code emailed to that address confirms it. Fans then set up a fan card with a unique @username and up to five teams, and find friends from their contacts, matched on email addresses that are hashed on the phone and never stored. "Forgot password?" sets a new one with an emailed code, Settings can change the password, and both sign out the fan's other devices. Deleting the account asks for the password first.
+**Accounts.** Sign-up asks for an email and a password, and a 6-digit code emailed to that address confirms it. Until a mail account is set up for Innings, the server runs in dev mode and shows the code on screen instead. Fans then set up a fan card with a unique @username and up to five teams, and find friends from their contacts, matched on email addresses that are hashed on the phone and never stored. "Forgot password?" sets a new one with an emailed code, Settings can change the password, and both sign out the fan's other devices. Deleting the account asks for the password first.
 
 ## Architecture
 
@@ -87,7 +83,7 @@ The original plan is in [docs/PLAN.md](docs/PLAN.md). Every requirement, with it
 
 ## Testing
 
-The Go side has table tests for scoring and aggregates, `httptest` checks for every endpoint (including that no list ever comes back as `null`), tests that the simulated world is deterministic, and tests of the real-match feed against saved ESPN responses. Sign-up, codes, passwords and the rate limits have their own tests, and the mailer is tested against a mail server on the same machine. On the app side, 69 Jest tests cover the pure helpers: the log draft, the Top 5, the sign-up checks, contact emails, teams and date formatting. `scripts/smoke.py` runs 88 end-to-end checks against a fresh server, from sign-up to deleting the account.
+The Go side has 99 test functions: table tests for scoring and aggregates, `httptest` checks for every endpoint (including that no list ever comes back as `null`), tests that the simulated world is deterministic, and tests of the real-match feed against saved ESPN responses. Sign-up, codes, passwords and the rate limits have their own tests, and the mailer is tested against a mail server on the same machine. The demo account's tests check that it signs in with the password `make demo` prints and only gets predictions on finished matches with both XIs known. On the app side, 69 Jest tests cover the pure helpers: the log draft, the Top 5, the sign-up checks, contact emails, teams and date formatting. `scripts/smoke.py` runs 88 end-to-end checks against a fresh server, from sign-up to deleting the account.
 
 ```bash
 make test         # Go tests, then the Jest tests
@@ -97,7 +93,7 @@ npx expo lint     # lint
 
 ## Getting started
 
-You need Go 1.26+, Node 20+, and Xcode (iOS Simulator) or Android Studio (Android Emulator).
+You need Go 1.26+, Node 20+, and Xcode (iOS Simulator) or Android Studio (Android Emulator). To see it with data straight away, run `make demo` in place of `make api` ([Demo](#demo) below).
 
 ```bash
 make api          # Go API on http://localhost:8088 (creates innings.db on first run)

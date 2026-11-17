@@ -5,10 +5,10 @@ milestone_name: Email sign-in and close-out
 current_phase: 10
 current_phase_name: email-sign-in-and-close-out
 status: complete
-stopped_at: v1.3 complete, then past matches and the match page's rating, Top 5 pin, review box and Top 5 editor (2026-11-13), then the repo made public with a PRD and the build's prompts (2026-11-16); sign-up codes stay on screen in dev mode, since the developer won't use a personal email password, and `make demo` added (2026-11-17)
-last_updated: "2026-11-17T08:47:37.000Z"
+stopped_at: v1.3 complete, then past matches and the match page's rating, Top 5 pin, review box and Top 5 editor (2026-11-13), then the repo made public with a PRD and the build's prompts (2026-11-16); sign-up codes stay on screen in dev mode, since the developer won't use a personal email password, and `make demo` added, the README screenshots retaken from it, and the project parked (2026-11-17)
+last_updated: "2026-11-17T17:45:00.000Z"
 last_activity: 2026-11-17
-last_activity_desc: Sign-up codes stay on screen rather than use a personal email password; make demo runs a ready-made demo account on today's real matches (or the simulation)
+last_activity_desc: make demo runs a ready-made demo account on today's real matches; the README screenshots were retaken from it, and the project is parked
 progress:
   total_phases: 10
   completed_phases: 10
@@ -18,6 +18,8 @@ progress:
 ---
 
 # Project State
+
+> **PARKED (2026-11-17).** Innings is finished for now. `make demo` shows it on the day's real matches with a ready-made account (README → Demo), and the README's screenshots were retaken from it. Nothing more is planned until the developer picks it up again, and the pending todos below are optional.
 
 > **CURRENT STATUS (2026-11-16).** All ten phases are complete (v1.0 to v1.3, 79 requirements), and two additions came after them. On 2026-11-13 a quick task added past matches (DATA-02): every World Cup, Champions Trophy, Asia Cup and IPL season since 1973, 2,948 matches in `internal/sim/archive.json`, which `scripts/archive.py` builds from Wikipedia's tournament pages and checks match by match. Fans find them in search, open their pages and log them; they never show on the Matches tab or Home. Later that day, at the developer's request, every finished match's page gained the fan's own say: a tap on the balls rates it and saves at once, "Pin to Top 5" works for any match, a box under Reviews takes their review, and Edit on the Top 5 opens `/top5` to reorder it or take games out (MATCH-10 and VAULT-05, reworded). `go test ./...`, `go vet`, `npx tsc --noEmit`, `npx expo lint` and 69 Jest tests pass, and `scripts/smoke.py` passed 88 checks against a fresh server on 2026-11-16. The new match-page panels were checked on the "Innings QA" iPhone simulator only. Phase 10 moved sign-in from phone numbers to email and password. Sign-up asks only for an email and a password; a 6-digit code emailed to the address confirms it, and then come the fan card and find-friends steps. Forgot password works with an emailed code, Settings has change password, and both sign out the fan's other devices; delete account asks for the password. Phone numbers are no longer collected, and contacts match on SHA-256 hashes of lower-cased email addresses. Fans can back up to five teams, main team first. Matches are real, from ESPN's public scores feed, with a chat room and calls during each match (Phases 8 and 9). Phase 10 was walked on the "Innings QA" iPhone simulator and the Android emulator. In dev mode the code shows on screen; real emails go out once `.env` holds a mail account's settings (README → Real emails), which hasn't been tried, since the developer won't use a personal email password. The repo is the public GitHub repo `swathivallabhaneni289/innings` (private until 2026-11-16), branch `main`. Next: an Android pass on the new match-page panels, real email delivery, then the developer's own phones.
 
@@ -34,7 +36,7 @@ See: .planning/PROJECT.md (updated 2026-10-30)
 Phase: 10 of 10 (email sign-in and close-out): complete
 Plan: none; built directly (see ROADMAP.md → Phase 10)
 Status: v1.3 milestone complete
-Last activity: 2026-11-16: the repo went public after a scan for secrets, the README was rewritten, and a PRD and the build's prompts were added. Before that, on 2026-11-13: past matches back to 1973 (DATA-02, a quick task), then the match page's rating, "Pin to Top 5" and review box, and the Top 5 editor
+Last activity: 2026-11-17: `make demo`, then the README screenshots retaken from it, and the project parked. On 2026-11-16 the repo went public after a scan for secrets, the README was rewritten, and a PRD and the build's prompts were added. Before that, on 2026-11-13: past matches back to 1973 (DATA-02, a quick task), then the match page's rating, "Pin to Top 5" and review box, and the Top 5 editor
 
 Progress: [██████████] 100%
 
@@ -99,7 +101,7 @@ Recent decisions:
 - Photos are only for the profile picture, and they stay on the phone; uploading them is MEDIA-01
 - Developer: confirm the stock colours for WPL, World Cup, BBL, SA20, The Hundred and Vault classics, and the darkened floodlights stocks (shown in the screenshots; no sign-off recorded)
 - Walk every screen in floodlights; the Phase 6 review captured four of them in the dark theme
-- Retake the README screenshots (most are from 2026-10-22, before chat, calls, past matches and the match page's rating) from `make demo`, which runs on real matches, so calls show whenever one is live; then record a short walkthrough for showing the app
+- Developer: record a short walkthrough of `make demo` as a backup for showing the app. The README screenshots were retaken from it on 2026-11-17, on iPhone only; the old Android ones (from 2026-10-22 to 10-30) were removed, and new ones need the emulator
 - Six archive finals have a wrong stage label ("Match scorecard", "Chennai Super Kings innings"): Champions Trophy 2013 and 2017, IPL 2022 and 2023, and both 2026 T20 World Cup finals. Fix the stage parsing in `scripts/archive.py` and rebuild (it reads Wikipedia, so ask first)
 
 ### Blockers/Concerns
@@ -127,7 +129,7 @@ Items acknowledged and carried forward:
 ## Session Continuity
 
 Last session: 2026-11-17
-Stopped at: the repo is public, with the README rewritten and `docs/PRD.md` and `docs/PROMPTS.md` added; sign-up codes stay on screen in dev mode, since the developer won't use a personal email password; `make demo` runs a ready-made demo account (`cmd/api/demo.go`) for showing the app
+Stopped at: parked. The repo is public, with the README, `docs/PRD.md` and `docs/PROMPTS.md`; sign-up codes stay on screen in dev mode, since the developer won't use a personal email password; `make demo` runs a ready-made demo account (`cmd/api/demo.go`) for showing the app, and the README's screenshots come from it
 Resume file: none
 
 - Run locally: `make api` (port 8088, SQLite file `./innings.db`; reads `.env` through `INNINGS_ENV_FILE`; sign-up codes show on screen in dev mode until `.env` has SMTP settings; `make reset-db` wipes the database) and `make app` (Metro on 8082; press `i` for iOS or `a` for Android). To sign up, use any email address and a password of at least 8 characters, then tap the dev code shown on the screen.
@@ -137,4 +139,4 @@ Resume file: none
 - A build from before Phase 7 lacks sign-in's native modules, so build again (`npx expo run:android --port 8082`, `npx expo run:ios`). Phase 10 added none.
 - iPhone: the "Innings QA" simulator. Android emulator: AVD `innings_pixel`; `adb reverse tcp:8082 tcp:8082` and `adb reverse tcp:8088 tcp:8088`; builds need `JAVA_HOME` set to JDK 17. The emulator also reaches the API at 10.0.2.2.
 - On a phone, the app reaches the API through the Metro host's LAN address; `EXPO_PUBLIC_API_URL` overrides it.
-- Screenshot tooling: start Metro with `EXPO_PUBLIC_QA_DRIVER=<url>` and the app polls that URL for a route or `theme:paper` / `theme:floodlights` (`src/lib/qaDriver.ts`).
+- Screenshot tooling: start Metro with `EXPO_PUBLIC_QA_DRIVER=<url>` and the app polls that URL for a route or `theme:paper` / `theme:floodlights` (`src/lib/qaDriver.ts`). Deep links work too: `xcrun simctl openurl <udid> 'innings:///match/<id>'`. Switching the simulator's appearance while the app runs brings up a dev-only LogBox warning, so relaunch the app after switching, and take the welcome screen from a burst, since its ticket keeps flipping.

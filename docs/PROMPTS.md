@@ -1,6 +1,6 @@
 # The prompts behind Innings
 
-I made Innings by prompting Claude Code. This file collects the prompts that shaped it, in the order I gave them, from the first evening on 22 October 2026 to the day the repository went public on 16 November. I've edited them for grammar and clarity and left out small talk and status questions, but each one still asks for what I asked for at the time. Under each prompt is what came of it.
+I made Innings by prompting Claude Code. This file collects the prompts that shaped it, in the order I gave them, from the first evening on 22 October 2026 to 17 November, the day after the repository went public. I've edited them for grammar and clarity and left out small talk and status questions, but each one still asks for what I asked for at the time. Under each prompt is what came of it.
 
 The plan I started from is in [PLAN.md](PLAN.md), and the product requirements are in [PRD.md](PRD.md).
 
@@ -133,3 +133,23 @@ Every commit was scanned for keys, tokens, passwords and personal data before th
 > Make the README professional, and add a PRD and a file of the prompts behind the build.
 
 That produced this file, [PRD.md](PRD.md) and the current README.
+
+## Ready to demo (17 November)
+
+> I don't want to use my email password, or any other personal password, anywhere in this project. I just want it ready to demo. What else does it need?
+
+The code that confirms a sign-up keeps showing on screen in dev mode, and the docs now say that sending real codes would need a mail account set up just for Innings.
+
+> Should we move the data to Supabase?
+
+> OK, let's keep SQLite and start the demo setup.
+
+`make demo` starts the API on a fresh database of its own, so my everyday data isn't touched. It opens demo@example.com, an account that already has stubs, five friends and a Top 5, and prints a new password for it each run.
+
+> For the demo, show the matches that are on that day.
+
+The demo runs on that day's real matches from ESPN's feed, and once the week's results have loaded, the demo account gets a few made-up predictions on them, with their points. `INNINGS_MATCHES=sim make demo` runs it on the simulated world instead, for a day with nothing live.
+
+> Will the email and password be the same every time I run the demo?
+
+The email is, but the password is new every run, because this repository is public and a fixed password in it would work for anyone. I kept it that way.
