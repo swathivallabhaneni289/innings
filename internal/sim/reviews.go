@@ -117,6 +117,11 @@ var demoPool = map[string][]string{
 		"{Y}. I didn't sleep that night. {H}.",
 		"The match that started it all for me. {H}.",
 	},
+	"archive": {
+		"{R}. I watched the last over standing up.",
+		"Logging this one late. {Y} at {V}, and I still know exactly where I was.",
+		"{W}, {Y}. The whole street heard us.",
+	},
 }
 
 var replyPool = []string{

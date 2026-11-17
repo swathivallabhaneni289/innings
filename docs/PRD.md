@@ -88,7 +88,7 @@ All 80 requirements are built: 79 over ten phases, and DATA-02, added later as a
 
 **Reliability** (PLAT-05). The JSON contract is written in TypeScript and mirrored in Go, lists are never `null`, and tests check every endpoint for it. Request handlers never call ESPN; one poller saves what it learns in the database.
 
-**Accessibility and performance.** Buttons and controls carry accessibility roles and labels, filter chips are at least 40 pt tall, and ratings and split bars have spoken labels. A full VoiceOver and TalkBack pass is still to do, and load times haven't been measured.
+**Accessibility and performance.** So far, many controls carry accessibility roles and labels, filter chips are at least 40 pt tall, and ratings and split bars have spoken labels. A full VoiceOver and TalkBack pass is still to do, and load times haven't been measured.
 
 ## 7. Data sources
 
@@ -104,7 +104,7 @@ The app is React Native with Expo SDK 57, Expo Router and TypeScript. It talks J
 
 ## 9. Status and release history
 
-Innings is built and tested, but it has not launched and has no real users. It has run on an iPhone 17 Pro simulator and a Pixel 8 emulator, not yet on a physical phone. The Go tests, typecheck, lint and 69 Jest tests pass, and an 88-check smoke run passed on 2026-11-16. The friends, fans and crowd ratings in the app and its screenshots are simulated. Next come an Android pass on the newest match-page panels, a first real sign-up email, and tests on real phones.
+Innings is built and tested, but it has not launched and has no real users. It has run on an iPhone 17 Pro simulator and a Pixel 8 emulator, not yet on a physical phone. The Go tests, typecheck, lint and 69 Jest tests pass, and an 88-check smoke run passed on 2026-11-16. The friends, fans and crowd ratings in the app and its screenshots are simulated. Next come an Android pass on the newest match-page panels and tests on real phones.
 
 - **v1.0, 2026-10-22** (Phases 1 to 6, 64 requirements): the full loop on a simulated cricket world, with guest accounts.
 - **v1.1, 2026-10-25** (Phase 7, 8 requirements): sign-in by phone number and texted code, fan cards and finding friends.
@@ -140,7 +140,7 @@ Decided against: Supabase, replaced by the Go API and SQLite; phone numbers and 
 
 **An empty app at launch.** Simulated fans don't predict, rate or watch real matches, so those sections start empty. The plan's answer is to launch before a big series with a seeded group of friends.
 
-**Email delivery.** Real delivery hasn't been tried; the mailer was only tested against a mail server on the same machine. A real sign-up through Gmail comes before friends join.
+**Email delivery.** Real delivery hasn't been tried; the mailer was only tested against a mail server on the same machine. I won't put a personal email password into the project, so for now the code shows on screen in dev mode, and sending real codes would need a mail account set up just for Innings.
 
 **Security limits.** Sessions don't expire, CORS allows any origin, and some rate limits reset when the server restarts. They're documented and accepted for now.
 

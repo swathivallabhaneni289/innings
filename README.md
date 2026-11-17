@@ -111,6 +111,10 @@ To try it, tap Get started and sign up with any email address and a password of 
 
 On a real phone, connect it by cable and run `npx expo run:android --device` or `npx expo run:ios --device`, with the phone on the same Wi-Fi as your computer. The app finds the API there automatically, and `EXPO_PUBLIC_API_URL` points it somewhere else.
 
+### Demo
+
+To show Innings to someone, stop `make api` and run `make demo` instead. It starts the API on a fresh `demo.db` with today's real matches and opens demo@example.com, an account that already has stubs, five friends and a Top 5, plus a few made-up predictions on the week's results, with their points, once the feed has loaded them (usually within a few minutes). Sign in on the app with the password it prints, which is new each run. Nothing is emailed, and your own `innings.db` isn't touched. Offline, or on a day with nothing live, `INNINGS_MATCHES=sim make demo` runs it on the simulated world, where one match is always live.
+
 ### Real emails
 
 `make api` emails real codes once a file named `.env` in the repo root holds a mail account's settings. The file is gitignored, so the password stays on your computer. To send from Gmail, turn on 2-Step Verification for the account, create an app password at [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords), and add these lines to `.env` with your own address, typing the app password without its spaces:

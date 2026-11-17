@@ -19,12 +19,21 @@
 //	                (what `make api` does). With neither, every call that would email a code answers 503.
 //	INNINGS_ENV_FILE
 //	                a file of KEY=VALUE lines to read first (`make api` passes .env); the environment wins over it.
+//
+// The demo (`make demo`):
+//
+//	INNINGS_DEMO=1  opens demo@example.com, a fan with stubs, friends, a Top 5 and points from settled predictions
+//	                (on real matches, once the feed has the week's results), and prints its password, made up fresh
+//	                each run. Needs dev codes, and a database without that account yet (make demo starts from an
+//	                empty demo.db).
 package main
 
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -76,6 +85,10 @@ func run(logger *slog.Logger) error {
 	if err != nil {
 		return err
 	}
+	demo := os.Getenv("INNINGS_DEMO") == "1"
+	if _, dev := mailer.(auth.DevMailer); demo && !dev {
+		return errors.New("INNINGS_DEMO=1 needs INNINGS_DEV_CODES=1 with no SMTP settings (make demo sets them)")
+	}
 
 	st, err := store.Open(dbPath)
 	if err != nil {
@@ -88,13 +101,13 @@ func run(logger *slog.Logger) error {
 
 	simWorld := sim.NewWorld(anchor)
 	var world httpapi.World = simWorld
-	matches := "simulated (INNINGS_MATCHES=sim)"
+	matches, realMatches := "simulated (INNINGS_MATCHES=sim)", false
 	if src := feed.FromEnv(os.Getenv, st, simWorld.Teams(), logger); src != nil {
 		if err := src.Load(ctx); err != nil {
 			return err
 		}
 		go src.Run(ctx)
-		world, matches, now = feed.NewWorld(simWorld, src), "real (ESPN scores feed)", time.Now
+		world, matches, now, realMatches = feed.NewWorld(simWorld, src), "real (ESPN scores feed)", time.Now, true
 	}
 
 	api := httpapi.New(st, world, now, logger)
@@ -113,10 +126,29 @@ func run(logger *slog.Logger) error {
 		Handler:           api.Handler(),
 		ReadHeaderTimeout: 10 * time.Second,
 	}
+	// Listen first, so a port that's taken stops the server before the demo account is made.
+	ln, err := net.Listen("tcp", srv.Addr)
+	if err != nil {
+		if demo {
+			return fmt.Errorf("%w: stop make api (or whatever has port %s) and run make demo again", err, port)
+		}
+		return err
+	}
+	if demo {
+		userID, password, err := seedDemo(ctx, api.Auth, st, simWorld, now(), realMatches)
+		if err != nil {
+			ln.Close()
+			return err
+		}
+		printDemo(os.Stdout, port, password, realMatches)
+		if realMatches {
+			go addDemoPicks(ctx, st, world, userID, now, os.Stdout, logger)
+		}
+	}
 	errc := make(chan error, 1)
 	go func() {
 		logger.Info("innings api listening", "addr", "http://localhost:"+port, "db", dbPath, "matches", matches, "anchor", anchor.UTC().Format(time.RFC3339))
-		errc <- srv.ListenAndServe()
+		errc <- srv.Serve(ln)
 	}()
 	select {
 	case err := <-errc:

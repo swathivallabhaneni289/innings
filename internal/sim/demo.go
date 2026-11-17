@@ -14,6 +14,10 @@ var demoFollows = []string{"f-aditi", "f-kabir", "f-meera", "f-tom", "f-sipho"}
 // demoLogPrefs are the fixtures a new guest has "already logged", in order of preference.
 var demoLogPrefs = []string{"ind-aus-t20i-2", "wc-ind-w-pak-w-m10", "ipl-rcb-pbks-m17", "sl-eng-test-1", "ind-aus-t20i-1", "ipl-dc-mi-m18"}
 
+// demoTop5 is the demo account's Top 5 (make demo), in order: Vault classics from five decades, men's and women's,
+// ending with the 1983 final it has logged.
+var demoTop5 = []string{"wc-2011-final", "test-2021-gabba", "wc-2019-final", "wwc-2025-final", "wc-1983-final"}
+
 // demoPredPlan: fixture → outcome ("all" = winner + top scorer + top wicket-taker right, "win" = right winner, "lose" = wrong winner).
 var demoPredPlan = []struct{ id, kind string }{
 	{"wc-wi-w-sl-w-m12", "win"}, // the upset, called correctly
@@ -41,6 +45,62 @@ var demoClassicPlaces = []struct {
 }{
 	{domain.WatchHome, "My uncle's place in Hyderabad"},
 	{domain.WatchHostel, "School hostel, one TV for eighty of us"},
+}
+
+// demoArchive are the past tournament finals a demo account on real matches has logged, where the simulated fixtures
+// don't exist: a fan of India and Chennai Super Kings.
+var demoArchive = []string{"ar-2021-10-15-csk-kkr", "ar-1466428", "ar-1496938"}
+
+var demoArchivePlaces = []struct {
+	p    domain.WatchPlace
+	note string
+}{
+	{domain.WatchFriends, "Rooftop with the whole building"},
+	{domain.WatchHome, "Family sofa, everyone shouting at the TV"},
+	{domain.WatchOffice, "Office canteen, nobody did any work"},
+}
+
+// demoHistoryReal keeps demoHistory's Vault classics, puts finals from the archive in place of its fixtures, and
+// leaves out its predictions, which are all on fixtures.
+func (w *World) demoHistoryReal(userID string, now time.Time) ([]domain.MatchLog, []string) {
+	all, _, follows := w.demoHistory(userID, now)
+	logs := []domain.MatchLog{}
+	for _, l := range all {
+		if classicByID[l.MatchID] != nil {
+			logs = append(logs, l)
+		}
+	}
+	for k, id := range demoArchive {
+		i, ok := archiveByID[id]
+		if !ok {
+			continue
+		}
+		m := archiveList[i]
+		r := newRNG("demo-archive", userID, id)
+		pl := demoArchivePlaces[k%len(demoArchivePlaces)]
+		vals := map[string]string{"R": m.Result.Text, "Y": m.StartTime[:4], "V": m.Venue.Name}
+		if m.Result.WinnerID != nil {
+			vals["W"] = teamName(*m.Result.WinnerID)
+		}
+		l := domain.MatchLog{UserID: userID, MatchID: id, PlayerRatings: map[string]int{}, WatchedWith: []string{}, WatchedAt: pl.p, PlaceNote: pl.note}
+		l.Rating = halfStep(4 + r.frange(0, 1))
+		l.InstantClassic = l.Rating >= 4.5
+		l.Companions = companionsFor(r, pl.p)
+		l.Review = fillFrom(r, demoPool["archive"], vals)
+		l.CreatedAt = ts(now.Add(-time.Duration((9-2*k)*day) * time.Minute))
+		logs = append(logs, l)
+	}
+	return logs, follows
+}
+
+func (w *World) demoTop5() []string {
+	ids := []string{}
+	for _, id := range demoTop5 {
+		if classicByID[id] != nil {
+			ids = append(ids, id)
+		}
+	}
+	return ids
 }
 
 func (w *World) demoHistory(userID string, now time.Time) ([]domain.MatchLog, []domain.Prediction, []string) {

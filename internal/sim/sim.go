@@ -129,3 +129,12 @@ func (w *World) FriendsWatching(matchID string, now time.Time) []string {
 func (w *World) DemoHistory(userID string, now time.Time) (logs []domain.MatchLog, preds []domain.Prediction, follows []string) {
 	return w.demoHistory(userID, now)
 }
+
+// DemoHistoryReal is DemoHistory for a server on real matches, where the simulated fixtures don't exist: its Vault
+// classics and three finals from the archive, no predictions, and the same friends.
+func (w *World) DemoHistoryReal(userID string, now time.Time) (logs []domain.MatchLog, follows []string) {
+	return w.demoHistoryReal(userID, now)
+}
+
+// DemoTop5 is a Top 5 of Vault classics to go with DemoHistory.
+func (w *World) DemoTop5() []string { return w.demoTop5() }

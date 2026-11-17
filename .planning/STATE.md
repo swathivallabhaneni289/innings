@@ -5,10 +5,10 @@ milestone_name: Email sign-in and close-out
 current_phase: 10
 current_phase_name: email-sign-in-and-close-out
 status: complete
-stopped_at: v1.3 complete, then past matches and the match page's rating, Top 5 pin, review box and Top 5 editor (2026-11-13), then the repo made public with a PRD and the build's prompts (2026-11-16); real email delivery waits on a Gmail app password in .env
-last_updated: "2026-11-16T07:27:52.000Z"
-last_activity: 2026-11-16
-last_activity_desc: Repo made public after a scan for secrets; README rewritten; PRD and the build's prompts added
+stopped_at: v1.3 complete, then past matches and the match page's rating, Top 5 pin, review box and Top 5 editor (2026-11-13), then the repo made public with a PRD and the build's prompts (2026-11-16); sign-up codes stay on screen in dev mode, since the developer won't use a personal email password, and `make demo` added (2026-11-17)
+last_updated: "2026-11-17T08:47:37.000Z"
+last_activity: 2026-11-17
+last_activity_desc: Sign-up codes stay on screen rather than use a personal email password; make demo runs a ready-made demo account on today's real matches (or the simulation)
 progress:
   total_phases: 10
   completed_phases: 10
@@ -19,7 +19,7 @@ progress:
 
 # Project State
 
-> **CURRENT STATUS (2026-11-16).** All ten phases are complete (v1.0 to v1.3, 79 requirements), and two additions came after them. On 2026-11-13 a quick task added past matches (DATA-02): every World Cup, Champions Trophy, Asia Cup and IPL season since 1973, 2,948 matches in `internal/sim/archive.json`, which `scripts/archive.py` builds from Wikipedia's tournament pages and checks match by match. Fans find them in search, open their pages and log them; they never show on the Matches tab or Home. Later that day, at the developer's request, every finished match's page gained the fan's own say: a tap on the balls rates it and saves at once, "Pin to Top 5" works for any match, a box under Reviews takes their review, and Edit on the Top 5 opens `/top5` to reorder it or take games out (MATCH-10 and VAULT-05, reworded). `go test ./...`, `go vet`, `npx tsc --noEmit`, `npx expo lint` and 69 Jest tests pass, and `scripts/smoke.py` passed 88 checks against a fresh server on 2026-11-16. The new match-page panels were checked on the "Innings QA" iPhone simulator only. Phase 10 moved sign-in from phone numbers to email and password. Sign-up asks only for an email and a password; a 6-digit code emailed to the address confirms it, and then come the fan card and find-friends steps. Forgot password works with an emailed code, Settings has change password, and both sign out the fan's other devices; delete account asks for the password. Phone numbers are no longer collected, and contacts match on SHA-256 hashes of lower-cased email addresses. Fans can back up to five teams, main team first. Matches are real, from ESPN's public scores feed, with a chat room and calls during each match (Phases 8 and 9). Phase 10 was walked on the "Innings QA" iPhone simulator and the Android emulator. In dev mode the code shows on screen; real emails go out once `.env` holds a Gmail app password (README → Real emails), which hasn't been tried yet. The repo is the public GitHub repo `swathivallabhaneni289/innings` (private until 2026-11-16), branch `main`. Next: an Android pass on the new match-page panels, real email delivery, then the developer's own phones.
+> **CURRENT STATUS (2026-11-16).** All ten phases are complete (v1.0 to v1.3, 79 requirements), and two additions came after them. On 2026-11-13 a quick task added past matches (DATA-02): every World Cup, Champions Trophy, Asia Cup and IPL season since 1973, 2,948 matches in `internal/sim/archive.json`, which `scripts/archive.py` builds from Wikipedia's tournament pages and checks match by match. Fans find them in search, open their pages and log them; they never show on the Matches tab or Home. Later that day, at the developer's request, every finished match's page gained the fan's own say: a tap on the balls rates it and saves at once, "Pin to Top 5" works for any match, a box under Reviews takes their review, and Edit on the Top 5 opens `/top5` to reorder it or take games out (MATCH-10 and VAULT-05, reworded). `go test ./...`, `go vet`, `npx tsc --noEmit`, `npx expo lint` and 69 Jest tests pass, and `scripts/smoke.py` passed 88 checks against a fresh server on 2026-11-16. The new match-page panels were checked on the "Innings QA" iPhone simulator only. Phase 10 moved sign-in from phone numbers to email and password. Sign-up asks only for an email and a password; a 6-digit code emailed to the address confirms it, and then come the fan card and find-friends steps. Forgot password works with an emailed code, Settings has change password, and both sign out the fan's other devices; delete account asks for the password. Phone numbers are no longer collected, and contacts match on SHA-256 hashes of lower-cased email addresses. Fans can back up to five teams, main team first. Matches are real, from ESPN's public scores feed, with a chat room and calls during each match (Phases 8 and 9). Phase 10 was walked on the "Innings QA" iPhone simulator and the Android emulator. In dev mode the code shows on screen; real emails go out once `.env` holds a mail account's settings (README → Real emails), which hasn't been tried, since the developer won't use a personal email password. The repo is the public GitHub repo `swathivallabhaneni289/innings` (private until 2026-11-16), branch `main`. Next: an Android pass on the new match-page panels, real email delivery, then the developer's own phones.
 
 ## Project Reference
 
@@ -93,12 +93,14 @@ Recent decisions:
 ### Pending Todos
 
 - Android: walk the match page's new panels on the emulator: the rating, "Pin to Top 5", the review box with the keyboard up, and the Top 5 editor. They were checked on the iPhone simulator only, and Android relies on `KeyboardAware`'s padding where iOS scrolls the field into view itself
-- Developer: put a Gmail app password in `.env` (README → Real emails) and try a real sign-up. Real email delivery is untested until then; the mailer has only been tested against a mail server on the same machine
+- Real email delivery is untested; the mailer has only been tested against a mail server on the same machine. The developer won't put a personal email password into the project (2026-11-17), so codes show on screen in dev mode until a mail account is set up just for Innings (README → Real emails)
 - Developer: test on a real iPhone and Android phone (`npx expo run:ios --device`, `npx expo run:android --device`), with the phone on the same Wi-Fi as `make api`
 - Developer: store builds (EAS, App Store, Play Store) need the developer's Apple and Google accounts
 - Photos are only for the profile picture, and they stay on the phone; uploading them is MEDIA-01
 - Developer: confirm the stock colours for WPL, World Cup, BBL, SA20, The Hundred and Vault classics, and the darkened floodlights stocks (shown in the screenshots; no sign-off recorded)
 - Walk every screen in floodlights; the Phase 6 review captured four of them in the dark theme
+- Retake the README screenshots (most are from 2026-10-22, before chat, calls, past matches and the match page's rating) from `make demo`, which runs on real matches, so calls show whenever one is live; then record a short walkthrough for showing the app
+- Six archive finals have a wrong stage label ("Match scorecard", "Chennai Super Kings innings"): Champions Trophy 2013 and 2017, IPL 2022 and 2023, and both 2026 T20 World Cup finals. Fix the stage parsing in `scripts/archive.py` and rebuild (it reads Wikipedia, so ask first)
 
 ### Blockers/Concerns
 
@@ -124,8 +126,8 @@ Items acknowledged and carried forward:
 
 ## Session Continuity
 
-Last session: 2026-11-16
-Stopped at: the repo is public; the README was rewritten, and `docs/PRD.md` and `docs/PROMPTS.md` were added; real email delivery waits on a Gmail app password in `.env`
+Last session: 2026-11-17
+Stopped at: the repo is public, with the README rewritten and `docs/PRD.md` and `docs/PROMPTS.md` added; sign-up codes stay on screen in dev mode, since the developer won't use a personal email password; `make demo` runs a ready-made demo account (`cmd/api/demo.go`) for showing the app
 Resume file: none
 
 - Run locally: `make api` (port 8088, SQLite file `./innings.db`; reads `.env` through `INNINGS_ENV_FILE`; sign-up codes show on screen in dev mode until `.env` has SMTP settings; `make reset-db` wipes the database) and `make app` (Metro on 8082; press `i` for iOS or `a` for Android). To sign up, use any email address and a password of at least 8 characters, then tap the dev code shown on the screen.
